@@ -10,9 +10,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.kanda.ptacproject.R;
+import com.example.kanda.ptacproject.activity.MainActivity;
+import com.example.kanda.ptacproject.model.Marker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -30,6 +31,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback {
     LocationManager locationManager;
     MarkerOptions myLocation;
     private GoogleMap mGoogleMap;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,27 +61,33 @@ public class OneFragment extends Fragment implements OnMapReadyCallback {
         Criteria criteria = new Criteria();
 
         Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-        LatLng lotlongLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        Toast.makeText(getContext(), "LatLng : " + location.getLatitude() + " / " + location.getLongitude(), Toast.LENGTH_SHORT).show();
-        System.out.println("LatLng : " + location.getLatitude() + " / " + location.getLongitude());
-        myLocation = new MarkerOptions().position(lotlongLocation).title("Marker Title").snippet("Marker Description").icon(icon);
+        LatLng latLngLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
+        myLocation = new MarkerOptions().position(latLngLocation).title("Marker Title").snippet("Marker Description").icon(icon);
         googleMap.addMarker(myLocation);
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(lotlongLocation).zoom(15).build();
+
+
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(latLngLocation).zoom(15).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         LocationListener lis = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
-                mGoogleMap.clear();
-                LatLng lotlongLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                myLocation = new MarkerOptions().position(lotlongLocation).title("Marker Title").snippet("Marker Description").icon(icon);
-                mGoogleMap.addMarker(myLocation);
-                Toast.makeText(getContext(), "LatLng : " + location.getLatitude() + " / " + location.getLongitude(), Toast.LENGTH_SHORT).show();
-                System.out.println("LatLng : " + location.getLatitude() + " / " + location.getLongitude());
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(lotlongLocation).zoom(15).build();
-                mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
+                if (((MainActivity) getActivity()).markerList != null) {
+                    BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
+                    mGoogleMap.clear();
+                    LatLng latLngLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                    for (Marker m : ((MainActivity) getActivity()).markerList) {
+                        if (isShowMarker(location, m)) {
+                            myLocation = new MarkerOptions().position(
+                                    new LatLng(m.getAccLat(), m.getAccLong())
+                            ).title(m.getAccTitle()).snippet(m.getAccDescription()).icon(icon);
+                            mGoogleMap.addMarker(myLocation);
+                        }
+                    }
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(latLngLocation).zoom(15).build();
+                    mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                }
             }
 
             @Override
@@ -124,4 +132,12 @@ public class OneFragment extends Fragment implements OnMapReadyCallback {
         super.onLowMemory();
         mMapView.onLowMemory();
     }
+
+    public boolean isShowMarker(Location lo, Marker marker) {
+        float[] results = new float[1];
+        Location.distanceBetween(lo.getLatitude(), lo.getLongitude(),
+                marker.getAccLat(), marker.getAccLong(), results);
+        return results[0] < 1000;
+    }
+
 }

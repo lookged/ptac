@@ -29,6 +29,7 @@ import com.example.kanda.ptacproject.fragments.ThreeFragment;
 import com.example.kanda.ptacproject.fragments.TwoFragment;
 import com.example.kanda.ptacproject.helper.SQLiteHandler;
 import com.example.kanda.ptacproject.helper.SessionManager;
+import com.example.kanda.ptacproject.model.Marker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,6 +43,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     public static SessionManager session;
+    public ArrayList<Marker> markerList = null;
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -100,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                                     obj.getString("email")
                             );
                         }
+                        markerList = db.getMarkerList();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
