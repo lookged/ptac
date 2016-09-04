@@ -1,15 +1,21 @@
 package com.example.kanda.ptacproject.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.example.kanda.ptacproject.R;
 import com.example.kanda.ptacproject.activity.MainActivity;
@@ -26,7 +32,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-public class OneFragment extends Fragment implements OnMapReadyCallback {
+public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
     MapView mMapView;
     LocationManager locationManager;
     MarkerOptions myLocation;
@@ -49,6 +55,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback {
         final OneFragment myObj = this;
         mMapView.getMapAsync(this);
 
+
         return rootView;
     }
 
@@ -56,17 +63,14 @@ public class OneFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
         mGoogleMap = googleMap;
+        mGoogleMap.setOnMapClickListener(this);
         googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         Criteria criteria = new Criteria();
-
         Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
         LatLng latLngLocation = new LatLng(location.getLatitude(), location.getLongitude());
-
         myLocation = new MarkerOptions().position(latLngLocation).title("Marker Title").snippet("Marker Description").icon(icon);
         googleMap.addMarker(myLocation);
-
-
         CameraPosition cameraPosition = new CameraPosition.Builder().target(latLngLocation).zoom(15).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
@@ -76,15 +80,33 @@ public class OneFragment extends Fragment implements OnMapReadyCallback {
                 if (((MainActivity) getActivity()).markerList != null) {
                     BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
                     mGoogleMap.clear();
-                    LatLng latLngLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
                     for (Marker m : ((MainActivity) getActivity()).markerList) {
+                        BitmapDescriptor iconMarker;
                         if (isShowMarker(location, m)) {
+                            if (m.getRateId() == 105) {
+                                iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+                            } else if (m.getRateId() == 104) {
+                                iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
+                            } else if (m.getRateId() == 103) {
+                                iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
+                            } else if (m.getRateId() == 102) {
+                                iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+                            } else {
+                                iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
+                            }
                             myLocation = new MarkerOptions().position(
                                     new LatLng(m.getAccLat(), m.getAccLong())
-                            ).title(m.getAccTitle()).snippet(m.getAccDescription()).icon(icon);
+                            ).title(m.getAccTitle()).snippet(m.getAccDescription()).icon(iconMarker);
                             mGoogleMap.addMarker(myLocation);
                         }
                     }
+
+                    LatLng latLngLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                    myLocation = new MarkerOptions().position(
+                            new LatLng(location.getLatitude(), location.getLongitude())
+                    ).title("moss").snippet("m").icon(icon);
+                    mGoogleMap.addMarker(myLocation);
                     CameraPosition cameraPosition = new CameraPosition.Builder().target(latLngLocation).zoom(15).build();
                     mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 }
@@ -140,4 +162,30 @@ public class OneFragment extends Fragment implements OnMapReadyCallback {
         return results[0] < 1000;
     }
 
+    @Override
+    public void onMapClick(LatLng latLng) {
+        myLocation = new MarkerOptions().position(
+                new LatLng(latLng.latitude, latLng.longitude)
+        ).title("moss").snippet("m");
+        mGoogleMap.addMarker(myLocation);
+
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Marker")
+                .setMessage("Are you sure you want to close this activity?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getActivity(), "marker", Toast.LENGTH_SHORT).show();
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
+        Window window = alertDialog.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.TOP;
+        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(wlp);
+    }
 }
