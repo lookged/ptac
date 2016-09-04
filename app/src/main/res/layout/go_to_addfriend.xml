@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_register"
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/textAddFriend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ADD FRIEND"
-        android:textSize="20dp"
-        android:id="@+id/textAddFriend"
-        android:layout_marginLeft="15dp"
-        android:textColor="@color/white"
-        android:layout_marginTop="15dp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:text="ADD FRIEND"
+        android:textColor="@color/white"
+        android:textSize="20dp" />
 
     <EditText
+        android:id="@+id/inputEmailFriend"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/inputEmailFriend"
+        android:layout_below="@+id/textAddFriend"
+        android:layout_marginTop="38dp"
+        android:background="@color/white"
         android:hint="Email"
         android:padding="10dp"
         android:singleLine="true"
-        android:background="@color/white"
-        android:layout_below="@+id/textAddFriend"
-        android:textColorHint="@color/input_login_hint"
-        android:layout_marginTop="38dp" />
+        android:textColorHint="@color/input_login_hint" />
 
     <Button
+        android:id="@+id/btnAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ADD"
-        android:id="@+id/btnAdd"
-        android:background="@color/btn_login_bg"
-        android:layout_marginTop="38dp"
         android:layout_below="@+id/edtEmail"
-        android:layout_centerHorizontal="true" />
-</RelativeLayout>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="38dp"
+        android:background="@color/btn_login_bg"
+        android:text="ADD" />
+</LinearLayout>

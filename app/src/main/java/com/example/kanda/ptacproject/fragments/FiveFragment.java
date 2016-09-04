@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.kanda.ptacproject.R;
-
+import com.example.kanda.ptacproject.activity.AddRequest;
 
 
 public class FiveFragment extends Fragment{
@@ -22,6 +22,15 @@ public class FiveFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_five, container, false);
+        btnAddFriend = (Button) rootView.findViewById(R.id.btnAddFriend);
         btnAddFriend.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
@@ -31,14 +40,6 @@ public class FiveFragment extends Fragment{
 
             }
         });
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_five, container, false);
-        btnAddFriend = (Button) rootView.findViewById(R.id.btnAddFriend);
         return rootView;
     }
 

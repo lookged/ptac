@@ -2,12 +2,9 @@ package com.example.kanda.ptacproject.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.kanda.ptacproject.R;
 
@@ -21,6 +18,9 @@ public class AddRequest extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.go_to_addfriend);
+        btnAdd = (Button) findViewById(R.id.btnAdd);
+        inputEmailFriend = (EditText) findViewById(R.id.inputEmailFriend);
         btnAdd.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
@@ -32,11 +32,5 @@ public class AddRequest extends Activity {
     }
 
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.go_to_addfriend, container, false);
-        btnAdd = (Button) rootView.findViewById(R.id.btnAdd);
-        return rootView;
-    }
 }
 
