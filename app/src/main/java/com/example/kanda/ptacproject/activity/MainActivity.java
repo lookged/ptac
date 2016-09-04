@@ -13,8 +13,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.example.kanda.ptacproject.R;
+import com.example.kanda.ptacproject.app.AppConfig;
+import com.example.kanda.ptacproject.app.AppController;
 import com.example.kanda.ptacproject.fragments.FiveFragment;
 import com.example.kanda.ptacproject.fragments.FourFragment;
 import com.example.kanda.ptacproject.fragments.OneFragment;
@@ -23,24 +30,29 @@ import com.example.kanda.ptacproject.fragments.TwoFragment;
 import com.example.kanda.ptacproject.helper.SQLiteHandler;
 import com.example.kanda.ptacproject.helper.SessionManager;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
+    public static SessionManager session;
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private SQLiteHandler db;
-    public static SessionManager session;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         db = new SQLiteHandler(getApplicationContext());
+        syncMarker();
         session = new SessionManager(getApplicationContext());
         if (!session.isLoggedIn()) {
             //logoutUser();
@@ -64,15 +76,55 @@ public class MainActivity extends AppCompatActivity {
         setupTabIcons();
     }
 
+    private void syncMarker() {
+        db.delMarker();
+        String tag_string_req = "req_marker_list";
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_MARKER_LIST, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray arr;
+                    arr = new JSONArray(response);
+                    if (arr.length() != 0) {
+                        for (int i = 0; i < arr.length(); i++) {
+                            JSONObject obj = (JSONObject) arr.get(i);
+                            db.syncMarker(
+                                    obj.getInt("acc_id"),
+                                    obj.getString("acc_title"),
+                                    obj.getString("acc_description"),
+                                    obj.getDouble("acc_lat"),
+                                    obj.getDouble("acc_long"),
+                                    new Date(),
+                                    obj.getInt("rate_id"),
+                                    obj.getString("email")
+                            );
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "Json error: " + e.getMessage());
+                    Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Load Marker List Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
     /**
      * Logging out the user. Will set isLoggedIn flag to false in shared
      * preferences Clears the user data from sqlite users table
      */
     private void logoutUser() {
         session.setLogin(false);
-
         db.deleteUsers();
-
         // Launching the login activity
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
@@ -107,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
                 R.drawable.ic_place_white,
                 R.drawable.ic_settings_white
         };
-
         for (int i = 0; i <= 4; i++) {
             tabLayout.getTabAt(i).setIcon(tabIcons[i]);
         }
@@ -148,7 +199,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-
             // return null to display only the icon
             return null;
         }

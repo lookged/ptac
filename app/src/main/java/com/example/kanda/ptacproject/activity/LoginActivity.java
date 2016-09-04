@@ -18,23 +18,20 @@ import com.android.volley.Request.Method;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.example.kanda.ptacproject.R;
 import com.example.kanda.ptacproject.app.AppConfig;
 import com.example.kanda.ptacproject.app.AppController;
 import com.example.kanda.ptacproject.helper.SQLiteHandler;
 import com.example.kanda.ptacproject.helper.SessionManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class LoginActivity extends Activity {
-    private static final String TAG = RegisterActivity.class.getSimpleName();
+    private static final String TAG = LoginActivity.class.getSimpleName();
     private Button btnLogin;
     private Button btnLinkToRegister;
     private EditText inputEmail;
@@ -120,7 +117,7 @@ public class LoginActivity extends Activity {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Login Response: " + response.toString());
+                Log.d(TAG, "Login Response: " + response);
                 hideDialog();
 
                 try {
@@ -144,11 +141,7 @@ public class LoginActivity extends Activity {
 
                         // Inserting row in users table
                         db.addUser(email, uid);
-                        // TEST NAJAAA
-                        db.deleteAllFriend();
-                        db.addFriendList(uid, "57c2a8aad0c076.77542458", new Date(), 0);
-                        db.addFriendList(uid, "57c2a8aad0c076.77542459", new Date(), 0);
-                        db.getFriendList(uid);
+
                         // Launch main activity
                         Intent intent = new Intent(LoginActivity.this,
                                 MainActivity.class);
@@ -163,6 +156,7 @@ public class LoginActivity extends Activity {
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
+                    Log.d(TAG, response);
                     Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
 
