@@ -31,6 +31,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.UnsupportedEncodingException;
+
 
 public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
     MapView mMapView;
@@ -69,8 +71,8 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         Criteria criteria = new Criteria();
         Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
         LatLng latLngLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        myLocation = new MarkerOptions().position(latLngLocation).title("Marker Title").snippet("Marker Description").icon(icon);
-        googleMap.addMarker(myLocation);
+//        myLocation = new MarkerOptions().position(latLngLocation).title("Marker Title").snippet("Marker Description").icon(icon);
+//        googleMap.addMarker(myLocation);
         CameraPosition cameraPosition = new CameraPosition.Builder().target(latLngLocation).zoom(15).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
@@ -95,18 +97,25 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                             } else {
                                 iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
                             }
+                            byte[] stringBytes = m.getAccTitle().getBytes();
+                            String title = "Unsupported Text";
+                            try {
+                                title = new String(stringBytes, "UTF-8");
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
                             myLocation = new MarkerOptions().position(
                                     new LatLng(m.getAccLat(), m.getAccLong())
-                            ).title(m.getAccTitle()).snippet(m.getAccDescription()).icon(iconMarker);
+                            ).title(title).snippet(m.getAccDescription()).icon(iconMarker);
                             mGoogleMap.addMarker(myLocation);
                         }
                     }
 
                     LatLng latLngLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                    myLocation = new MarkerOptions().position(
-                            new LatLng(location.getLatitude(), location.getLongitude())
-                    ).title("moss").snippet("m").icon(icon);
-                    mGoogleMap.addMarker(myLocation);
+//                    myLocation = new MarkerOptions().position(
+//                            new LatLng(location.getLatitude(), location.getLongitude())
+//                    ).title("moss").snippet("m").icon(icon);
+//                    mGoogleMap.addMarker(myLocation);
                     CameraPosition cameraPosition = new CameraPosition.Builder().target(latLngLocation).zoom(15).build();
                     mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 }
@@ -166,13 +175,14 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public void onMapClick(LatLng latLng) {
         myLocation = new MarkerOptions().position(
                 new LatLng(latLng.latitude, latLng.longitude)
-        ).title("moss").snippet("m");
+        ).title("Marker").snippet("Lat : " + latLng.latitude + " Lng : " + latLng.longitude);
         mGoogleMap.addMarker(myLocation);
 
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Marker")
-                .setMessage("Are you sure you want to close this activity?")
+                .setMessage("Are you sure you want to Marker this activity?" + "\n " +
+                        "Lat : " + latLng.latitude + "\n " + "Lng : " + latLng.longitude)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
