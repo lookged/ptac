@@ -178,24 +178,41 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         ).title("Marker").snippet("Lat : " + latLng.latitude + " Lng : " + latLng.longitude);
         mGoogleMap.addMarker(myLocation);
 
-        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Marker")
-                .setMessage("Are you sure you want to Marker this activity?" + "\n " +
-                        "Lat : " + latLng.latitude + "\n " + "Lng : " + latLng.longitude)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getActivity(), "marker", Toast.LENGTH_SHORT).show();
-                    }
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        // Get the layout inflater
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        builder.setView(inflater.inflate(R.layout.dialog_marker, null))
+                // Add action buttons
+                .setPositiveButton("Mark", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
                 })
-                .setNegativeButton("No", null)
-                .show();
-        Window window = alertDialog.getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-        wlp.gravity = Gravity.TOP;
-        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        window.setAttributes(wlp);
+                .setNegativeButton("cancel", null).show();
+//        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+//                .setIcon(android.R.drawable.ic_dialog_alert)
+//                .setTitle("Marker")
+//                .setMessage("Are you sure you want to Marker this activity?" + "\n " +
+//                        "Lat : " + latLng.latitude + "\n " + "Lng : " + latLng.longitude)
+//                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                        Toast.makeText(getActivity(), "marker", Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                })
+//                .setNegativeButton("No", null)
+//                .show();
+//        Window window = alertDialog.getWindow();
+//        WindowManager.LayoutParams wlp = window.getAttributes();
+//        wlp.gravity = Gravity.TOP;
+//        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+//        window.setAttributes(wlp);
     }
 }
