@@ -70,74 +70,76 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         Criteria criteria = new Criteria();
         Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-        LatLng latLngLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        if (location != null) {
+            LatLng latLngLocation = new LatLng(location.getLatitude(), location.getLongitude());
 //        myLocation = new MarkerOptions().position(latLngLocation).title("Marker Title").snippet("Marker Description").icon(icon);
 //        googleMap.addMarker(myLocation);
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(latLngLocation).zoom(15).build();
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(latLngLocation).zoom(15).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-        LocationListener lis = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                if (((MainActivity) getActivity()).markerList != null) {
-                    BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
-                    mGoogleMap.clear();
+            LocationListener lis = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    if (((MainActivity) getActivity()).markerList != null) {
+                        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
+                        mGoogleMap.clear();
 
-                    for (Marker m : ((MainActivity) getActivity()).markerList) {
-                        BitmapDescriptor iconMarker;
-                        if (isShowMarker(location, m)) {
-                            if (m.getRateId() == 105) {
-                                iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
-                            } else if (m.getRateId() == 104) {
-                                iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
-                            } else if (m.getRateId() == 103) {
-                                iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
-                            } else if (m.getRateId() == 102) {
-                                iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
-                            } else {
-                                iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
+                        for (Marker m : ((MainActivity) getActivity()).markerList) {
+                            BitmapDescriptor iconMarker;
+                            if (isShowMarker(location, m)) {
+                                if (m.getRateId() == 105) {
+                                    iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+                                } else if (m.getRateId() == 104) {
+                                    iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
+                                } else if (m.getRateId() == 103) {
+                                    iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
+                                } else if (m.getRateId() == 102) {
+                                    iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+                                } else {
+                                    iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
+                                }
+                                byte[] stringBytes = m.getAccTitle().getBytes();
+                                String title = "Unsupported Text";
+                                try {
+                                    title = new String(stringBytes, "UTF-8");
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                                myLocation = new MarkerOptions().position(
+                                        new LatLng(m.getAccLat(), m.getAccLong())
+                                ).title(title).snippet(m.getAccDescription()).icon(iconMarker);
+                                mGoogleMap.addMarker(myLocation);
                             }
-                            byte[] stringBytes = m.getAccTitle().getBytes();
-                            String title = "Unsupported Text";
-                            try {
-                                title = new String(stringBytes, "UTF-8");
-                            } catch (UnsupportedEncodingException e) {
-                                e.printStackTrace();
-                            }
-                            myLocation = new MarkerOptions().position(
-                                    new LatLng(m.getAccLat(), m.getAccLong())
-                            ).title(title).snippet(m.getAccDescription()).icon(iconMarker);
-                            mGoogleMap.addMarker(myLocation);
                         }
-                    }
 
-                    LatLng latLngLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        LatLng latLngLocation = new LatLng(location.getLatitude(), location.getLongitude());
 //                    myLocation = new MarkerOptions().position(
 //                            new LatLng(location.getLatitude(), location.getLongitude())
 //                    ).title("moss").snippet("m").icon(icon);
 //                    mGoogleMap.addMarker(myLocation);
-                    CameraPosition cameraPosition = new CameraPosition.Builder().target(latLngLocation).zoom(15).build();
-                    mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        CameraPosition cameraPosition = new CameraPosition.Builder().target(latLngLocation).zoom(15).build();
+                        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    }
                 }
-            }
 
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
 
-            }
+                }
 
-            @Override
-            public void onProviderEnabled(String provider) {
+                @Override
+                public void onProviderEnabled(String provider) {
 
-            }
+                }
 
-            @Override
-            public void onProviderDisabled(String provider) {
+                @Override
+                public void onProviderDisabled(String provider) {
 
-            }
-        };
+                }
+            };
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, lis);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, lis);
+        }
     }
 
     @Override

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.kanda.ptacproject.R;
-import com.example.kanda.ptacproject.activity.AddRequest;
+import com.example.kanda.ptacproject.activity.*;
 
 
 public class FiveFragment extends Fragment{
@@ -35,7 +35,7 @@ public class FiveFragment extends Fragment{
 
             public void onClick(View view) {
                 Intent i = new Intent(getActivity(),
-                        AddRequest.class);
+                        SearchFriendActivity.class);
                 startActivity(i);
 
             }

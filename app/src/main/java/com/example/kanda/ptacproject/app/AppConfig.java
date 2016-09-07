@@ -9,6 +9,6 @@ public class AppConfig {
     public static String URL_ADD_FRIEND = "http://www.ptacproject.com/android_login_api/friendrequest.php";
     public static String URL_FRIEND_LIST = "http://www.ptacproject.com/android_login_api/getfriendlist.php";
     public static String URL_MARKER_LIST = "http://www.ptacproject.com/android_login_api/getallmarker.php";
-
+    public static String URL_SEARCH_FRIEND = "http://www.ptacproject.com/android_login_api/searchfriend.php";
 
 }

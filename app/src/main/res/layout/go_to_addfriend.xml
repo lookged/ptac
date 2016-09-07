@@ -30,12 +30,13 @@
         android:textColorHint="@color/input_login_hint" />
 
     <Button
-        android:id="@+id/btnAdd"
+        android:id="@+id/btnSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/edtEmail"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="38dp"
         android:background="@color/btn_login_bg"
-        android:text="ADD" />
+        android:layout_gravity="center_horizontal"
+        android:text="SEARCH" />
 </LinearLayout>

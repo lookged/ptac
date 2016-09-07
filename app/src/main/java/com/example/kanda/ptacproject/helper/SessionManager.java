@@ -25,6 +25,7 @@ public class SessionManager {
 
     private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
     private static final String KEY_LOGIN_ID = "logindId";
+    private static final String KEY_LOGIN_EMAIL = "loginEmail";
 
     public SessionManager(Context context) {
         this._context = context;
@@ -52,5 +53,16 @@ public class SessionManager {
 
     public String getLoginId(){
         return pref.getString(KEY_LOGIN_ID, null);
+    }
+
+    public void setLoginEmail(String loginEmail) {
+        editor.putString(KEY_LOGIN_ID, loginEmail);
+        // commit changes
+        editor.commit();
+        Log.d(TAG, "User login email session modified!");
+    }
+
+    public String getLoginEmail(){
+        return pref.getString(KEY_LOGIN_EMAIL, null);
     }
 }
