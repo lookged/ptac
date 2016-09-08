@@ -1,48 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <ImageView
-        android:src="@mipmap/ic_launcher"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:scaleType="center"
+        android:layout_height="50dp"
         android:background="#FFFFBB33"
-        android:contentDescription="@string/app_name" />
+        android:contentDescription="@string/app_name"
+        android:scaleType="center"
+        android:src="@mipmap/ic_launcher" />
+
     <EditText
-        android:id="@+id/title"
-        android:inputType="textEmailAddress"
+        android:id="@+id/title_Marker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="0dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginTop="0dp"
         android:hint="Title" />
+
     <EditText
-        android:id="@+id/description"
-        android:inputType="textPostalAddress"
+        android:id="@+id/Description_Marker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="0dp"
         android:fontFamily="sans-serif"
-        android:hint="description"/>
+        android:hint="description" />
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPostalAddress"
-        android:ems="10"
-        android:id="@+id/editText2" />
 
-    <CalendarView
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/calendarView"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="sans-serif"
+        android:text="Levels of Violence" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lvl 1" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lvl 2" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lvl 3" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lvl 4" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lvl 5" />
+    </RadioGroup>
+
+
+    <CalendarView
+        android:id="@+id/Calendar_Marker"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center_horizontal" />
 
 

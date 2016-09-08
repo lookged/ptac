@@ -1,18 +1,28 @@
 package com.example.kanda.ptacproject.activity;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -30,6 +40,7 @@ import com.example.kanda.ptacproject.fragments.TwoFragment;
 import com.example.kanda.ptacproject.helper.SQLiteHandler;
 import com.example.kanda.ptacproject.helper.SessionManager;
 import com.example.kanda.ptacproject.model.Marker;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,6 +87,37 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons();
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+                .setIcon(R.mipmap.ic_launcher)
+                .setTitle("Send SMS")
+                .setMessage("Are you sure you want to Send SMS?" )
+                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
+                        Criteria criteria = new Criteria();
+                        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+                        double lat = location.getLatitude();
+                        double lng = location.getLongitude();
+                        String phoneNumber = "0992467337" ;
+                        String message = "https://www.google.co.th/maps/place/"+lat+"+"+lng+"/@"+lat+","+lng+",20z";
+                        sendSMS(phoneNumber, message);
+                        Toast.makeText(getApplicationContext(), "Send SMS Complete. " , Toast.LENGTH_LONG).show();
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
+            }
+        });
     }
 
     private void syncMarker() {
@@ -132,6 +174,11 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    public void sendSMS(String phoneNumber, String message) {
+        SmsManager sms = SmsManager.getDefault();
+        sms.sendTextMessage(phoneNumber, null, message, null, null);
     }
 
     @Override
