@@ -38,16 +38,5 @@
         android:layout_marginTop="38dp"
         android:background="@color/btn_login_bg"
         android:layout_gravity="center_horizontal"
-        android:visibility="gone"
         android:text="SEARCH" />
-    <Button
-        android:id="@+id/btnAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/edtEmail"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="38dp"
-        android:background="@color/btn_login_bg"
-        android:layout_gravity="center_horizontal"
-        android:text="ADD" />
 </LinearLayout>

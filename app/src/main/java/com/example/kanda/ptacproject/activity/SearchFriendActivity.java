@@ -35,7 +35,7 @@ public class SearchFriendActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.go_to_addfriend);
+        setContentView(R.layout.go_to_searchfriend);
         btnSearch = (Button) findViewById(R.id.btnSearch);
         inputEmailFriend = (EditText) findViewById(R.id.inputEmailFriend);
         session = new SessionManager(getApplicationContext());
