@@ -128,6 +128,32 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New user inserted into sqlite: " + id);
     }
 
+    public void addMarker(final int accid,
+                          final String titelmarker,
+                          final String description,
+                          final double latmarker,
+                          final double lngmarker,
+                          final String Datemarker,
+                          final int ratemarkers,
+                          final String usermarker) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_ACC_ID, accid); // Email
+        values.put(KEY_ACC_TITLE, titelmarker); // Email
+        values.put(KEY_ACC_DESCRIPTION, description); // Email
+        values.put(KEY_ACC_LAT, latmarker); // Email
+        values.put(KEY_ACC_LONG, lngmarker); // Email
+        values.put(KEY_DATEM_MARKER, Datemarker); // Email
+        values.put(KEY_RATE_ID, ratemarkers); // Email
+        values.put(KEY_EMAIL_MARKER, usermarker); // Email
+        // Inserting Row
+        long id = db.insert(TABLE_MARKER, null, values);
+        db.close(); // Closing database connection
+
+        Log.d(TAG, "New user inserted into sqlite: " + id);
+    }
     /**
      * Getting user data from database
      */

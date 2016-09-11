@@ -23,7 +23,7 @@
         android:hint="Title" />
 
     <EditText
-        android:id="@+id/Description_Marker"
+        android:id="@+id/description_Marker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
@@ -45,31 +45,37 @@
         android:text="Levels of Violence" />
 
     <RadioGroup
+        android:id="@+id/radioGroup_marker"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
         <RadioButton
+            android:id="@+id/radio_lvl1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Lvl 1" />
 
         <RadioButton
+            android:id="@+id/radio_lvl2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Lvl 2" />
 
         <RadioButton
+            android:id="@+id/radio_lvl3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Lvl 3" />
 
         <RadioButton
+            android:id="@+id/radio_lvl4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Lvl 4" />
 
         <RadioButton
+            android:id="@+id/radio_lvl5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Lvl 5" />
