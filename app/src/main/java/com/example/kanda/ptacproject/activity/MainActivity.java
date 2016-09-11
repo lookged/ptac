@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -59,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private SQLiteHandler db;
+    private long then = 0;
+    private int longClickDuration = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,19 +92,14 @@ public class MainActivity extends AppCompatActivity {
         setupTabIcons();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
 
-                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
-                .setIcon(R.mipmap.ic_launcher)
-                .setTitle("Send SMS")
-                .setMessage("Are you sure you want to Send SMS?" )
-                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        fab.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    then = (long) System.currentTimeMillis();
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if ((System.currentTimeMillis() - then) > longClickDuration) {
                         LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
                         Criteria criteria = new Criteria();
                         Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
@@ -111,13 +109,44 @@ public class MainActivity extends AppCompatActivity {
                         String message = "https://www.google.co.th/maps/place/"+lat+"+"+lng+"/@"+lat+","+lng+",20z";
                         sendSMS(phoneNumber, message);
                         Toast.makeText(getApplicationContext(), "Send SMS Complete. " , Toast.LENGTH_LONG).show();
+                        return false;
+                    } else {
+                        Toast.makeText(getApplicationContext(), "2" , Toast.LENGTH_LONG).show();
+                        return true;
                     }
-
-                })
-                .setNegativeButton("No", null)
-                .show();
+                }
+                return true;
             }
         });
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+////                        .setAction("Action", null).show();
+//
+////                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+////                .setIcon(R.mipmap.ic_launcher)
+////                .setTitle("Send SMS")
+////                .setMessage("Are you sure you want to Send SMS?" )
+////                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+////                    @Override
+////                    public void onClick(DialogInterface dialog, int which) {
+////                        LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
+////                        Criteria criteria = new Criteria();
+////                        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+////                        double lat = location.getLatitude();
+////                        double lng = location.getLongitude();
+////                        String phoneNumber = "0992467337" ;
+////                        String message = "https://www.google.co.th/maps/place/"+lat+"+"+lng+"/@"+lat+","+lng+",20z";
+////                        sendSMS(phoneNumber, message);
+////                        Toast.makeText(getApplicationContext(), "Send SMS Complete. " , Toast.LENGTH_LONG).show();
+////                    }
+////
+////                })
+////                .setNegativeButton("No", null)
+////                .show();
+//            }
+//        });
     }
 
     private void syncMarker() {
