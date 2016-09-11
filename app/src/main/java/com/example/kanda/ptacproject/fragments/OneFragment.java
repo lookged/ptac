@@ -66,6 +66,8 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private ProgressDialog pDialog;
     private SessionManager session;
     private SQLiteHandler db;
+    private long then = 0;
+    private int longClickDuration = 3000;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,6 +79,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMapView = (MapView) rootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
+
 
 
         try {
@@ -120,13 +123,13 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                                 if (m.getRateId() == 105) {
                                     iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
                                 } else if (m.getRateId() == 104) {
-                                    iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
+                                    iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefour);
                                 } else if (m.getRateId() == 103) {
                                     iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
                                 } else if (m.getRateId() == 102) {
-                                    iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+                                    iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimetwo);
                                 } else {
-                                    iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
+                                    iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimeone);
                                 }
                                 byte[] stringBytes = m.getAccTitle().getBytes();
                                 String title = "Unsupported Text";
@@ -200,8 +203,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         float[] results = new float[1];
         Location.distanceBetween(lo.getLatitude(), lo.getLongitude(),
                 marker.getAccLat(), marker.getAccLong(), results);
-        Log.d(TAG, "isEnter: " + marker.getAccTitle() + " return " + (results[0] < 100000));
-        return results[0] < 100000;
+        return results[0] < 1000;
     }
 
     @Override
@@ -341,6 +343,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         db.syncMarker(accid, titelmarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
                         ((MainActivity) getActivity()).markerList = db.getMarkerList();
                         Toast.makeText(getActivity(), "Marker successfully ", Toast.LENGTH_LONG).show();
+
 
                         // Launch login activity
 //                        Intent intent = new Intent(
