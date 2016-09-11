@@ -15,6 +15,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.kanda.ptacproject.R;
 import com.example.kanda.ptacproject.app.AppConfig;
 import com.example.kanda.ptacproject.app.AppController;
+import com.example.kanda.ptacproject.helper.SQLiteHandler;
 import com.example.kanda.ptacproject.helper.SessionManager;
 
 import org.json.JSONException;
@@ -29,25 +30,43 @@ import java.util.Map;
 public class SearchFriendActivity extends Activity {
     private static final String TAG = SearchFriendActivity.class.getSimpleName();
     private Button btnSearch;
+    private Button btnAdd;
     private EditText inputEmailFriend;
     private SessionManager session;
+    private SQLiteHandler db;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.go_to_searchfriend);
         btnSearch = (Button) findViewById(R.id.btnSearch);
+        btnAdd = (Button) findViewById(R.id.btnAdd);
+        btnAdd.setVisibility(View.INVISIBLE);
         inputEmailFriend = (EditText) findViewById(R.id.inputEmailFriend);
+        db = new SQLiteHandler(getApplicationContext());
         session = new SessionManager(getApplicationContext());
         btnSearch.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-                String email = inputEmailFriend.getText().toString().trim();
-                checkExistUser(email);
+                String friendEmail = inputEmailFriend.getText().toString().trim();
+
+                checkExistUser(friendEmail);
+
+
             }
 
         });
+        btnAdd.setOnClickListener(new View.OnClickListener() {
 
+            public void onClick(View view) {
+                String friendEmail = inputEmailFriend.getText().toString().trim();
+
+                addFriend(friendEmail);
+
+
+            }
+
+        });
     }
     public void checkExistUser(final String email){
         String tag_string_req = "req_searchfriend";
@@ -68,6 +87,7 @@ public class SearchFriendActivity extends Activity {
                     if (!error) {
                         Toast.makeText(getApplicationContext(),
                                 "you can add this user", Toast.LENGTH_LONG).show();
+                        btnAdd.setVisibility(View.VISIBLE);
                     } else {
                         // Error in login. Get the error message
                         String errorMsg = "user not found";
@@ -107,5 +127,60 @@ public class SearchFriendActivity extends Activity {
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
+
+
+    private void addFriend(final String friendEmail) {
+        // Tag used to cancel the request
+        String tag_string_req = "req_addfriend";
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_ADD_FRIEND, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Register Response: " + response.toString());
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        Toast.makeText(getApplicationContext(), "Add Friend successfully", Toast.LENGTH_LONG).show();
+                    } else {
+                        // Error occurred add friend. Get the error
+                        // message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getApplicationContext(),
+                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Add Friend Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting params to register url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("loginid", MainActivity.session.getLoginId());
+                params.put("email", friendEmail);
+
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
 }
 
