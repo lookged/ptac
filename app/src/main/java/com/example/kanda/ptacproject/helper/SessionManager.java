@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.Log;
+
 public class SessionManager {
     // Shared preferences file name
     private static final String PREF_NAME = "AndroidHiveLogin";
@@ -35,9 +36,10 @@ public class SessionManager {
         Log.d(TAG, "User login session modified!");
     }
 
-    public boolean isLoggedIn(){
+    public boolean isLoggedIn() {
         return pref.getBoolean(KEY_IS_LOGGEDIN, false);
     }
+
 
     public String getLoginId() {
         return pref.getString(KEY_LOGIN_ID, null);
@@ -55,9 +57,11 @@ public class SessionManager {
     }
 
     public void setLoginEmail(String loginEmail) {
-        editor.putString(KEY_LOGIN_ID, loginEmail);
+        editor.putString(KEY_LOGIN_EMAIL, loginEmail);
         // commit changes
         editor.commit();
         Log.d(TAG, "User login email session modified!");
     }
+
+
 }

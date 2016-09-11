@@ -1,5 +1,6 @@
 package com.example.kanda.ptacproject.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.location.Criteria;
@@ -9,16 +10,25 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
+import android.widget.CalendarView;
+import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.example.kanda.ptacproject.R;
 import com.example.kanda.ptacproject.activity.MainActivity;
+import com.example.kanda.ptacproject.app.AppConfig;
+import com.example.kanda.ptacproject.app.AppController;
+import com.example.kanda.ptacproject.helper.SQLiteHandler;
+import com.example.kanda.ptacproject.helper.SessionManager;
 import com.example.kanda.ptacproject.model.Marker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,23 +41,43 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
+    private static final String TAG = OneFragment.class.getSimpleName();
+    public EditText titleMarker;
+    public EditText descriptionMarker;
+    public CalendarView calendarMarker;
+    public int rateMarker;
     MapView mMapView;
     LocationManager locationManager;
     MarkerOptions myLocation;
+    View rootView;
+    View inflator;
     private GoogleMap mGoogleMap;
-
+    private ProgressDialog pDialog;
+    private SessionManager session;
+    private SQLiteHandler db;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_one, container, false);
+        rootView = inflater.inflate(R.layout.fragment_one, container, false);
+        inflator = inflater.inflate(R.layout.dialog_marker, null);
+
+        db = new SQLiteHandler(getActivity());
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         mMapView = (MapView) rootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
+
 
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
@@ -117,8 +147,8 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //                            new LatLng(location.getLatitude(), location.getLongitude())
 //                    ).title("moss").snippet("m").icon(icon);
 //                    mGoogleMap.addMarker(myLocation);
-                        CameraPosition cameraPosition = new CameraPosition.Builder().target(latLngLocation).zoom(15).build();
-                        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//                        CameraPosition cameraPosition = new CameraPosition.Builder().target(latLngLocation).zoom(15).build();
+//                        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                     }
                 }
 
@@ -170,29 +200,75 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         float[] results = new float[1];
         Location.distanceBetween(lo.getLatitude(), lo.getLongitude(),
                 marker.getAccLat(), marker.getAccLong(), results);
-        return results[0] < 1000;
+        Log.d(TAG, "isEnter: " + marker.getAccTitle() + " return " + (results[0] < 100000));
+        return results[0] < 100000;
     }
 
     @Override
-    public void onMapClick(LatLng latLng) {
+    public void onMapClick(final LatLng latLng) {
         myLocation = new MarkerOptions().position(
                 new LatLng(latLng.latitude, latLng.longitude)
         ).title("Marker").snippet("Lat : " + latLng.latitude + " Lng : " + latLng.longitude);
         mGoogleMap.addMarker(myLocation);
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
-
+        final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_marker, null);
+        builder.setView(dialogView);
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.dialog_marker, null))
-                // Add action buttons
-                .setPositiveButton("Mark", new DialogInterface.OnClickListener() {
+
+        builder.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+                        titleMarker = (EditText) dialogView.findViewById(R.id.title_Marker);
+                        descriptionMarker = (EditText) dialogView.findViewById(R.id.description_Marker);
+                        calendarMarker = (CalendarView) dialogView.findViewById(R.id.Calendar_Marker);
+                        rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
 
+                        int ratemarker = 0;
+
+                        switch (rateMarker) {
+
+                            case R.id.radio_lvl1:
+                                ratemarker = 101;
+                                break;
+                            case R.id.radio_lvl2:
+                                ratemarker = 102;
+                                break;
+                            case R.id.radio_lvl3:
+                                ratemarker = 103;
+                                break;
+                            case R.id.radio_lvl4:
+                                ratemarker = 104;
+                                break;
+                            case R.id.radio_lvl5:
+                                ratemarker = 105;
+                                break;
+                        }
+
+                        int accid = 0;
+                        String titlemarker1 = titleMarker.getText().toString();
+                        String description = descriptionMarker.getText().toString().trim();
+                        double latmarker = latLng.latitude;
+                        double lngmarker = latLng.longitude;
+                        String Datemarker = sdf.format(new Date(calendarMarker.getDate()));
+                        int ratemarkers = ratemarker;
+                        String usermarker = MainActivity.session.getLoginEmail();
+//                        Log.d(TAG, "titlemarker1: " + titlemarker1);
+//                        Log.d(TAG, "description: " + description);
+//                        Log.d(TAG, "latmarker: " + latmarker);
+//                        Log.d(TAG, "lngmarker: " + lngmarker);
+//                        Log.d(TAG, "Datemarker: " + Datemarker);
+//                        Log.d(TAG, "ratemarkers: " + ratemarkers);
+//                        Log.d(TAG, "usermarker: " + usermarker);
+
+//                        Toast.makeText(getActivity(), mm, Toast.LENGTH_SHORT).show();
+                        addMarker(accid, titlemarker1, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
+//                        Toast.makeText(getActivity(), ratemarker , Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("cancel", null).show();
@@ -217,4 +293,107 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
 //        window.setAttributes(wlp);
     }
+
+    private void addMarker(final int accid,
+                           final String titelmarker,
+                           final String description,
+                           final double latmarker,
+                           final double lngmarker,
+                           final String Datemarker,
+                           final int ratemarkers,
+                           final String usermarker) {
+        // Tag used to cancel the request
+        String tag_string_req = "req_register";
+
+//        pDialog.setMessage("Registering ...");
+//        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_ADD_MARKER, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+//                Log.d(TAG, "Register Response: " + response.toString());
+//                hideDialog();
+
+                try {
+                    Log.d(TAG, response);
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        // User successfully stored in MySQL
+                        // Now store the user in sqlite
+
+
+                        JSONObject user = jObj.getJSONObject("user");
+                        int accid = user.getInt("accid");
+                        String titelmarker = user.getString("titelmarker");
+                        String description = user.getString("description");
+                        Double latmarker = user.optDouble("latmarker");
+                        Double lngmarker = user.optDouble("lngmarker");
+                        String Datemarker = user.getString("Datemarker");
+                        int ratemarkers = user.getInt("ratemarkers");
+                        String usermarker = user.getString("usermarker");
+                        String created_at = user
+                                .getString("created_at");
+
+                        // Inserting row in users table
+                        db.syncMarker(accid, titelmarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
+                        ((MainActivity) getActivity()).markerList = db.getMarkerList();
+                        Toast.makeText(getActivity(), "Marker successfully ", Toast.LENGTH_LONG).show();
+
+                        // Launch login activity
+//                        Intent intent = new Intent(
+//                                RegisterActivity.this,
+//                                LoginActivity.class);
+//                        startActivity(intent);
+//                        finish();
+                    } else {
+
+                        // Error occurred in registration. Get the error
+                        // message
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getActivity(),
+                                "error_msg" + errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                Toast.makeText(getActivity(), "Marker completed", Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "addMarker Error: " + error.getMessage());
+                Toast.makeText(getActivity(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting params to register url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("acc_id", Integer.toString(accid));
+                params.put("acc_title", titelmarker);
+                params.put("acc_description", description);
+                params.put("acc_lat", Double.toString(latmarker));
+                params.put("acc_long", Double.toString(lngmarker));
+                params.put("date", Datemarker);
+                params.put("rate_id", Integer.toString(ratemarkers));
+                params.put("email", usermarker);
+
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
 }

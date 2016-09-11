@@ -137,6 +137,7 @@ public class LoginActivity extends Activity {
                         JSONObject user = jObj.getJSONObject("user");
                         //String name = user.getString("name");
                         String email = user.getString("email");
+                        session.setLoginEmail(email);
                         //String created_at = user.getString("created_at");
 
                         // Inserting row in users table

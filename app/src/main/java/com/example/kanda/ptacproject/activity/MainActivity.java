@@ -44,7 +44,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -164,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                                     obj.getString("acc_description"),
                                     obj.getDouble("acc_lat"),
                                     obj.getDouble("acc_long"),
-                                    new Date(),
+                                    obj.getString("date"),
                                     obj.getInt("rate_id"),
                                     obj.getString("email")
                             );

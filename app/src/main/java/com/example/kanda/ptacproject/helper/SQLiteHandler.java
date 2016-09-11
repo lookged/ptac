@@ -128,6 +128,32 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "New user inserted into sqlite: " + id);
     }
 
+    public void addMarker(final int accid,
+                          final String titelmarker,
+                          final String description,
+                          final double latmarker,
+                          final double lngmarker,
+                          final String Datemarker,
+                          final int ratemarkers,
+                          final String usermarker) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_ACC_ID, accid); // Email
+        values.put(KEY_ACC_TITLE, titelmarker); // Email
+        values.put(KEY_ACC_DESCRIPTION, description); // Email
+        values.put(KEY_ACC_LAT, latmarker); // Email
+        values.put(KEY_ACC_LONG, lngmarker); // Email
+        values.put(KEY_DATEM_MARKER, Datemarker); // Email
+        values.put(KEY_RATE_ID, ratemarkers); // Email
+        values.put(KEY_EMAIL_MARKER, usermarker); // Email
+        // Inserting Row
+        long id = db.insert(TABLE_MARKER, null, values);
+        db.close(); // Closing database connection
+
+        Log.d(TAG, "New marker inserted into sqlite: " + id);
+    }
     /**
      * Getting user data from database
      */
@@ -242,7 +268,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      */
-    public void syncMarker(int accid, String acctitle, String accdescription, double acclat, double acclong, Date date, int rateid, String email) {
+    public void syncMarker(int accid, String acctitle, String accdescription, double acclat, double acclong, String date, int rateid, String email) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -279,10 +305,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         String selectQuery = "SELECT  * FROM " + TABLE_MARKER;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+        int i = 0;
         if (cursor.getCount() > 0) {
             markerList = new ArrayList<>();
             if (cursor.moveToFirst()) {
                 do {
+                    i++;
                     Marker m = new Marker();
                     m.setAccId(cursor.getInt(0));
                     m.setAccTitle(cursor.getString(1));
@@ -294,9 +322,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     m.setEmail(cursor.getString(7));
                     markerList.add(m);
                     Log.d(TAG, "Fetching Marker from Sqlite: " + cursor.getString(1));
+
                 } while (cursor.moveToNext());
             }
         }
+        Log.d(TAG, "maker count : " + i);
         cursor.close();
         db.close();
         return markerList;
