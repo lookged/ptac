@@ -1,20 +1,17 @@
 package com.example.kanda.ptacproject.activity;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
@@ -41,7 +38,6 @@ import com.example.kanda.ptacproject.fragments.TwoFragment;
 import com.example.kanda.ptacproject.helper.SQLiteHandler;
 import com.example.kanda.ptacproject.helper.SessionManager;
 import com.example.kanda.ptacproject.model.Marker;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -97,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    then = (long) System.currentTimeMillis();
+                    then = System.currentTimeMillis();
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     if ((System.currentTimeMillis() - then) > longClickDuration) {
                         LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
@@ -111,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Send SMS Complete. " , Toast.LENGTH_LONG).show();
                         return false;
                     } else {
-                        Toast.makeText(getApplicationContext(), "2" , Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_LONG).show();
                         return true;
                     }
                 }

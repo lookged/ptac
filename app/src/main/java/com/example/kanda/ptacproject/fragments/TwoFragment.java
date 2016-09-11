@@ -16,6 +16,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.kanda.ptacproject.R;
 import com.example.kanda.ptacproject.activity.MainActivity;
+import com.example.kanda.ptacproject.adepter.FriendListAdepter;
 import com.example.kanda.ptacproject.app.AppConfig;
 import com.example.kanda.ptacproject.app.AppController;
 
@@ -27,16 +28,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.example.kanda.ptacproject.adepter.FriendListAdepter;
-
 public class TwoFragment extends Fragment {
     private static final String TAG = TwoFragment.class.getSimpleName();
-    private ProgressDialog pDialog;
-    protected String loginId;
-    public ArrayList<String[]> friendList = null;
     public ListView friendListView;
     public View rootView;
+    public ArrayList<String[]> friendList = null;
     public FriendListAdepter friendListAdepter;
+    protected String loginId;
+    private ProgressDialog pDialog;
 
     public TwoFragment() {
     }
@@ -88,16 +87,16 @@ public class TwoFragment extends Fragment {
                         friendListView.setAdapter(friendListAdepter);
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.e(TAG, "Json error: " + e.getMessage());
-                    Toast.makeText(getActivity(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+//                    e.printStackTrace();
+//                    Log.e(TAG, "Json error: " + e.getMessage());
+                    Toast.makeText(getActivity(), "no friend", Toast.LENGTH_LONG).show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Load Friend List Error: " + error.getMessage());
-                Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), (error.getMessage() == null ? "haha" : "eiei"), Toast.LENGTH_LONG).show();
                 hideDialog();
             }
         }) {
