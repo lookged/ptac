@@ -121,11 +121,11 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                             BitmapDescriptor iconMarker;
                             if (isShowMarker(location, m)) {
                                 if (m.getRateId() == 105) {
-                                    iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+                                    iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefive);
                                 } else if (m.getRateId() == 104) {
                                     iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefour);
                                 } else if (m.getRateId() == 103) {
-                                    iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
+                                    iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimethree);
                                 } else if (m.getRateId() == 102) {
                                     iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimetwo);
                                 } else {

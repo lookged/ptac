@@ -84,7 +84,7 @@ public class FourFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Log.d(TAG, "Json error: " + e.getMessage());
-                    Toast.makeText(getActivity(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Json error mm: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -99,7 +99,7 @@ public class FourFragment extends Fragment {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("loginid", loginId);
+                params.put("login_id", loginId);
 
                 return params;
             }
