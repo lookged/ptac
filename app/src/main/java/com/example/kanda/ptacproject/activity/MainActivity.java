@@ -1,20 +1,17 @@
 package com.example.kanda.ptacproject.activity;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
@@ -41,14 +38,12 @@ import com.example.kanda.ptacproject.fragments.TwoFragment;
 import com.example.kanda.ptacproject.helper.SQLiteHandler;
 import com.example.kanda.ptacproject.helper.SessionManager;
 import com.example.kanda.ptacproject.model.Marker;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -168,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                                     obj.getString("acc_description"),
                                     obj.getDouble("acc_lat"),
                                     obj.getDouble("acc_long"),
-                                    new Date(),
+                                    obj.getString("date"),
                                     obj.getInt("rate_id"),
                                     obj.getString("email")
                             );

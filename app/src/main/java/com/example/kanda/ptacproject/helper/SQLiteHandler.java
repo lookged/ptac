@@ -152,7 +152,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         long id = db.insert(TABLE_MARKER, null, values);
         db.close(); // Closing database connection
 
-        Log.d(TAG, "New user inserted into sqlite: " + id);
+        Log.d(TAG, "New marker inserted into sqlite: " + id);
     }
     /**
      * Getting user data from database
@@ -268,7 +268,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      */
-    public void syncMarker(int accid, String acctitle, String accdescription, double acclat, double acclong, Date date, int rateid, String email) {
+    public void syncMarker(int accid, String acctitle, String accdescription, double acclat, double acclong, String date, int rateid, String email) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -305,10 +305,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         String selectQuery = "SELECT  * FROM " + TABLE_MARKER;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+        int i = 0;
         if (cursor.getCount() > 0) {
             markerList = new ArrayList<>();
             if (cursor.moveToFirst()) {
                 do {
+                    i++;
                     Marker m = new Marker();
                     m.setAccId(cursor.getInt(0));
                     m.setAccTitle(cursor.getString(1));
@@ -320,9 +322,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     m.setEmail(cursor.getString(7));
                     markerList.add(m);
                     Log.d(TAG, "Fetching Marker from Sqlite: " + cursor.getString(1));
+
                 } while (cursor.moveToNext());
             }
         }
+        Log.d(TAG, "maker count : " + i);
         cursor.close();
         db.close();
         return markerList;
