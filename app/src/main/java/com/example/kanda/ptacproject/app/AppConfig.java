@@ -10,5 +10,8 @@ public class AppConfig {
     public static String URL_FRIEND_LIST = "http://www.ptacproject.com/android_login_api/getfriendlist.php";
     public static String URL_MARKER_LIST = "http://www.ptacproject.com/android_login_api/getallmarker.php";
     public static String URL_SEARCH_FRIEND = "http://www.ptacproject.com/android_login_api/searchfriend.php";
+    public static String URL_CHECK_REQUEST = "http://www.ptacproject.com/android_login_api/checkrequest.php";
+    public static String URL_UPDATE_STATUS = "http://www.ptacproject.com/android_login_api/updatestatus.php";
+    public static String URL_REMOVE_REQUEST = "http://www.ptacproject.com/android_login_api/removerequest.php";
 
 }
