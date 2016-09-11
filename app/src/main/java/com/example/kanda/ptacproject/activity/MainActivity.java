@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    then = (long) System.currentTimeMillis();
+                    then = System.currentTimeMillis();
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     if ((System.currentTimeMillis() - then) > longClickDuration) {
                         LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Send SMS Complete. " , Toast.LENGTH_LONG).show();
                         return false;
                     } else {
-                        Toast.makeText(getApplicationContext(), "2" , Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_LONG).show();
                         return true;
                     }
                 }
