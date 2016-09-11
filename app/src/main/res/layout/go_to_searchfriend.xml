@@ -3,40 +3,78 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_register"
-    android:orientation="vertical">
+    android:baselineAligned="false"
+    android:orientation="vertical"
+    android:weightSum="1">
 
-    <TextView
-        android:id="@+id/textAddFriend"
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp"
-        android:text="ADD FRIEND"
-        android:textColor="@color/white"
-        android:textSize="20dp" />
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/inputEmailFriend"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textAddFriend"
-        android:layout_marginTop="38dp"
-        android:background="@color/white"
-        android:hint="Email"
-        android:padding="10dp"
-        android:singleLine="true"
-        android:textColorHint="@color/input_login_hint" />
+        <TextView
+            android:id="@+id/textAddFriend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:text="ADD FRIEND"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/btnSearch"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/edtEmail"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="38dp"
-        android:background="@color/btn_login_bg"
         android:layout_gravity="center_horizontal"
-        android:text="SEARCH" />
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/inputEmailFriend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textAddFriend"
+            android:layout_marginTop="38dp"
+            android:background="@color/white"
+            android:hint="Email"
+            android:padding="10dp"
+            android:singleLine="true"
+            android:textColorHint="@color/input_login_hint" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/edtEmail"
+            android:layout_gravity="center"
+            android:background="@color/bg_register"
+            android:text="SEARCH"
+            android:textColor="#ffffff"
+            android:textSize="17dp" />
+
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/bg_register"
+            android:text="ADD"
+            android:textColor="#ffffff"
+            android:textSize="17dp" />
+
+    </LinearLayout>
+
+
 </LinearLayout>
