@@ -342,7 +342,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         // Inserting row in users table
                         db.syncMarker(accid, titelmarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
                         ((MainActivity) getActivity()).markerList = db.getMarkerList();
-                        Toast.makeText(getActivity(), "Marker successfully ", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(getActivity(), "Marker successfully ", Toast.LENGTH_LONG).show();
 
 
                         // Launch login activity
