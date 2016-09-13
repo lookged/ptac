@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private SQLiteHandler db;
     private long then = 0;
-    private int longClickDuration = 3000;
+    private int longClickDuration = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,12 +101,13 @@ public class MainActivity extends AppCompatActivity {
                         double lat = location.getLatitude();
                         double lng = location.getLongitude();
                         String phoneNumber = "0992467337" ;
-                        String message = "https://www.google.co.th/maps/place/"+lat+"+"+lng+"/@"+lat+","+lng+",20z";
+                        String message = MainActivity.session.getLoginEmail() + " being in danger" + " https://www.google.co.th/maps/place/" + lat + "+" + lng + "/@" + lat + "," + lng;
                         sendSMS(phoneNumber, message);
+//                        Toast.makeText(getApplicationContext(),message, Toast.LENGTH_LONG).show();
                         Toast.makeText(getApplicationContext(), "Send SMS Complete. " , Toast.LENGTH_LONG).show();
                         return false;
                     } else {
-                        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
                         return true;
                     }
                 }

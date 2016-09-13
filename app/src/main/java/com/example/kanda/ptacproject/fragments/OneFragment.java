@@ -3,17 +3,20 @@ package com.example.kanda.ptacproject.fragments;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -24,6 +27,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.kanda.ptacproject.R;
+import com.example.kanda.ptacproject.activity.DetailActivity;
 import com.example.kanda.ptacproject.activity.MainActivity;
 import com.example.kanda.ptacproject.app.AppConfig;
 import com.example.kanda.ptacproject.app.AppController;
@@ -46,17 +50,18 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
+public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
     private static final String TAG = OneFragment.class.getSimpleName();
     public EditText titleMarker;
     public EditText descriptionMarker;
     public CalendarView calendarMarker;
     public int rateMarker;
+    public Button btnDetail;
     MapView mMapView;
     LocationManager locationManager;
     MarkerOptions myLocation;
@@ -68,6 +73,16 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private SQLiteHandler db;
     private long then = 0;
     private int longClickDuration = 3000;
+
+    public static String getDate(long milliSeconds, String dateFormat) {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -99,6 +114,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
         mGoogleMap = googleMap;
         mGoogleMap.setOnMapClickListener(this);
+        mGoogleMap.setOnMapLongClickListener(this);
         googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         Criteria criteria = new Criteria();
@@ -140,8 +156,9 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                                 }
                                 myLocation = new MarkerOptions().position(
                                         new LatLng(m.getAccLat(), m.getAccLong())
-                                ).title(title).snippet(m.getAccDescription()).icon(iconMarker);
+                                ).title(title).snippet(m.getAccDescription() + " " + m.getDate()).icon(iconMarker);
                                 mGoogleMap.addMarker(myLocation);
+
                             }
                         }
 
@@ -208,6 +225,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void onMapClick(final LatLng latLng) {
+
         myLocation = new MarkerOptions().position(
                 new LatLng(latLng.latitude, latLng.longitude)
         ).title("Marker").snippet("Lat : " + latLng.latitude + " Lng : " + latLng.longitude);
@@ -222,14 +240,26 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
+        btnDetail = (Button) dialogView.findViewById(R.id.detail_button);
+        btnDetail.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(),
+                        DetailActivity.class));
+
+
+            }
+        });
+
         builder.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         titleMarker = (EditText) dialogView.findViewById(R.id.title_Marker);
                         descriptionMarker = (EditText) dialogView.findViewById(R.id.description_Marker);
                         calendarMarker = (CalendarView) dialogView.findViewById(R.id.Calendar_Marker);
                         rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
+
 
                         int ratemarker = 0;
 
@@ -257,9 +287,12 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         String description = descriptionMarker.getText().toString().trim();
                         double latmarker = latLng.latitude;
                         double lngmarker = latLng.longitude;
-                        String Datemarker = sdf.format(new Date(calendarMarker.getDate()));
+                        double longdate = calendarMarker.getDate();
+                        String Datemarker = getDate(calendarMarker.getDate(), "dd/MM/yyyy hh:mm:ss.SSS");
                         int ratemarkers = ratemarker;
                         String usermarker = MainActivity.session.getLoginEmail();
+
+
 //                        Log.d(TAG, "titlemarker1: " + titlemarker1);
 //                        Log.d(TAG, "description: " + description);
 //                        Log.d(TAG, "latmarker: " + latmarker);
@@ -268,7 +301,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //                        Log.d(TAG, "ratemarkers: " + ratemarkers);
 //                        Log.d(TAG, "usermarker: " + usermarker);
 
-//                        Toast.makeText(getActivity(), mm, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getActivity(),""+ Datemarker, Toast.LENGTH_SHORT).show();
                         addMarker(accid, titlemarker1, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
 //                        Toast.makeText(getActivity(), ratemarker , Toast.LENGTH_SHORT).show();
                     }
@@ -294,6 +327,78 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //        wlp.gravity = Gravity.TOP;
 //        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
 //        window.setAttributes(wlp);
+    }
+
+    public boolean isShowMarkerClick(LatLng latLng, Marker marker) {
+        float[] results = new float[1];
+        Location.distanceBetween(latLng.latitude, latLng.longitude,
+                marker.getAccLat(), marker.getAccLong(), results);
+        return results[0] < 1000;
+    }
+
+    @Override
+    public void onMapLongClick(final LatLng latLng) {
+
+
+        final AlertDialog.Builder builderdialog = new AlertDialog.Builder(getActivity());
+        // Get the layout inflater
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_destination, null);
+        builderdialog.setView(dialogView);
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+
+        builderdialog.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+
+//                        Toast.makeText(getActivity(), ratemarker , Toast.LENGTH_SHORT).show();
+            }
+        }).setNegativeButton("cancel", null);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                builderdialog.show();
+            }
+        }, 3300);
+
+        if (((MainActivity) getActivity()).markerList != null) {
+            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
+//            mGoogleMap.clear();
+
+            for (Marker m : ((MainActivity) getActivity()).markerList) {
+                BitmapDescriptor iconMarker;
+                if (isShowMarkerClick(latLng, m)) {
+                    if (m.getRateId() == 105) {
+                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefive);
+                    } else if (m.getRateId() == 104) {
+                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefour);
+                    } else if (m.getRateId() == 103) {
+                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimethree);
+                    } else if (m.getRateId() == 102) {
+                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimetwo);
+                    } else {
+                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimeone);
+                    }
+                    byte[] stringBytes = m.getAccTitle().getBytes();
+                    String title = "Unsupported Text";
+                    try {
+                        title = new String(stringBytes, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    myLocation = new MarkerOptions().position(
+                            new LatLng(m.getAccLat(), m.getAccLong())
+                    ).title(title).snippet(m.getAccDescription() + " " + m.getDate()).icon(iconMarker);
+                    mGoogleMap.addMarker(myLocation);
+
+                }
+            }
+
+        }
+//        Toast.makeText(getActivity(), "LongClick" , Toast.LENGTH_SHORT).show();
+
+
     }
 
     private void addMarker(final int accid,

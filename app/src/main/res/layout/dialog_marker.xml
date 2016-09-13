@@ -33,8 +33,20 @@
         android:fontFamily="sans-serif"
         android:hint="description" />
 
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:orientation="horizontal">
 
-    <TextView
+        <Button
+            android:id="@+id/detail_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="Detail"
+            android:textSize="8dp" />
+
+        <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="5dp"
@@ -43,6 +55,9 @@
         android:layout_marginTop="4dp"
         android:fontFamily="sans-serif"
         android:text="Levels of Violence" />
+
+
+    </TableRow>
 
     <RadioGroup
         android:id="@+id/radioGroup_marker"
