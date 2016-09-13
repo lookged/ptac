@@ -12,10 +12,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -107,6 +109,13 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Send SMS Complete. " , Toast.LENGTH_LONG).show();
                         return false;
                     } else {
+
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        // Get the layout inflater
+                        LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+                        final View dialogView = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_detail, null);
+                        builder.setView(dialogView).setNegativeButton("Back", null);
+                        builder.show();
 //                        Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
                         return true;
                     }

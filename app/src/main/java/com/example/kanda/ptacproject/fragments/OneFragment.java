@@ -3,7 +3,6 @@ package com.example.kanda.ptacproject.fragments;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -27,7 +26,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.kanda.ptacproject.R;
-import com.example.kanda.ptacproject.activity.DetailActivity;
 import com.example.kanda.ptacproject.activity.MainActivity;
 import com.example.kanda.ptacproject.app.AppConfig;
 import com.example.kanda.ptacproject.app.AppController;
@@ -58,15 +56,20 @@ import java.util.Map;
 public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
     private static final String TAG = OneFragment.class.getSimpleName();
     public EditText titleMarker;
-    public EditText descriptionMarker;
+    public EditText descriptionDestination;
     public CalendarView calendarMarker;
     public int rateMarker;
     public Button btnDetail;
+
+    public EditText descriptionMarker;
+
     MapView mMapView;
     LocationManager locationManager;
     MarkerOptions myLocation;
+
     View rootView;
     View inflator;
+
     private GoogleMap mGoogleMap;
     private ProgressDialog pDialog;
     private SessionManager session;
@@ -240,16 +243,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
-        btnDetail = (Button) dialogView.findViewById(R.id.detail_button);
-        btnDetail.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View view) {
-                startActivity(new Intent(getActivity(),
-                        DetailActivity.class));
-
-
-            }
-        });
 
         builder.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
                     @Override
@@ -351,8 +345,9 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         builderdialog.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-
-//                        Toast.makeText(getActivity(), ratemarker , Toast.LENGTH_SHORT).show();
+                descriptionDestination = (EditText) dialogView.findViewById(R.id.description_of_destination);
+                String descriptiondestination = descriptionDestination.getText().toString();
+                Toast.makeText(getActivity(), descriptiondestination, Toast.LENGTH_SHORT).show();
             }
         }).setNegativeButton("cancel", null);
         Handler handler = new Handler();

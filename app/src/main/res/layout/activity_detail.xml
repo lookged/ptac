@@ -5,14 +5,22 @@
     android:background="@color/input_register_bg"
     android:orientation="vertical">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#FFFFBB33"
+        android:contentDescription="@string/app_name"
+        android:scaleType="center"
+        android:src="@mipmap/ic_launcher" />
+
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp">
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_gravity="clip_horizontal"
 
             android:src="@mipmap/crimeone" />
@@ -20,7 +28,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="Lvl 1 \n 	ชิงทรัพย์" />
+            android:text="\n Lvl 1 \n 	ชิงทรัพย์"
+            android:textColor="#ffffff" />
 
     </TableRow>
 
@@ -38,7 +47,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="Lvl 2 \n 	ทำร้ายร่างกาย" />
+            android:text="\n Lvl 2 \n 	ทำร้ายร่างกาย"
+            android:textColor="#ffffff" />
     </TableRow>
 
     <TableRow
@@ -55,7 +65,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="Lvl 3 \n 	ชิงทรัพย์และทำร้ายร่างกาย" />
+            android:text="\n Lvl 3 \n 	ชิงทรัพย์และทำร้ายร่างกาย"
+            android:textColor="#ffffff" />
     </TableRow>
 
     <TableRow
@@ -72,7 +83,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="Lvl 4 \n 	ข่มขืนและกระทำอนาจาร" />
+            android:text="\n  Lvl 4 \n 	ข่มขืนและกระทำอนาจาร"
+            android:textColor="#ffffff" />
     </TableRow>
 
     <TableRow
@@ -88,14 +100,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="Lvl 5 \n 	ทำร้ายร่างกายจนเสียชีวิต" />
+            android:text="\n Lvl 5 \n 	ทำร้ายร่างกายจนเสียชีวิต"
+            android:textColor="#ffffff" />
     </TableRow>
 
-    <Button
-        android:id="@+id/btnBack"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="Back" />
+
 </LinearLayout>
