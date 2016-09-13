@@ -100,6 +100,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 
 
+
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
@@ -116,6 +117,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public void onMapReady(GoogleMap googleMap) {
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
         mGoogleMap = googleMap;
+
         mGoogleMap.setOnMapClickListener(this);
         mGoogleMap.setOnMapLongClickListener(this);
         googleMap.setMyLocationEnabled(true);
@@ -242,17 +244,17 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         builder.setView(dialogView);
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        titleMarker = (EditText) dialogView.findViewById(R.id.title_Marker);
+        descriptionMarker = (EditText) dialogView.findViewById(R.id.description_Marker);
+        calendarMarker = (CalendarView) dialogView.findViewById(R.id.Calendar_Marker);
+        rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
 
 
         builder.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        titleMarker = (EditText) dialogView.findViewById(R.id.title_Marker);
-                        descriptionMarker = (EditText) dialogView.findViewById(R.id.description_Marker);
-                        calendarMarker = (CalendarView) dialogView.findViewById(R.id.Calendar_Marker);
-                        rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
+
 
 
                         int ratemarker = 0;
@@ -295,9 +297,14 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //                        Log.d(TAG, "ratemarkers: " + ratemarkers);
 //                        Log.d(TAG, "usermarker: " + usermarker);
 
-//                        Toast.makeText(getActivity(),""+ Datemarker, Toast.LENGTH_SHORT).show();
-                        addMarker(accid, titlemarker1, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
+
+                        if (titlemarker1.length() > 0 && description.length() > 0 && ratemarker != 0) {
+                            addMarker(accid, titlemarker1, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
 //                        Toast.makeText(getActivity(), ratemarker , Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            Toast.makeText(getActivity(), "Please complete all information.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 })
                 .setNegativeButton("cancel", null).show();
@@ -347,7 +354,13 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
             public void onClick(DialogInterface dialog, int id) {
                 descriptionDestination = (EditText) dialogView.findViewById(R.id.description_of_destination);
                 String descriptiondestination = descriptionDestination.getText().toString();
-                Toast.makeText(getActivity(), descriptiondestination, Toast.LENGTH_SHORT).show();
+                Double destinationlat = latLng.latitude;
+                Double destinationlng = latLng.longitude;
+                Double mylocationlat = myLocation.getPosition().latitude;
+                Double mylocationlng = myLocation.getPosition().longitude;
+
+                String mm = "" + destinationlat + "\n" + destinationlng + "\n" + mylocationlat + "\n" + mylocationlng;
+                Toast.makeText(getActivity(), mm, Toast.LENGTH_SHORT).show();
             }
         }).setNegativeButton("cancel", null);
         Handler handler = new Handler();
