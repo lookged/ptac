@@ -54,6 +54,7 @@ import java.util.Map;
 
 
 public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
+
     private static final String TAG = OneFragment.class.getSimpleName();
     public EditText titleMarker;
     public EditText descriptionDestination;
@@ -97,8 +98,6 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMapView = (MapView) rootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
-
-
 
 
         try {
@@ -249,64 +248,73 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         descriptionMarker = (EditText) dialogView.findViewById(R.id.description_Marker);
         calendarMarker = (CalendarView) dialogView.findViewById(R.id.Calendar_Marker);
         rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
+        calendarMarker.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+
+            @Override
+            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
+
+                Toast.makeText(getActivity(), "" + year + "/" + (month + 1) + "/" + dayOfMonth, Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
 
         builder.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
 
 
+                int ratemarker = 0;
 
-                        int ratemarker = 0;
+                switch (rateMarker) {
 
-                        switch (rateMarker) {
+                    case R.id.radio_lvl1:
+                        ratemarker = 101;
+                        break;
+                    case R.id.radio_lvl2:
+                        ratemarker = 102;
+                        break;
+                    case R.id.radio_lvl3:
+                        ratemarker = 103;
+                        break;
+                    case R.id.radio_lvl4:
+                        ratemarker = 104;
+                        break;
+                    case R.id.radio_lvl5:
+                        ratemarker = 105;
+                        break;
+                }
 
-                            case R.id.radio_lvl1:
-                                ratemarker = 101;
-                                break;
-                            case R.id.radio_lvl2:
-                                ratemarker = 102;
-                                break;
-                            case R.id.radio_lvl3:
-                                ratemarker = 103;
-                                break;
-                            case R.id.radio_lvl4:
-                                ratemarker = 104;
-                                break;
-                            case R.id.radio_lvl5:
-                                ratemarker = 105;
-                                break;
-                        }
+                int accid = 0;
+                String titlemarker1 = titleMarker.getText().toString();
+                String description = descriptionMarker.getText().toString().trim();
+                double latmarker = latLng.latitude;
+                double lngmarker = latLng.longitude;
+                String Datemarker = "" + calendarMarker.getDate();
 
-                        int accid = 0;
-                        String titlemarker1 = titleMarker.getText().toString();
-                        String description = descriptionMarker.getText().toString().trim();
-                        double latmarker = latLng.latitude;
-                        double lngmarker = latLng.longitude;
-                        double longdate = calendarMarker.getDate();
-                        String Datemarker = getDate(calendarMarker.getDate(), "dd/MM/yyyy hh:mm:ss.SSS");
-                        int ratemarkers = ratemarker;
-                        String usermarker = MainActivity.session.getLoginEmail();
+
+                int ratemarkers = ratemarker;
+                String usermarker = MainActivity.session.getLoginEmail();
 
 
 //                        Log.d(TAG, "titlemarker1: " + titlemarker1);
 //                        Log.d(TAG, "description: " + description);
 //                        Log.d(TAG, "latmarker: " + latmarker);
 //                        Log.d(TAG, "lngmarker: " + lngmarker);
-//                        Log.d(TAG, "Datemarker: " + Datemarker);
+//                Log.d(TAG, "Datemarker: " + calendarMarker);
 //                        Log.d(TAG, "ratemarkers: " + ratemarkers);
 //                        Log.d(TAG, "usermarker: " + usermarker);
 
 
-                        if (titlemarker1.length() > 0 && description.length() > 0 && ratemarker != 0) {
-                            addMarker(accid, titlemarker1, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
+                if (titlemarker1.length() > 0 && description.length() > 0 && ratemarker != 0) {
+                    addMarker(accid, titlemarker1, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
 //                        Toast.makeText(getActivity(), ratemarker , Toast.LENGTH_SHORT).show();
-                        } else {
+                } else {
 
-                            Toast.makeText(getActivity(), "Please complete all information.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
+                    Toast.makeText(getActivity(), "Please complete all information.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        })
                 .setNegativeButton("cancel", null).show();
 //        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
 //                .setIcon(android.R.drawable.ic_dialog_alert)
@@ -358,7 +366,10 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 Double destinationlng = latLng.longitude;
                 Double mylocationlat = myLocation.getPosition().latitude;
                 Double mylocationlng = myLocation.getPosition().longitude;
-
+//
+//                DrawRoute.getInstance(OneFragment.this,getActivity()).setFromLatLong(destinationlat,destinationlng)
+//                        .setToLatLong(mylocationlat,mylocationlng).setGmapAndKey("AIzaSyDXztYnV2LvuDo6A0QO3raRos9Agl5bzqg",mGoogleMap).run();
+////OneFragment.this
                 String mm = "" + destinationlat + "\n" + destinationlng + "\n" + mylocationlat + "\n" + mylocationlng;
                 Toast.makeText(getActivity(), mm, Toast.LENGTH_SHORT).show();
             }
@@ -512,4 +523,8 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
+//    @Override
+//    public void afterDraw(String result) {
+//        Log.d("response",""+result);
+//    }
 }
