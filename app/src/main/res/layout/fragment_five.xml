@@ -3,16 +3,61 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/input_register_bg"
-    tools:context="info.androidhive.materialtabs.fragments.FiveFragment">
-
+    android:background="@color/colorPrimary"
+    android:orientation="vertical"
+    tools:context="fragments.FiveFragment">
 
     <Button
-        android:layout_width="wrap_content"
+        android:id="@+id/btnProfile"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ADD FRIEND"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="50dp"
+        android:background="@color/colorAccent"
+        android:drawableTop="@drawable/user"
+        android:text="Profile"
+
+        />
+
+    <Button
+        android:id="@+id/btnEditProfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="120dp"
+        android:background="@color/colorAccent"
+        android:drawableTop="@drawable/edituser"
+        android:text="Edit Profile"
+
+        />
+
+    <Button
         android:id="@+id/btnAddFriend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="190dp"
+        android:background="@color/colorAccent"
+        android:drawableTop="@drawable/addusernew"
+        android:text="ADD FRIEND"
+
+        />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="57dp" />
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="260dp"
+        android:background="@color/colorAccent"
+        android:drawableTop="@drawable/logoutnew"
+        android:text="Logout" />
+
+
 </RelativeLayout>

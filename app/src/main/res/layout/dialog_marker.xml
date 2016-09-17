@@ -9,8 +9,8 @@
         android:layout_height="50dp"
         android:background="#FFFFBB33"
         android:contentDescription="@string/app_name"
-        android:scaleType="center"
-        android:src="@mipmap/ic_launcher" />
+        android:scaleType="fitCenter"
+        android:src="@drawable/logoapp" />
 
     <EditText
         android:id="@+id/title_Marker"
@@ -31,20 +31,20 @@
         android:layout_marginRight="4dp"
         android:layout_marginTop="0dp"
         android:fontFamily="sans-serif"
-        android:hint="description" />
+        android:hint="Description" />
 
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/detail_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
-            android:text="Detail"
-            android:textSize="8dp" />
+        <!--<Button-->
+        <!--android:id="@+id/detail_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:fontFamily="sans-serif"-->
+        <!--android:text="Detail"-->
+        <!--android:textSize="8dp" />-->
 
         <TextView
         android:layout_width="match_parent"
@@ -69,6 +69,7 @@
             android:id="@+id/radio_lvl1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:checked="true"
             android:text="Lvl 1" />
 
         <RadioButton

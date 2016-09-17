@@ -1,7 +1,6 @@
 package com.example.kanda.ptacproject.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -20,7 +19,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -201,14 +199,14 @@ public class MainActivity extends AppCompatActivity {
      * Logging out the user. Will set isLoggedIn flag to false in shared
      * preferences Clears the user data from sqlite users table
      */
-    private void logoutUser() {
-        session.setLogin(false);
-        db.deleteUsers();
-        // Launching the login activity
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(intent);
-        finish();
-    }
+//    public  void logoutUser() {
+//        session.setLogin(false);
+//        db.deleteUsers();
+//        // Launching the login activity
+//        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//        startActivity(intent);
+//        finish();
+//    }
 
     public void sendSMS(String phoneNumber, String message) {
         SmsManager sms = SmsManager.getDefault();
@@ -223,17 +221,17 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_logout:
-                logoutUser();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle item selection
+//        switch (item.getItemId()) {
+//            case R.id.action_logout:
+//                logoutUser();
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
 
     private void setupTabIcons() {
         int[] tabIcons = {

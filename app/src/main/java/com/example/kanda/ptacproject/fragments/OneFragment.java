@@ -49,6 +49,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,6 +62,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public CalendarView calendarMarker;
     public int rateMarker;
     public Button btnDetail;
+    public String Datemarker;
 
     public EditText descriptionMarker;
 
@@ -243,17 +245,24 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         builder.setView(dialogView);
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
         titleMarker = (EditText) dialogView.findViewById(R.id.title_Marker);
         descriptionMarker = (EditText) dialogView.findViewById(R.id.description_Marker);
+
+
         calendarMarker = (CalendarView) dialogView.findViewById(R.id.Calendar_Marker);
-        rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
+
+
         calendarMarker.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
 
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-d");
+                String dateNew = sdf.format(new Date());
+                String selectDate = "" + year + "-" + month + "-" + dayOfMonth;
 
-                Toast.makeText(getActivity(), "" + year + "/" + (month + 1) + "/" + dayOfMonth, Toast.LENGTH_SHORT).show();
+                Datemarker = "" + year + "/" + month + "/" + dayOfMonth;
+
 
             }
         });
@@ -262,8 +271,8 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         builder.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-
-
+                rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
+                Toast.makeText(getActivity(), "rateMarker" + rateMarker, Toast.LENGTH_SHORT).show();
                 int ratemarker = 0;
 
                 switch (rateMarker) {
@@ -286,17 +295,16 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 }
 
                 int accid = 0;
-                String titlemarker1 = titleMarker.getText().toString();
+                String titlemarker = titleMarker.getText().toString();
                 String description = descriptionMarker.getText().toString().trim();
                 double latmarker = latLng.latitude;
                 double lngmarker = latLng.longitude;
-                String Datemarker = "" + calendarMarker.getDate();
-
-
                 int ratemarkers = ratemarker;
                 String usermarker = MainActivity.session.getLoginEmail();
 
-
+////
+//             Toast.makeText(getActivity(),"Datemarker : "+ Datemarker , Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), ""+new Date().toString(). , Toast.LENGTH_SHORT).show();
 //                        Log.d(TAG, "titlemarker1: " + titlemarker1);
 //                        Log.d(TAG, "description: " + description);
 //                        Log.d(TAG, "latmarker: " + latmarker);
@@ -306,8 +314,8 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //                        Log.d(TAG, "usermarker: " + usermarker);
 
 
-                if (titlemarker1.length() > 0 && description.length() > 0 && ratemarker != 0) {
-                    addMarker(accid, titlemarker1, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
+                if (titlemarker.length() > 0 && description.length() > 0) {
+                    addMarker(accid, titlemarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
 //                        Toast.makeText(getActivity(), ratemarker , Toast.LENGTH_SHORT).show();
                 } else {
 
@@ -370,7 +378,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //                DrawRoute.getInstance(OneFragment.this,getActivity()).setFromLatLong(destinationlat,destinationlng)
 //                        .setToLatLong(mylocationlat,mylocationlng).setGmapAndKey("AIzaSyDXztYnV2LvuDo6A0QO3raRos9Agl5bzqg",mGoogleMap).run();
 ////OneFragment.this
-                String mm = "" + destinationlat + "\n" + destinationlng + "\n" + mylocationlat + "\n" + mylocationlng;
+                String mm = "Destination : " + descriptiondestination + "\n" + destinationlat + "\n" + destinationlng + "\n" + mylocationlat + "\n" + mylocationlng;
                 Toast.makeText(getActivity(), mm, Toast.LENGTH_SHORT).show();
             }
         }).setNegativeButton("cancel", null);

@@ -279,7 +279,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_ACC_DESCRIPTION, accdescription);
         values.put(KEY_ACC_LAT, acclat);
         values.put(KEY_ACC_LONG, acclong);
-        values.put(KEY_DATEM_MARKER, getDateTime());
+        values.put(KEY_DATEM_MARKER, date);
         values.put(KEY_RATE_ID, rateid);
         values.put(KEY_EMAIL_MARKER, email); // Email
 
@@ -318,7 +318,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     m.setAccDescription(cursor.getString(2));
                     m.setAccLat(cursor.getDouble(3));
                     m.setAccLong(cursor.getDouble(4));
-                    m.setDate(new Date());
+                    m.setDate(cursor.getString(5));
                     m.setRateId(cursor.getInt(6));
                     m.setEmail(cursor.getString(7));
                     markerList.add(m);

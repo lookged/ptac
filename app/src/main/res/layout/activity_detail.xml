@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/input_register_bg"
+
     android:orientation="vertical">
 
     <ImageView
@@ -10,8 +10,8 @@
         android:layout_height="50dp"
         android:background="#FFFFBB33"
         android:contentDescription="@string/app_name"
-        android:scaleType="center"
-        android:src="@mipmap/ic_launcher" />
+        android:scaleType="fitCenter"
+        android:src="@drawable/logoapp" />
 
     <TableRow
         android:layout_width="match_parent"
@@ -28,8 +28,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="\n Lvl 1 \n 	ชิงทรัพย์"
-            android:textColor="#ffffff" />
+            android:text="\n Lvl 1 \n 	ชิงทรัพย์" />
 
     </TableRow>
 
@@ -47,8 +46,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="\n Lvl 2 \n 	ทำร้ายร่างกาย"
-            android:textColor="#ffffff" />
+            android:text="\n Lvl 2 \n 	ทำร้ายร่างกาย" />
     </TableRow>
 
     <TableRow
@@ -65,8 +63,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="\n Lvl 3 \n 	ชิงทรัพย์และทำร้ายร่างกาย"
-            android:textColor="#ffffff" />
+            android:text="\n Lvl 3 \n 	ชิงทรัพย์และทำร้ายร่างกาย" />
     </TableRow>
 
     <TableRow
@@ -83,8 +80,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="\n  Lvl 4 \n 	ข่มขืนและกระทำอนาจาร"
-            android:textColor="#ffffff" />
+            android:text="\n  Lvl 4 \n 	ข่มขืนและกระทำอนาจาร" />
     </TableRow>
 
     <TableRow
@@ -100,8 +96,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="\n Lvl 5 \n 	ทำร้ายร่างกายจนเสียชีวิต"
-            android:textColor="#ffffff" />
+            android:text="\n Lvl 5 \n 	ทำร้ายร่างกายจนเสียชีวิต" />
     </TableRow>
 
 

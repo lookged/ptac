@@ -1,7 +1,5 @@
 package com.example.kanda.ptacproject.model;
 
-import java.util.Date;
-
 /**
  * Created by NamPeung on 04-Sep-16.
  */
@@ -11,7 +9,7 @@ public class Marker {
     private String accDescription;
     private double accLat;
     private double accLong;
-    private Date date;
+    private String date;
     private int rateId;
     private String email;
 
@@ -55,11 +53,11 @@ public class Marker {
         this.accLong = accLong;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

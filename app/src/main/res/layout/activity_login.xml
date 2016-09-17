@@ -12,7 +12,7 @@
         android:layout_height="150dp"
         android:layout_gravity="center"
         android:layout_marginBottom="30dp"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@drawable/logoapp" />
 
     <LinearLayout
         android:layout_width="fill_parent"
