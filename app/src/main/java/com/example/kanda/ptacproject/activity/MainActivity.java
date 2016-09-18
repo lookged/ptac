@@ -1,7 +1,6 @@
 package com.example.kanda.ptacproject.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -12,13 +11,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private SQLiteHandler db;
     private long then = 0;
-    private int longClickDuration = 3000;
+    private int longClickDuration = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,12 +101,20 @@ public class MainActivity extends AppCompatActivity {
                         double lat = location.getLatitude();
                         double lng = location.getLongitude();
                         String phoneNumber = "0992467337" ;
-                        String message = "https://www.google.co.th/maps/place/"+lat+"+"+lng+"/@"+lat+","+lng+",20z";
+                        String message = MainActivity.session.getLoginEmail() + " being in danger" + " https://www.google.co.th/maps/place/" + lat + "+" + lng + "/@" + lat + "," + lng;
                         sendSMS(phoneNumber, message);
+//                        Toast.makeText(getApplicationContext(),message, Toast.LENGTH_LONG).show();
                         Toast.makeText(getApplicationContext(), "Send SMS Complete. " , Toast.LENGTH_LONG).show();
                         return false;
                     } else {
-                        Toast.makeText(getApplicationContext(), "2", Toast.LENGTH_LONG).show();
+
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        // Get the layout inflater
+                        LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+                        final View dialogView = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_detail, null);
+                        builder.setView(dialogView).setNegativeButton("Back", null);
+                        builder.show();
+//                        Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
                         return true;
                     }
                 }
@@ -191,14 +199,14 @@ public class MainActivity extends AppCompatActivity {
      * Logging out the user. Will set isLoggedIn flag to false in shared
      * preferences Clears the user data from sqlite users table
      */
-    private void logoutUser() {
-        session.setLogin(false);
-        db.deleteUsers();
-        // Launching the login activity
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(intent);
-        finish();
-    }
+//    public  void logoutUser() {
+//        session.setLogin(false);
+//        db.deleteUsers();
+//        // Launching the login activity
+//        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//        startActivity(intent);
+//        finish();
+//    }
 
     public void sendSMS(String phoneNumber, String message) {
         SmsManager sms = SmsManager.getDefault();
@@ -213,17 +221,17 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_logout:
-                logoutUser();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle item selection
+//        switch (item.getItemId()) {
+//            case R.id.action_logout:
+//                logoutUser();
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
 
     private void setupTabIcons() {
         int[] tabIcons = {

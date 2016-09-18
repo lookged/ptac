@@ -60,7 +60,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_EMAIL_MARKER = "email";
 
 
-
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -86,8 +85,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 + KEY_ACC_LONG + " REAL,"
                 + KEY_DATEM_MARKER + " DATETIME,"
                 + KEY_RATE_ID + " INT,"
-                + KEY_EMAIL_MARKER + " TEXT,"
-                + " PRIMARY KEY (" + KEY_ACC_ID + ")"
+                + KEY_EMAIL_MARKER + " TEXT"
+                + ", PRIMARY KEY (" + KEY_ACC_ID + ")"
                 + ")";
 
         db.execSQL(CREATE_LOGIN_TABLE);
@@ -154,6 +153,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         Log.d(TAG, "New marker inserted into sqlite: " + id);
     }
+
     /**
      * Getting user data from database
      */
@@ -256,6 +256,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         Log.d(TAG, "Deleted all user info from sqlite");
     }
+
     public void deleteFriend(String loginId, String fIDTeejadornLob) {
         SQLiteDatabase db = this.getWritableDatabase();
         // Delete All Rows
@@ -278,7 +279,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(KEY_ACC_DESCRIPTION, accdescription);
         values.put(KEY_ACC_LAT, acclat);
         values.put(KEY_ACC_LONG, acclong);
-        values.put(KEY_DATEM_MARKER, getDateTime());
+        values.put(KEY_DATEM_MARKER, date);
         values.put(KEY_RATE_ID, rateid);
         values.put(KEY_EMAIL_MARKER, email); // Email
 
@@ -317,7 +318,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     m.setAccDescription(cursor.getString(2));
                     m.setAccLat(cursor.getDouble(3));
                     m.setAccLong(cursor.getDouble(4));
-                    m.setDate(new Date());
+                    m.setDate(cursor.getString(5));
                     m.setRateId(cursor.getInt(6));
                     m.setEmail(cursor.getString(7));
                     markerList.add(m);

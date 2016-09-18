@@ -8,12 +8,14 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -46,26 +48,47 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
+public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
+
     private static final String TAG = OneFragment.class.getSimpleName();
     public EditText titleMarker;
-    public EditText descriptionMarker;
+    public EditText descriptionDestination;
     public CalendarView calendarMarker;
     public int rateMarker;
+    public Button btnDetail;
+    public String Datemarker;
+
+    public EditText descriptionMarker;
+
     MapView mMapView;
     LocationManager locationManager;
     MarkerOptions myLocation;
+
     View rootView;
     View inflator;
+
     private GoogleMap mGoogleMap;
     private ProgressDialog pDialog;
     private SessionManager session;
     private SQLiteHandler db;
+    private long then = 0;
+    private int longClickDuration = 3000;
+
+    public static String getDate(long milliSeconds, String dateFormat) {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -95,7 +118,9 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public void onMapReady(GoogleMap googleMap) {
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
         mGoogleMap = googleMap;
+
         mGoogleMap.setOnMapClickListener(this);
+        mGoogleMap.setOnMapLongClickListener(this);
         googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         Criteria criteria = new Criteria();
@@ -118,15 +143,15 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                             BitmapDescriptor iconMarker;
                             if (isShowMarker(location, m)) {
                                 if (m.getRateId() == 105) {
-                                    iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+                                    iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefive);
                                 } else if (m.getRateId() == 104) {
-                                    iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
+                                    iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefour);
                                 } else if (m.getRateId() == 103) {
-                                    iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
+                                    iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimethree);
                                 } else if (m.getRateId() == 102) {
-                                    iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+                                    iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimetwo);
                                 } else {
-                                    iconMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
+                                    iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimeone);
                                 }
                                 byte[] stringBytes = m.getAccTitle().getBytes();
                                 String title = "Unsupported Text";
@@ -137,8 +162,9 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                                 }
                                 myLocation = new MarkerOptions().position(
                                         new LatLng(m.getAccLat(), m.getAccLong())
-                                ).title(title).snippet(m.getAccDescription()).icon(iconMarker);
+                                ).title(title).snippet(m.getAccDescription() + " " + m.getDate()).icon(iconMarker);
                                 mGoogleMap.addMarker(myLocation);
+
                             }
                         }
 
@@ -200,12 +226,12 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         float[] results = new float[1];
         Location.distanceBetween(lo.getLatitude(), lo.getLongitude(),
                 marker.getAccLat(), marker.getAccLong(), results);
-        Log.d(TAG, "isEnter: " + marker.getAccTitle() + " return " + (results[0] < 100000));
-        return results[0] < 100000;
+        return results[0] < 1000;
     }
 
     @Override
     public void onMapClick(final LatLng latLng) {
+
         myLocation = new MarkerOptions().position(
                 new LatLng(latLng.latitude, latLng.longitude)
         ).title("Marker").snippet("Lat : " + latLng.latitude + " Lng : " + latLng.longitude);
@@ -220,57 +246,83 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
+        titleMarker = (EditText) dialogView.findViewById(R.id.title_Marker);
+        descriptionMarker = (EditText) dialogView.findViewById(R.id.description_Marker);
+
+
+        calendarMarker = (CalendarView) dialogView.findViewById(R.id.Calendar_Marker);
+
+
+        calendarMarker.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+
+            @Override
+            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-d");
+                String dateNew = sdf.format(new Date());
+                String selectDate = "" + year + "-" + month + "-" + dayOfMonth;
+
+                Datemarker = "" + year + "/" + month + "/" + dayOfMonth;
+
+
+            }
+        });
+
+
         builder.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-                        titleMarker = (EditText) dialogView.findViewById(R.id.title_Marker);
-                        descriptionMarker = (EditText) dialogView.findViewById(R.id.description_Marker);
-                        calendarMarker = (CalendarView) dialogView.findViewById(R.id.Calendar_Marker);
-                        rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
+                Toast.makeText(getActivity(), "rateMarker" + rateMarker, Toast.LENGTH_SHORT).show();
+                int ratemarker = 0;
 
-                        int ratemarker = 0;
+                switch (rateMarker) {
 
-                        switch (rateMarker) {
+                    case R.id.radio_lvl1:
+                        ratemarker = 101;
+                        break;
+                    case R.id.radio_lvl2:
+                        ratemarker = 102;
+                        break;
+                    case R.id.radio_lvl3:
+                        ratemarker = 103;
+                        break;
+                    case R.id.radio_lvl4:
+                        ratemarker = 104;
+                        break;
+                    case R.id.radio_lvl5:
+                        ratemarker = 105;
+                        break;
+                }
 
-                            case R.id.radio_lvl1:
-                                ratemarker = 101;
-                                break;
-                            case R.id.radio_lvl2:
-                                ratemarker = 102;
-                                break;
-                            case R.id.radio_lvl3:
-                                ratemarker = 103;
-                                break;
-                            case R.id.radio_lvl4:
-                                ratemarker = 104;
-                                break;
-                            case R.id.radio_lvl5:
-                                ratemarker = 105;
-                                break;
-                        }
+                int accid = 0;
+                String titlemarker = titleMarker.getText().toString();
+                String description = descriptionMarker.getText().toString().trim();
+                double latmarker = latLng.latitude;
+                double lngmarker = latLng.longitude;
+                int ratemarkers = ratemarker;
+                String usermarker = MainActivity.session.getLoginEmail();
 
-                        int accid = 0;
-                        String titlemarker1 = titleMarker.getText().toString();
-                        String description = descriptionMarker.getText().toString().trim();
-                        double latmarker = latLng.latitude;
-                        double lngmarker = latLng.longitude;
-                        String Datemarker = sdf.format(new Date(calendarMarker.getDate()));
-                        int ratemarkers = ratemarker;
-                        String usermarker = MainActivity.session.getLoginEmail();
+////
+//             Toast.makeText(getActivity(),"Datemarker : "+ Datemarker , Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), ""+new Date().toString(). , Toast.LENGTH_SHORT).show();
 //                        Log.d(TAG, "titlemarker1: " + titlemarker1);
 //                        Log.d(TAG, "description: " + description);
 //                        Log.d(TAG, "latmarker: " + latmarker);
 //                        Log.d(TAG, "lngmarker: " + lngmarker);
-//                        Log.d(TAG, "Datemarker: " + Datemarker);
+//                Log.d(TAG, "Datemarker: " + calendarMarker);
 //                        Log.d(TAG, "ratemarkers: " + ratemarkers);
 //                        Log.d(TAG, "usermarker: " + usermarker);
 
-//                        Toast.makeText(getActivity(), mm, Toast.LENGTH_SHORT).show();
-                        addMarker(accid, titlemarker1, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
+
+                if (titlemarker.length() > 0 && description.length() > 0) {
+                    addMarker(accid, titlemarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
 //                        Toast.makeText(getActivity(), ratemarker , Toast.LENGTH_SHORT).show();
-                    }
-                })
+                } else {
+
+                    Toast.makeText(getActivity(), "Please complete all information.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        })
                 .setNegativeButton("cancel", null).show();
 //        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
 //                .setIcon(android.R.drawable.ic_dialog_alert)
@@ -292,6 +344,88 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //        wlp.gravity = Gravity.TOP;
 //        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
 //        window.setAttributes(wlp);
+    }
+
+    public boolean isShowMarkerClick(LatLng latLng, Marker marker) {
+        float[] results = new float[1];
+        Location.distanceBetween(latLng.latitude, latLng.longitude,
+                marker.getAccLat(), marker.getAccLong(), results);
+        return results[0] < 1000;
+    }
+
+    @Override
+    public void onMapLongClick(final LatLng latLng) {
+
+
+        final AlertDialog.Builder builderdialog = new AlertDialog.Builder(getActivity());
+        // Get the layout inflater
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_destination, null);
+        builderdialog.setView(dialogView);
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+
+        builderdialog.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                descriptionDestination = (EditText) dialogView.findViewById(R.id.description_of_destination);
+                String descriptiondestination = descriptionDestination.getText().toString();
+                Double destinationlat = latLng.latitude;
+                Double destinationlng = latLng.longitude;
+                Double mylocationlat = myLocation.getPosition().latitude;
+                Double mylocationlng = myLocation.getPosition().longitude;
+//
+//                DrawRoute.getInstance(OneFragment.this,getActivity()).setFromLatLong(destinationlat,destinationlng)
+//                        .setToLatLong(mylocationlat,mylocationlng).setGmapAndKey("AIzaSyDXztYnV2LvuDo6A0QO3raRos9Agl5bzqg",mGoogleMap).run();
+////OneFragment.this
+                String mm = "Destination : " + descriptiondestination + "\n" + destinationlat + "\n" + destinationlng + "\n" + mylocationlat + "\n" + mylocationlng;
+                Toast.makeText(getActivity(), mm, Toast.LENGTH_SHORT).show();
+            }
+        }).setNegativeButton("cancel", null);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                builderdialog.show();
+            }
+        }, 3300);
+
+        if (((MainActivity) getActivity()).markerList != null) {
+            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
+//            mGoogleMap.clear();
+
+            for (Marker m : ((MainActivity) getActivity()).markerList) {
+                BitmapDescriptor iconMarker;
+                if (isShowMarkerClick(latLng, m)) {
+                    if (m.getRateId() == 105) {
+                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefive);
+                    } else if (m.getRateId() == 104) {
+                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefour);
+                    } else if (m.getRateId() == 103) {
+                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimethree);
+                    } else if (m.getRateId() == 102) {
+                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimetwo);
+                    } else {
+                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimeone);
+                    }
+                    byte[] stringBytes = m.getAccTitle().getBytes();
+                    String title = "Unsupported Text";
+                    try {
+                        title = new String(stringBytes, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    myLocation = new MarkerOptions().position(
+                            new LatLng(m.getAccLat(), m.getAccLong())
+                    ).title(title).snippet(m.getAccDescription() + " " + m.getDate()).icon(iconMarker);
+                    mGoogleMap.addMarker(myLocation);
+
+                }
+            }
+
+        }
+//        Toast.makeText(getActivity(), "LongClick" , Toast.LENGTH_SHORT).show();
+
+
     }
 
     private void addMarker(final int accid,
@@ -340,7 +474,8 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         // Inserting row in users table
                         db.syncMarker(accid, titelmarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
                         ((MainActivity) getActivity()).markerList = db.getMarkerList();
-                        Toast.makeText(getActivity(), "Marker successfully ", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(getActivity(), "Marker successfully ", Toast.LENGTH_LONG).show();
+
 
                         // Launch login activity
 //                        Intent intent = new Intent(
@@ -396,4 +531,8 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
+//    @Override
+//    public void afterDraw(String result) {
+//        Log.d("response",""+result);
+//    }
 }
