@@ -421,7 +421,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //                        .setToLatLong(mylocationlat,mylocationlng).setGmapAndKey("AIzaSyDXztYnV2LvuDo6A0QO3raRos9Agl5bzqg",mGoogleMap).run();
 ////OneFragment.this
                 String mm = "Destination : " + descriptiondestination + "\n" + destinationlat + "\n" + destinationlng + "\n" + mylocationlat + "\n" + mylocationlng;
-                Toast.makeText(getActivity(), mm, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), " Mark Destination complete.", Toast.LENGTH_SHORT).show();
             }
         }).setNegativeButton("cancel", null);
         Handler handler = new Handler();

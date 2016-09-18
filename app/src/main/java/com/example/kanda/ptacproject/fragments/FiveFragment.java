@@ -40,6 +40,7 @@ public class FiveFragment extends Fragment{
     private Button btnLogout;
     private Button btnEditproFile;
     private Button btnProfile;
+    private Button btnSetFriend;
     private TextView txtName;
     private TextView txtAddress;
     private TextView txtPhonenumber;
@@ -69,10 +70,27 @@ public class FiveFragment extends Fragment{
         btnLogout = (Button) rootView.findViewById(R.id.btnLogout);
         btnEditproFile = (Button) rootView.findViewById(R.id.btnEditProfile);
         btnProfile = (Button) rootView.findViewById(R.id.btnProfile);
+        btnSetFriend = (Button) rootView.findViewById(R.id.btnSetfriend);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final AlertDialog.Builder builderaddfriend = new AlertDialog.Builder(getActivity());
         final AlertDialog.Builder builderprofile = new AlertDialog.Builder(getActivity());
         final AlertDialog.Builder builderlogout = new AlertDialog.Builder(getActivity());
+        final AlertDialog.Builder buildersetfriend = new AlertDialog.Builder(getActivity());
+
+        btnSetFriend.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                final View buildersetfriend = LayoutInflater.from(getActivity()).inflate(R.layout.setcontact, null);
+                builder.setView(buildersetfriend);
+                builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        Toast.makeText(getActivity(), " Complete. ", Toast.LENGTH_LONG).show();
+                    }
+                }).setNegativeButton("cancel", null).show();
+
+            }
+        });
 
         btnProfile.setOnClickListener(new View.OnClickListener() {
 
@@ -97,7 +115,7 @@ public class FiveFragment extends Fragment{
                 builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-
+                        Toast.makeText(getActivity(), " Edit Complete. ", Toast.LENGTH_LONG).show();
                     }
                 }).setNegativeButton("cancel", null).show();
 
