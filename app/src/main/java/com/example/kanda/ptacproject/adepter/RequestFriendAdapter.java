@@ -49,16 +49,16 @@ public class RequestFriendAdapter extends BaseAdapter {
         String[] str = getItem(i);
         if (str != null) {
             ViewHolder viewHolder = new ViewHolder(view);
-            viewHolder.friendNameTV.setText(str[0]);
+            viewHolder.requestNameTV.setText(str[0]);
         }
         return view;
     }
 
     public static class ViewHolder {
-        TextView friendNameTV;
+        TextView requestNameTV;
 
         public ViewHolder(View view) {
-            friendNameTV = (TextView) view.findViewById(R.id.friend_name);
+            requestNameTV = (TextView) view.findViewById(R.id.request_name);
         }
     }
 }
