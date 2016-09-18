@@ -33,7 +33,6 @@ import com.example.kanda.ptacproject.app.AppController;
 import com.example.kanda.ptacproject.fragments.FiveFragment;
 import com.example.kanda.ptacproject.fragments.FourFragment;
 import com.example.kanda.ptacproject.fragments.OneFragment;
-import com.example.kanda.ptacproject.fragments.ThreeFragment;
 import com.example.kanda.ptacproject.fragments.TwoFragment;
 import com.example.kanda.ptacproject.helper.SQLiteHandler;
 import com.example.kanda.ptacproject.helper.SessionManager;
@@ -237,11 +236,10 @@ public class MainActivity extends AppCompatActivity {
         int[] tabIcons = {
                 R.drawable.ic_home_white,
                 R.drawable.ic_face_white,
-                R.drawable.ic_tab_favourite,
-                R.drawable.ic_place_white,
+                R.drawable.requestfriend,
                 R.drawable.ic_settings_white
         };
-        for (int i = 0; i <= 4; i++) {
+        for (int i = 0; i <= 3; i++) {
             tabLayout.getTabAt(i).setIcon(tabIcons[i]);
         }
     }
@@ -250,7 +248,6 @@ public class MainActivity extends AppCompatActivity {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(new OneFragment(), "ONE");
         adapter.addFrag(new TwoFragment(), "TWO");
-        adapter.addFrag(new ThreeFragment(), "THREE");
         adapter.addFrag(new FourFragment(), "FOUR");
         adapter.addFrag(new FiveFragment(), "FIVE");
         viewPager.setAdapter(adapter);

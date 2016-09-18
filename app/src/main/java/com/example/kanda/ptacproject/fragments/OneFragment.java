@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -34,6 +35,7 @@ import com.example.kanda.ptacproject.helper.SessionManager;
 import com.example.kanda.ptacproject.model.Marker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -136,22 +138,28 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 @Override
                 public void onLocationChanged(Location location) {
                     if (((MainActivity) getActivity()).markerList != null) {
-                        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
+
                         mGoogleMap.clear();
 
-                        for (Marker m : ((MainActivity) getActivity()).markerList) {
-                            BitmapDescriptor iconMarker;
+
+                        for (final Marker m : ((MainActivity) getActivity()).markerList) {
+                            final BitmapDescriptor iconMarker;
                             if (isShowMarker(location, m)) {
                                 if (m.getRateId() == 105) {
                                     iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefive);
+
                                 } else if (m.getRateId() == 104) {
                                     iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefour);
+
                                 } else if (m.getRateId() == 103) {
                                     iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimethree);
+
                                 } else if (m.getRateId() == 102) {
                                     iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimetwo);
+
                                 } else {
                                     iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimeone);
+
                                 }
                                 byte[] stringBytes = m.getAccTitle().getBytes();
                                 String title = "Unsupported Text";
@@ -160,11 +168,45 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                                 } catch (UnsupportedEncodingException e) {
                                     e.printStackTrace();
                                 }
+
+
                                 myLocation = new MarkerOptions().position(
                                         new LatLng(m.getAccLat(), m.getAccLong())
-                                ).title(title).snippet(m.getAccDescription() + " " + m.getDate()).icon(iconMarker);
-                                mGoogleMap.addMarker(myLocation);
+                                ).title(title).snippet(m.getAccDescription() + "\n" + "\n" + " Time of Occurrence : " + m.getDate()).icon(iconMarker);
 
+
+                                mGoogleMap.setInfoWindowAdapter(new InfoWindowAdapter() {
+
+
+                                    @Override
+                                    public View getInfoWindow(com.google.android.gms.maps.model.Marker marker) {
+                                        return null;
+                                    }
+
+                                    @Override
+                                    public View getInfoContents(com.google.android.gms.maps.model.Marker marker) {
+                                        // Getting view from the layout file info_window_layout
+                                        View v = LayoutInflater.from(getActivity()).inflate(R.layout.description_marker, null);
+
+                                        // Getting the position from the marker
+
+                                        // Getting reference to the TextView to set latitude
+                                        TextView tvLat = (TextView) v.findViewById(R.id.tv_title);
+
+                                        // Getting reference to the TextView to set longitude
+                                        TextView tvLng = (TextView) v.findViewById(R.id.tv_description);
+
+                                        // Setting the latitude
+                                        tvLat.setText("Title:" + marker.getTitle());
+
+                                        // Setting the longitude
+                                        tvLng.setText("Description :" + marker.getSnippet());
+                                        return v;
+                                    }
+
+
+                                });
+                                mGoogleMap.addMarker(myLocation);
                             }
                         }
 
