@@ -29,7 +29,7 @@ import java.util.Map;
 
 public class FourFragment extends Fragment {
     private static final String TAG = FourFragment.class.getSimpleName();
-    public ListView requestView;
+    //public ListView requestView;
     public View rootView;
     public ArrayList<String[]> checkRequest;
     public RequestFriendAdapter requestFriendAdapter;
@@ -44,7 +44,7 @@ public class FourFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_four, container, false);
-        requestView = (ListView) rootView.findViewById(R.id.requestlistView);
+        requestListView = (ListView) rootView.findViewById(R.id.requestListView);
         checkRequest(MainActivity.session.getLoginId());
         return rootView;
     }
@@ -65,6 +65,7 @@ public class FourFragment extends Fragment {
                     if (!error) {
                         JSONArray arr;
                         arr = new JSONArray(response);
+
                         if (arr.length() != 0) {
                             checkRequest = new ArrayList<>();
                             for (int i = 0; i < arr.length(); i++) {
