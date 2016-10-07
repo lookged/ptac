@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Profile">
+        <menu>
+            <item
+                android:id="@+id/nav_Profile"
+                android:icon="@drawable/user"
+                android:title="Profile" />
+            <item
+                android:id="@+id/nav_EditProfile"
+                android:icon="@drawable/edituser"
+                android:title="EditProfile" />
+        </menu>
+    </item>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_AddFriend"
+                android:icon="@drawable/addusernew"
+                android:title="Add Friend" />
+            <item
+                android:id="@+id/nav_Setfriend"
+                android:icon="@drawable/message"
+                android:title="Emergency sms Contact" />
+        </menu>
+    </item>
+    <item android:title="Logout">
+        <menu>
+            <item
+                android:id="@+id/nav_Logout"
+                android:icon="@drawable/logoutnew"
+                android:title="Add Friend" />
+
+        </menu>
+    </item>
+
+</menu>

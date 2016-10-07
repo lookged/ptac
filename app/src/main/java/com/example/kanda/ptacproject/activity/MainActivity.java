@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
                 R.drawable.ic_home_white,
                 R.drawable.ic_face_white,
                 R.drawable.requestfriend,
-                R.drawable.ic_settings_white
+                R.drawable.menulist
         };
         for (int i = 0; i <= 3; i++) {
             tabLayout.getTabAt(i).setIcon(tabIcons[i]);
