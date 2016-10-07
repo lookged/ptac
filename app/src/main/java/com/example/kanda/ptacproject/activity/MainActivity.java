@@ -5,6 +5,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private SQLiteHandler db;
     private long then = 0;
-    private int longClickDuration = 2000;
+    private int longClickDuration = 1200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,8 +102,11 @@ public class MainActivity extends AppCompatActivity {
                         double lng = location.getLongitude();
                         String phoneNumber = "0992467337" ;
                         String message = MainActivity.session.getLoginEmail() + " being in danger" + " https://www.google.co.th/maps/place/" + lat + "+" + lng + "/@" + lat + "," + lng;
-                        sendSMS(phoneNumber, message);
+//                        sendSMS(phoneNumber, message);
 //                        Toast.makeText(getApplicationContext(),message, Toast.LENGTH_LONG).show();
+                        Vibrator vtr = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                        // Vibrate for 500 milliseconds
+                        vtr.vibrate(500);
                         Toast.makeText(getApplicationContext(), "Send SMS Complete. " , Toast.LENGTH_LONG).show();
                         return false;
                     } else {

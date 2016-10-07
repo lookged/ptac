@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.PREVENT_POWER_KEY" />
     <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -24,7 +25,7 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyDyVgVXk_iSigLHOQaCfYrhL_A1DtQcLeY" />
+            android:value="AIzaSyDXztYnV2LvuDo6A0QO3raRos9Agl5bzqg" />
 
         <meta-data
             android:name="com.google.android.gms.version"

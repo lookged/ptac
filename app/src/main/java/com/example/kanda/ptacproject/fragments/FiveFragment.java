@@ -170,7 +170,12 @@ public class FiveFragment extends Fragment{
                 builderlogout.setMessage("Do you want to exit?").setPositiveButton("Logout", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        logoutUser();
+                        try {
+                            logoutUser();
+                        } catch (Exception e) {
+                            Log.d(TAG, "Logout : " + e);
+                        }
+
                     }
                 }).setNegativeButton("cancel", null).show();
 

@@ -36,7 +36,7 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="35dp"
         android:layout_margin="10dp"
         android:text="Report"
         android:textSize="10dp" />

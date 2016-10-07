@@ -1,6 +1,5 @@
 package com.example.kanda.ptacproject.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.location.Criteria;
@@ -15,7 +14,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -31,7 +29,6 @@ import com.example.kanda.ptacproject.activity.MainActivity;
 import com.example.kanda.ptacproject.app.AppConfig;
 import com.example.kanda.ptacproject.app.AppController;
 import com.example.kanda.ptacproject.helper.SQLiteHandler;
-import com.example.kanda.ptacproject.helper.SessionManager;
 import com.example.kanda.ptacproject.model.Marker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -63,9 +60,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public EditText descriptionDestination;
     public CalendarView calendarMarker;
     public int rateMarker;
-    public Button btnDetail;
     public String Datemarker;
-
     public EditText descriptionMarker;
 
     MapView mMapView;
@@ -76,8 +71,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
     View inflator;
 
     private GoogleMap mGoogleMap;
-    private ProgressDialog pDialog;
-    private SessionManager session;
+
     private SQLiteHandler db;
     private long then = 0;
     private int longClickDuration = 3000;
@@ -123,6 +117,8 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         mGoogleMap.setOnMapClickListener(this);
         mGoogleMap.setOnMapLongClickListener(this);
+
+
         googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         Criteria criteria = new Criteria();
@@ -236,7 +232,8 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 }
             };
 
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, lis);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
+
         }
     }
 
@@ -344,17 +341,6 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 int ratemarkers = ratemarker;
                 String usermarker = MainActivity.session.getLoginEmail();
 
-////
-//             Toast.makeText(getActivity(),"Datemarker : "+ Datemarker , Toast.LENGTH_SHORT).show();
-//                Toast.makeText(getActivity(), ""+new Date().toString(). , Toast.LENGTH_SHORT).show();
-//                        Log.d(TAG, "titlemarker1: " + titlemarker1);
-//                        Log.d(TAG, "description: " + description);
-//                        Log.d(TAG, "latmarker: " + latmarker);
-//                        Log.d(TAG, "lngmarker: " + lngmarker);
-//                Log.d(TAG, "Datemarker: " + calendarMarker);
-//                        Log.d(TAG, "ratemarkers: " + ratemarkers);
-//                        Log.d(TAG, "usermarker: " + usermarker);
-
 
                 if (titlemarker.length() > 0 && description.length() > 0) {
                     addMarker(accid, titlemarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
@@ -366,26 +352,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
             }
         })
                 .setNegativeButton("cancel", null).show();
-//        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-//                .setIcon(android.R.drawable.ic_dialog_alert)
-//                .setTitle("Marker")
-//                .setMessage("Are you sure you want to Marker this activity?" + "\n " +
-//                        "Lat : " + latLng.latitude + "\n " + "Lng : " + latLng.longitude)
-//                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//
-//                        Toast.makeText(getActivity(), "marker", Toast.LENGTH_SHORT).show();
-//                    }
-//
-//                })
-//                .setNegativeButton("No", null)
-//                .show();
-//        Window window = alertDialog.getWindow();
-//        WindowManager.LayoutParams wlp = window.getAttributes();
-//        wlp.gravity = Gravity.TOP;
-//        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-//        window.setAttributes(wlp);
+
     }
 
     public boolean isShowMarkerClick(LatLng latLng, Marker marker) {
@@ -400,12 +367,10 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 
         final AlertDialog.Builder builderdialog = new AlertDialog.Builder(getActivity());
-        // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_destination, null);
         builderdialog.setView(dialogView);
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
+
 
         builderdialog.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
             @Override
@@ -416,11 +381,8 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 Double destinationlng = latLng.longitude;
                 Double mylocationlat = myLocation.getPosition().latitude;
                 Double mylocationlng = myLocation.getPosition().longitude;
-//
-//                DrawRoute.getInstance(OneFragment.this,getActivity()).setFromLatLong(destinationlat,destinationlng)
-//                        .setToLatLong(mylocationlat,mylocationlng).setGmapAndKey("AIzaSyDXztYnV2LvuDo6A0QO3raRos9Agl5bzqg",mGoogleMap).run();
-////OneFragment.this
-                String mm = "Destination : " + descriptiondestination + "\n" + destinationlat + "\n" + destinationlng + "\n" + mylocationlat + "\n" + mylocationlng;
+
+
                 Toast.makeText(getActivity(), " Mark Destination complete.", Toast.LENGTH_SHORT).show();
             }
         }).setNegativeButton("cancel", null);
@@ -433,7 +395,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         if (((MainActivity) getActivity()).markerList != null) {
             BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
-//            mGoogleMap.clear();
+
 
             for (Marker m : ((MainActivity) getActivity()).markerList) {
                 BitmapDescriptor iconMarker;
@@ -465,7 +427,6 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
             }
 
         }
-//        Toast.makeText(getActivity(), "LongClick" , Toast.LENGTH_SHORT).show();
 
 
     }
@@ -478,28 +439,21 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                            final String Datemarker,
                            final int ratemarkers,
                            final String usermarker) {
-        // Tag used to cancel the request
-        String tag_string_req = "req_register";
 
-//        pDialog.setMessage("Registering ...");
-//        showDialog();
+        String tag_string_req = "add_mark";
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_ADD_MARKER, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
-//                Log.d(TAG, "Register Response: " + response.toString());
-//                hideDialog();
+
 
                 try {
                     Log.d(TAG, response);
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
-                        // User successfully stored in MySQL
-                        // Now store the user in sqlite
-
 
                         JSONObject user = jObj.getJSONObject("user");
                         int accid = user.getInt("accid");
@@ -510,25 +464,15 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         String Datemarker = user.getString("Datemarker");
                         int ratemarkers = user.getInt("ratemarkers");
                         String usermarker = user.getString("usermarker");
-                        String created_at = user
-                                .getString("created_at");
+                        String created_at = user.getString("created_at");
 
-                        // Inserting row in users table
+
                         db.syncMarker(accid, titelmarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
                         ((MainActivity) getActivity()).markerList = db.getMarkerList();
-//                        Toast.makeText(getActivity(), "Marker successfully ", Toast.LENGTH_LONG).show();
 
-
-                        // Launch login activity
-//                        Intent intent = new Intent(
-//                                RegisterActivity.this,
-//                                LoginActivity.class);
-//                        startActivity(intent);
-//                        finish();
                     } else {
 
-                        // Error occurred in registration. Get the error
-                        // message
+
                         String errorMsg = jObj.getString("error_msg");
                         Toast.makeText(getActivity(),
                                 "error_msg" + errorMsg, Toast.LENGTH_LONG).show();
@@ -553,7 +497,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
             @Override
             protected Map<String, String> getParams() {
-                // Posting params to register url
+
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("acc_id", Integer.toString(accid));
                 params.put("acc_title", titelmarker);
@@ -569,12 +513,8 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         };
 
-        // Adding request to request queue
+
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-//    @Override
-//    public void afterDraw(String result) {
-//        Log.d("response",""+result);
-//    }
 }
