@@ -121,15 +121,32 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
     }
 
     private void editProFile() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.edit_profile, null);
-        builder.setView(dialogView);
-        builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                Toast.makeText(getActivity(), " Edit Complete. ", Toast.LENGTH_LONG).show();
-            }
-        }).setNegativeButton("cancel", null).show();
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.edit_profile, null);
+            builder.setView(dialogView);
+            builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    EditText editfname = (EditText) dialogView.findViewById(R.id.text_first_name);
+                    EditText editlname = (EditText) dialogView.findViewById(R.id.text_last_name);
+                    EditText editaddress = (EditText) dialogView.findViewById(R.id.text_address);
+                    EditText editphone = (EditText) dialogView.findViewById(R.id.text_phoneno);
+
+                    String fname = editfname.getText().toString();
+                    String lname = editlname.getText().toString();
+                    String address = editaddress.getText().toString();
+                    int phoneno = Integer.parseInt(editphone.getText().toString());
+                    String email = MainActivity.session.getLoginEmail();
+
+                    updateProfile(fname, lname, address, phoneno, email);
+                    Toast.makeText(getActivity(), " Edit Complete. ", Toast.LENGTH_LONG).show();
+                }
+            }).setNegativeButton("cancel", null).show();
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "Editprofile :  " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
 
 
     }
@@ -302,6 +319,83 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
         };
 
         // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    private void updateProfile(final String fname,
+                               final String lname,
+                               final String address,
+                               final int phoneno,
+                               final String email) {
+
+        String tag_string_req = "add_mark";
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_UPDATE_PROFILE, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+
+
+                try {
+                    Log.d(TAG, response);
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+
+                        JSONObject user = jObj.getJSONObject("user");
+
+                        String fname = user.getString("fname");
+                        String lname = user.getString("lname");
+                        String address = user.getString("address");
+                        int phoneno = user.optInt("phoneno");
+                        String email = user.getString("email");
+
+
+//                        db.syncMarker(accid, titelmarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
+//                        ((MainActivity) getActivity()).markerList = db.getMarkerList();
+
+                    } else {
+
+
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getActivity(),
+                                "error_msg" + errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                Toast.makeText(getActivity(), "Marker completed", Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "addMarker Error: " + error.getMessage());
+                Toast.makeText(getActivity(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("fname", fname);
+                params.put("lname", lname);
+                params.put("address", address);
+                params.put("phoneno", Integer.toString(phoneno));
+                params.put("email", email);
+
+                return params;
+            }
+
+        };
+
+
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
