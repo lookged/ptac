@@ -59,13 +59,15 @@ public class FourFragment extends Fragment {
                 Log.d(TAG, "response: " + response);
                 try {
                     JSONObject jObj = new JSONObject(response);
+                    String requestedUsers = jObj.getString("requestusers");
+                    Log.d(TAG, "requestedUsers: " + requestedUsers);
+
                     boolean error = jObj.getBoolean("error");
 
                     // Check for error node in json
                     if (!error) {
                         JSONArray arr;
-                        arr = new JSONArray(response);
-
+                        arr = new JSONArray(requestedUsers);
                         if (arr.length() != 0) {
                             checkRequest = new ArrayList<>();
                             for (int i = 0; i < arr.length(); i++) {
@@ -75,7 +77,6 @@ public class FourFragment extends Fragment {
                                 str[1] = obj.getString("email");
                                 checkRequest.add(str);
                             }
-
                             requestFriendAdapter = new RequestFriendAdapter(getActivity(), checkRequest);
                             requestListView.setAdapter(requestFriendAdapter);
                         }
@@ -100,7 +101,7 @@ public class FourFragment extends Fragment {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("login_id", loginId);
+                params.put("loginid", loginId);
 
                 return params;
             }
