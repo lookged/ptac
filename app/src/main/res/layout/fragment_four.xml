@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="info.androidhive.materialtabs.fragments.FourFragment">
+    android:layout_margin="10dp"
+    tools:context="fragments.FourFragment">
 
     <TextView
         android:id="@+id/textView"
@@ -22,7 +23,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/textView"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp" />
+        android:layout_margin="10dp" />
 
 </RelativeLayout>

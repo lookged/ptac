@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -71,7 +72,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
     MarkerOptions myLocation;
     View rootView;
     View inflator;
-    private int lengthMap = 0;
+    private int lengthMap = 1000;
     private GoogleMap mGoogleMap;
 
     private Spinner lengthSpinner;
@@ -103,7 +104,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMapView = (MapView) rootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
-
+        lSpinner.clear();
 
         lengthSpinner = (Spinner) rootView.findViewById(R.id.spinner_length);
         createLengthData();
@@ -214,6 +215,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
                                         // Getting reference to the TextView to set latitude
                                         TextView tvLat = (TextView) v.findViewById(R.id.tv_title);
+                                        Button reportmark1 = (Button) v.findViewById(R.id.mark_report);
 
                                         // Getting reference to the TextView to set longitude
                                         TextView tvLng = (TextView) v.findViewById(R.id.tv_description);
@@ -223,12 +225,24 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
                                         // Setting the longitude
                                         tvLng.setText("Description :" + marker.getSnippet());
+                                        reportmark1.setOnClickListener(new View.OnClickListener() {
+
+                                            public void onClick(View view) {
+                                                Toast.makeText(getActivity(),
+                                                        "Report complete!!", Toast.LENGTH_LONG).show();
+
+
+                                            }
+
+                                        });
                                         return v;
                                     }
 
 
                                 });
+
                                 mGoogleMap.addMarker(myLocation);
+
                             }
                         }
 
@@ -306,9 +320,9 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         break;
 
                 }
-                Toast.makeText(getActivity(),
-                        "Select : " + position,
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(),
+//                        "Select : " + position,
+//                        Toast.LENGTH_SHORT).show();
             }
 
             @Override
