@@ -14,9 +14,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +50,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,15 +66,18 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public int rateMarker;
     public String Datemarker;
     public EditText descriptionMarker;
-
     MapView mMapView;
     LocationManager locationManager;
     MarkerOptions myLocation;
-
     View rootView;
     View inflator;
-
+    private int lengthMap = 0;
     private GoogleMap mGoogleMap;
+
+    private Spinner lengthSpinner;
+    private ArrayList<String> lSpinner = new ArrayList<String>();
+
+
 
     private SQLiteHandler db;
     private long then = 0;
@@ -98,6 +105,14 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMapView.onResume(); // needed to get the map to display immediately
 
 
+        lengthSpinner = (Spinner) rootView.findViewById(R.id.spinner_length);
+        createLengthData();
+        ArrayAdapter<String> lengthspinner = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_spinner_dropdown_item, lSpinner);
+        lengthSpinner.setAdapter(lengthspinner);
+
+
+
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
@@ -109,6 +124,17 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         return rootView;
     }
+
+    private void createLengthData() {
+
+        lSpinner.add("ระยะ 1 กม.");
+        lSpinner.add("ระยะ 5 กม.");
+        lSpinner.add("ระยะ 10 กม.");
+
+
+    }
+
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -265,7 +291,32 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         float[] results = new float[1];
         Location.distanceBetween(lo.getLatitude(), lo.getLongitude(),
                 marker.getAccLat(), marker.getAccLong(), results);
-        return results[0] < 1000;
+        lengthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        lengthMap = 1000;
+                        break;
+                    case 1:
+                        lengthMap = 5000;
+                        break;
+                    case 2:
+                        lengthMap = 10000;
+                        break;
+
+                }
+                Toast.makeText(getActivity(),
+                        "Select : " + position,
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        return results[0] < lengthMap;
     }
 
     @Override
