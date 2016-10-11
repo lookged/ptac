@@ -376,7 +376,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
-                Toast.makeText(getActivity(), "rateMarker" + rateMarker, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "rateMarker" + rateMarker, Toast.LENGTH_SHORT).show();
                 int ratemarker = 0;
 
                 switch (rateMarker) {
