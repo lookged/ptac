@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -36,7 +37,7 @@ public class TwoFragment extends Fragment {
     public FriendListAdepter friendListAdepter;
     protected String loginId;
     private ProgressDialog pDialog;
-
+    private TextView textName ;
     public TwoFragment() {
     }
 
@@ -53,7 +54,8 @@ public class TwoFragment extends Fragment {
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_two, container, false);
         friendListView = (ListView) rootView.findViewById(R.id.friend_list_view);
-
+        textName = (TextView) rootView.findViewById(R.id.nameuser);
+        textName.setText(MainActivity.session.getLoginEmail());
         loginId = MainActivity.session.getLoginId();
 
         requestFriendList(loginId);

@@ -50,6 +50,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -440,14 +441,17 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         builderdialog.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
+                DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
                 descriptionDestination = (EditText) dialogView.findViewById(R.id.description_of_destination);
+                String email = MainActivity.session.getLoginEmail();
                 String descriptiondestination = descriptionDestination.getText().toString();
                 Double destinationlat = latLng.latitude;
                 Double destinationlng = latLng.longitude;
                 Double mylocationlat = myLocation.getPosition().latitude;
                 Double mylocationlng = myLocation.getPosition().longitude;
+                String date = df.format(new Date());
 
-
+                addDestination(email,descriptiondestination,destinationlat,destinationlng,mylocationlat,mylocationlng,date);
                 Toast.makeText(getActivity(), " Mark Destination complete.", Toast.LENGTH_SHORT).show();
             }
         }).setNegativeButton("cancel", null);
@@ -494,6 +498,90 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         }
 
 
+    }
+
+    private void addDestination(final String email,
+                                final String descriptiondestination,
+                                final Double destinationlat,
+                                final Double destinationlng,
+                                final Double mylocationlat,
+                                final Double mylocationlng,
+                                final String date ) {
+
+        String tag_string_req = "add_destination";
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_ADD_DESTINATION, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+
+
+                try {
+                    Log.d(TAG, response);
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+
+                        JSONObject user = jObj.getJSONObject("user");
+                        String email = user.optString("email");
+                        String descriptiondestination = user.getString("descriptiondestination");
+                        Double destinationlat = user.optDouble("destinationlat");
+                        Double destinationlng = user.optDouble("destinationlng");
+                        Double mylocationlat = user.optDouble("mylocationlat");
+                        Double mylocationlng = user.optDouble("mylocationlng");
+                        String date = user.optString("date");
+
+
+
+//                        db.syncMarker(accid, titelmarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
+//                        ((MainActivity) getActivity()).markerList = db.getMarkerList();
+
+                    } else {
+
+
+                        String errorMsg = jObj.getString("error_msg");
+                        Toast.makeText(getActivity(),
+                                "error_msg" + errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                Toast.makeText(getActivity(), "Marke Destination completed", Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "addDestination Error: " + error.getMessage());
+                Toast.makeText(getActivity(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+                params.put("descriptiondestination", descriptiondestination);
+                params.put("destinationlat",  Double.toString(destinationlat));
+                params.put("destinationlng", Double.toString(destinationlng));
+                params.put("mylocationlat", Double.toString(mylocationlat));
+                params.put("mylocationlng",  Double.toString(mylocationlng));
+                params.put("date", date);
+
+
+                return params;
+            }
+
+        };
+
+
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
     private void addMarker(final int accid,
