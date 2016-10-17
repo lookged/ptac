@@ -35,6 +35,7 @@ import com.example.kanda.ptacproject.activity.MainActivity;
 import com.example.kanda.ptacproject.app.AppConfig;
 import com.example.kanda.ptacproject.app.AppController;
 import com.example.kanda.ptacproject.helper.SQLiteHandler;
+import com.example.kanda.ptacproject.helper.SessionManager;
 import com.example.kanda.ptacproject.model.Marker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -60,6 +61,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.example.kanda.ptacproject.fragments.FiveFragment.session;
 
 
 public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
@@ -104,7 +107,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         rootView = inflater.inflate(R.layout.fragment_one, container, false);
         inflator = inflater.inflate(R.layout.dialog_marker, null);
 
-        db = new SQLiteHandler(getActivity());
+
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         mMapView = (MapView) rootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
@@ -165,6 +168,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
             LocationListener lis = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
+
                     if (((MainActivity) getActivity()).markerList != null) {
 
                         mGoogleMap.clear();
@@ -365,6 +369,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //                Toast.makeText(getActivity(), "rateMarker" + rateMarker, Toast.LENGTH_SHORT).show();
 
         final TextView textCategory = (TextView) dialogView.findViewById(R.id.textcategory);
+
         calendarMarker.setMaxDate(System.currentTimeMillis());
 
         rateMarker.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -458,15 +463,23 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 int ratemarkers = ratemarker;
                 String usermarker = MainActivity.session.getLoginEmail();
 
+                if(Datemarker==null) {
+                    long yourmilliseconds = System.currentTimeMillis();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+                    Date resultdate = new Date(yourmilliseconds);
+                    Datemarker=sdf.format(resultdate);
+                }
+//                Toast.makeText(getActivity(), ""+sdf.format(resultdate) , Toast.LENGTH_SHORT).show();
 
-//                if (titlemarker.length() > 0 && description.length() > 0) {
-                    addMarker(accid, titlemarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
+                if (titlemarker.length() > 0 && description.length() > 0) {
+                   addMarker(accid, titlemarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
 
-//                        Toast.makeText(getActivity(), ratemarker , Toast.LENGTH_SHORT).show();
-//                } else {
-//
-//                    Toast.makeText(getActivity(), "Please complete all information.", Toast.LENGTH_SHORT).show();
-//                }
+
+                        Toast.makeText(getActivity(), ratemarker , Toast.LENGTH_SHORT).show();
+                } else {
+
+                    Toast.makeText(getActivity(), "Please complete all information.", Toast.LENGTH_SHORT).show();
+                }
             }
         })
                 .setNegativeButton("cancel", null).show();
@@ -669,7 +682,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         String Datemarker = user.getString("Datemarker");
                         int ratemarkers = user.getInt("ratemarkers");
                         String usermarker = user.getString("usermarker");
-                        String created_at = user.getString("created_at");
+
 
 
                         db.syncMarker(accid, titelmarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
@@ -720,8 +733,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-        db = new SQLiteHandler(getActivity());
-        syncMarker();
+
     }
     private void syncMarker() {
         db.delMarker();
