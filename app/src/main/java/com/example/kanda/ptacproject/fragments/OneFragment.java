@@ -16,9 +16,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -46,6 +48,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,12 +65,13 @@ import java.util.Map;
 public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
 
     private static final String TAG = OneFragment.class.getSimpleName();
-    public EditText titleMarker;
+    public AutoCompleteTextView titleMarker;
     public EditText descriptionDestination;
     public CalendarView calendarMarker;
     public int rateMarker;
+    public ArrayList<Marker> markerList = null;
     public String Datemarker;
-    public EditText descriptionMarker;
+    public AutoCompleteTextView descriptionMarker;
     MapView mMapView;
     LocationManager locationManager;
     MarkerOptions myLocation;
@@ -351,11 +355,58 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
-        titleMarker = (EditText) dialogView.findViewById(R.id.title_Marker);
-        descriptionMarker = (EditText) dialogView.findViewById(R.id.description_Marker);
+        titleMarker = (AutoCompleteTextView) dialogView.findViewById(R.id.title_Marker);
+        descriptionMarker = (AutoCompleteTextView) dialogView.findViewById(R.id.description_Marker);
 
-
+        long endOfMonth = System.currentTimeMillis();
         calendarMarker = (CalendarView) dialogView.findViewById(R.id.Calendar_Marker);
+        RadioGroup rateMarker = (RadioGroup) dialogView.findViewById(R.id.radioGroup_marker);
+//        rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
+//                Toast.makeText(getActivity(), "rateMarker" + rateMarker, Toast.LENGTH_SHORT).show();
+
+        final TextView textCategory = (TextView) dialogView.findViewById(R.id.textcategory);
+        calendarMarker.setMaxDate(System.currentTimeMillis());
+
+        rateMarker.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged (RadioGroup group,int checkedId){
+
+                Log.d("chk", "id" + checkedId);
+
+                if (checkedId == R.id.radio_lvl1) {
+                    textCategory.setText("ชิงทรัพย์");
+                } else if (checkedId == R.id.radio_lvl2) {
+                    textCategory.setText("ทำร้านร่างกาย");
+                }else if (checkedId == R.id.radio_lvl3) {
+                    textCategory.setText("ชิงทรัพย์และทำร้านร่างกาย");
+                }else if (checkedId == R.id.radio_lvl4) {
+                    textCategory.setText("ข่มขืนและกระทำอนาจาร");
+                }else if (checkedId == R.id.radio_lvl5) {
+                    textCategory.setText("ทำร้ายร่างกายจนเสียชีวิต");
+                }
+            }
+        });
+
+
+//        switch (rateMarker) {
+//
+//            case R.id.radio_lvl1:
+//                textCategory.setText("ชิงทรัพย์");
+//                break;
+//            case R.id.radio_lvl2:
+//                textCategory.setText("ทำร้านร่างกาย");
+//                break;
+//            case R.id.radio_lvl3:
+//                textCategory.setText("ชิงทรัพย์และทำร้านร่างกาย");
+//                break;
+//            case R.id.radio_lvl4:
+//                textCategory.setText("ข่มขืนและกระทำอนาจาร");
+//                break;
+//            case R.id.radio_lvl5:
+//                textCategory.setText("ทำร้ายร่างกายจนเสียชีวิต");
+//                break;
+//        }
 
 
         calendarMarker.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
@@ -376,7 +427,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         builder.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
+                int rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
 //                Toast.makeText(getActivity(), "rateMarker" + rateMarker, Toast.LENGTH_SHORT).show();
                 int ratemarker = 0;
 
@@ -408,13 +459,14 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 String usermarker = MainActivity.session.getLoginEmail();
 
 
-                if (titlemarker.length() > 0 && description.length() > 0) {
+//                if (titlemarker.length() > 0 && description.length() > 0) {
                     addMarker(accid, titlemarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
-//                        Toast.makeText(getActivity(), ratemarker , Toast.LENGTH_SHORT).show();
-                } else {
 
-                    Toast.makeText(getActivity(), "Please complete all information.", Toast.LENGTH_SHORT).show();
-                }
+//                        Toast.makeText(getActivity(), ratemarker , Toast.LENGTH_SHORT).show();
+//                } else {
+//
+//                    Toast.makeText(getActivity(), "Please complete all information.", Toast.LENGTH_SHORT).show();
+//                }
             }
         })
                 .setNegativeButton("cancel", null).show();
@@ -667,6 +719,50 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         };
 
 
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+        db = new SQLiteHandler(getActivity());
+        syncMarker();
+    }
+    private void syncMarker() {
+        db.delMarker();
+        String tag_string_req = "req_marker_list";
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_MARKER_LIST, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray arr;
+                    arr = new JSONArray(response);
+                    if (arr.length() != 0) {
+                        for (int i = 0; i < arr.length(); i++) {
+                            JSONObject obj = (JSONObject) arr.get(i);
+                            db.syncMarker(
+                                    obj.getInt("acc_id"),
+                                    obj.getString("acc_title"),
+                                    obj.getString("acc_description"),
+                                    obj.getDouble("acc_lat"),
+                                    obj.getDouble("acc_long"),
+                                    obj.getString("date"),
+                                    obj.getInt("rate_id"),
+                                    obj.getString("email")
+                            );
+                        }
+                        markerList = db.getMarkerList();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "Json error: " + e.getMessage());
+                    Toast.makeText(getActivity(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Load Marker List Error: " + error.getMessage());
+                Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+        // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 

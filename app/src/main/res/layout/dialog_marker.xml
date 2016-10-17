@@ -6,36 +6,55 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:background="#FFFFBB33"
         android:contentDescription="@string/app_name"
         android:scaleType="fitCenter"
         android:src="@drawable/logoapp" />
 
-    <EditText
-        android:id="@+id/title_Marker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="0dp"
-        android:hint="Title" />
 
-    <EditText
-        android:id="@+id/description_Marker"
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="0dp"
-        android:fontFamily="sans-serif"
-        android:hint="Description" />
+        android:layout_height="wrap_content">
+
+        <AutoCompleteTextView
+            android:id="@+id/title_Marker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="0dp"
+            android:hint="Title"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+             />
+
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <AutoCompleteTextView
+            android:id="@+id/description_Marker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="0dp"
+            android:hint="Description"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            />
+
+    </android.support.design.widget.TextInputLayout>
+
+
 
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="25dp"
         android:orientation="horizontal">
 
         <!--<Button-->
@@ -47,22 +66,31 @@
         <!--android:textSize="8dp" />-->
 
         <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:layout_marginLeft="4dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginRight="4dp"
         android:layout_marginTop="4dp"
         android:fontFamily="sans-serif"
-        android:text="Levels of Violence" />
+        android:text="ประเภท :  " />
 
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:id="@+id/textcategory"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif"
+            android:text="ชิงทรัพย์" />
     </TableRow>
 
     <RadioGroup
         android:id="@+id/radioGroup_marker"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <RadioButton
@@ -70,38 +98,58 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="Lvl 1" />
+             />
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/crimeone"/>
 
         <RadioButton
             android:id="@+id/radio_lvl2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lvl 2" />
+             />
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@mipmap/crimetwo"/>
 
         <RadioButton
             android:id="@+id/radio_lvl3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lvl 3" />
+            />
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@mipmap/crimethree"/>
 
         <RadioButton
             android:id="@+id/radio_lvl4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lvl 4" />
+             />
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@mipmap/crimefour"/>
 
         <RadioButton
             android:id="@+id/radio_lvl5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lvl 5" />
+            />
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@mipmap/crimefive"/>
     </RadioGroup>
 
 
     <CalendarView
         android:id="@+id/Calendar_Marker"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal" />
 
 

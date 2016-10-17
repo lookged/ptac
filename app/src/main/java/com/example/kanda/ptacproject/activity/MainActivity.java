@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                         double lng = location.getLongitude();
                         String phoneNumber = "0992467337" ;
                         String message = MainActivity.session.getLoginEmail() + " being in danger" + " https://www.google.co.th/maps/place/" + lat + "+" + lng + "/@" + lat + "," + lng;
-//                        sendSMS(phoneNumber, message);
+                       sendSMS(phoneNumber, message);
 //                        Toast.makeText(getApplicationContext(),message, Toast.LENGTH_LONG).show();
                         Vibrator vtr = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                         // Vibrate for 500 milliseconds
