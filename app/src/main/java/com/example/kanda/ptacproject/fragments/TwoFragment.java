@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +34,7 @@ public class TwoFragment extends Fragment {
     private static final String TAG = TwoFragment.class.getSimpleName();
     public ListView friendListView;
     public View rootView;
+    public Button checkLocation;
     public ArrayList<String[]> friendList = null;
     public FriendListAdepter friendListAdepter;
     protected String loginId;
@@ -55,6 +57,7 @@ public class TwoFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_two, container, false);
         friendListView = (ListView) rootView.findViewById(R.id.friend_list_view);
         textName = (TextView) rootView.findViewById(R.id.nameuser);
+        checkLocation = (Button) rootView.findViewById(R.id.check_location);
         textName.setText(MainActivity.session.getLoginEmail());
         loginId = MainActivity.session.getLoginId();
 

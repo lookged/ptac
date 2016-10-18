@@ -228,41 +228,6 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 
 
-
-        try {long yourmilliseconds = System.currentTimeMillis();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-            Date resultdate = new Date(yourmilliseconds);
-            String todate= sdf.format(resultdate);
-        String dateInString = todate;  // Start date
-
-
-        Calendar c = Calendar.getInstance(); // Get Calendar Instance
-        c.setTime(sdf.parse(dateInString));
-
-        c.add(Calendar.DATE, maxDate);  // add 45 days
-        sdf = new SimpleDateFormat("MM/dd/yyyy");
-
-        Date resultdate1 = new Date(c.getTimeInMillis());   // Get new time
-        dateInString = sdf.format(resultdate1);
-//            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-//            formatter.setLenient(false);
-//            Date curDate = new Date();
-//            long curMillis = curDate.getTime();
-//            String curTime = formatter.format(curDate);
-//            long endOfMonth = System.currentTimeMillis();
-////            long endOfMonth = 14767236*100000;
-//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-//            Date resultdate = new Date((endOfMonth)-(7776*1000000*9));
-//            String datemss =sdf.format(resultdate);
-//            String oldTime = "20.07.2016";
-//            Date oldDate = formatter.parse(oldTime);
-//            long oldMillis = oldDate.getTime();
-            Toast.makeText(getActivity(), "rateMarker" + dateInString, Toast.LENGTH_LONG).show();
-        }catch (Exception e){
-            Toast.makeText(getActivity(), "rateMarker" , Toast.LENGTH_SHORT).show();
-        }
-
-
         googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         Criteria criteria = new Criteria();
