@@ -82,10 +82,16 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
     View inflator;
     private int lengthMap = 1000;
     private GoogleMap mGoogleMap;
+    private int maxDate = -90;
 
     private Spinner lengthSpinner;
+    private Spinner dateSpinner;
     private ArrayList<String> lSpinner = new ArrayList<String>();
+    private ArrayList<String> dSpinner = new ArrayList<String>();
 
+    String[] lengthdate = {"ระยะ 90 วัน","ระยะ 180 วัน","ระยะ 365 วัน"};
+
+    String[] lengthdistance = {"ระยะ 1 กม.","ระยะ 5 กม.","ระยะ 10 กม."};
 
 
     private SQLiteHandler db;
@@ -113,12 +119,79 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
         lSpinner.clear();
+        dSpinner.clear();
 
-        lengthSpinner = (Spinner) rootView.findViewById(R.id.spinner_length);
-        createLengthData();
-        ArrayAdapter<String> lengthspinner = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_spinner_dropdown_item, lSpinner);
-        lengthSpinner.setAdapter(lengthspinner);
+
+
+        Spinner spin = (Spinner) (Spinner) rootView.findViewById(R.id.spinner_length);
+        ArrayAdapter<String> aa = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, lengthdate);
+        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spin.setAdapter(aa);
+       spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+           public void onItemSelected(AdapterView<?> parent, View view,
+                                      int position, long id) {
+               switch (position) {
+                   case 0:
+                       maxDate = -90;
+                       break;
+                   case 1:
+                       maxDate = -180;
+                       break;
+                   case 2:
+                       maxDate = -365;
+                       break;
+
+               }
+
+           }
+
+           @Override
+           public void onNothingSelected(AdapterView<?> parent) {
+
+           }
+       });
+
+
+        Spinner spin2 = (Spinner) rootView.findViewById(R.id.spinner_maxdate);
+        ArrayAdapter<String> bb = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, lengthdistance);
+        bb.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spin2.setAdapter(bb);
+        spin2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+                switch (position) {
+                    case 0:
+                        lengthMap = 1000;
+                        break;
+                    case 1:
+                        lengthMap = 5000;
+                        break;
+                    case 2:
+                        lengthMap = 10000;
+                        break;
+
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+//
+//        lengthSpinner = (Spinner) rootView.findViewById(R.id.spinner_length);
+//        createLengthData();
+//        ArrayAdapter<String> lengthspinner = new ArrayAdapter<String>(getActivity(),
+//                android.R.layout.simple_spinner_dropdown_item, lSpinner);
+//        lengthSpinner.setAdapter(lengthspinner);
+//
+//        dateSpinner = (Spinner) rootView.findViewById(R.id.spinner_maxdate);
+//        createLengthData();
+//        ArrayAdapter<String> datespinner = new ArrayAdapter<String>(getActivity(),
+//                android.R.layout.simple_spinner_dropdown_item, dSpinner);
+//        lengthSpinner.setAdapter(datespinner);
 
 
 
@@ -154,6 +227,42 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mGoogleMap.setOnMapLongClickListener(this);
 
 
+
+
+        try {long yourmilliseconds = System.currentTimeMillis();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+            Date resultdate = new Date(yourmilliseconds);
+            String todate= sdf.format(resultdate);
+        String dateInString = todate;  // Start date
+
+
+        Calendar c = Calendar.getInstance(); // Get Calendar Instance
+        c.setTime(sdf.parse(dateInString));
+
+        c.add(Calendar.DATE, maxDate);  // add 45 days
+        sdf = new SimpleDateFormat("MM/dd/yyyy");
+
+        Date resultdate1 = new Date(c.getTimeInMillis());   // Get new time
+        dateInString = sdf.format(resultdate1);
+//            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+//            formatter.setLenient(false);
+//            Date curDate = new Date();
+//            long curMillis = curDate.getTime();
+//            String curTime = formatter.format(curDate);
+//            long endOfMonth = System.currentTimeMillis();
+////            long endOfMonth = 14767236*100000;
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+//            Date resultdate = new Date((endOfMonth)-(7776*1000000*9));
+//            String datemss =sdf.format(resultdate);
+//            String oldTime = "20.07.2016";
+//            Date oldDate = formatter.parse(oldTime);
+//            long oldMillis = oldDate.getTime();
+            Toast.makeText(getActivity(), "rateMarker" + dateInString, Toast.LENGTH_LONG).show();
+        }catch (Exception e){
+            Toast.makeText(getActivity(), "rateMarker" , Toast.LENGTH_SHORT).show();
+        }
+
+
         googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         Criteria criteria = new Criteria();
@@ -177,91 +286,126 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         for (final Marker m : ((MainActivity) getActivity()).markerList) {
                             final BitmapDescriptor iconMarker;
                             if (isShowMarker(location, m)) {
-                                if (m.getRateId() == 105) {
-                                    iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefive);
-
-                                } else if (m.getRateId() == 104) {
-                                    iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefour);
-
-                                } else if (m.getRateId() == 103) {
-                                    iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimethree);
-
-                                } else if (m.getRateId() == 102) {
-                                    iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimetwo);
-
-                                } else {
-                                    iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimeone);
-
-                                }
-                                byte[] stringBytes = m.getAccTitle().getBytes();
-                                String title = "Unsupported Text";
                                 try {
-                                    title = new String(stringBytes, "UTF-8");
-                                } catch (UnsupportedEncodingException e) {
-                                    e.printStackTrace();
+                                    long yourmilliseconds = System.currentTimeMillis();
+
+                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                    Date resultdate = new Date(yourmilliseconds);
+                                    String todate= sdf.format(resultdate);
+                                    String dateInString = todate;  // Start date
+
+
+                                    Calendar c = Calendar.getInstance(); // Get Calendar Instance
+                                    c.setTime(sdf.parse(dateInString));
+
+                                    c.add(Calendar.DATE, maxDate);  // add 45 days
+                                    sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+                                    Date resultdate1 = new Date(c.getTimeInMillis());   // Get new time
+                                    dateInString = sdf.format(resultdate1);
+
+                                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                                    formatter.setLenient(false);
+                                    Date curDate = new Date();
+
+
+                                    String oldTime = m.getDate();
+                                    Date oldDate = formatter.parse(oldTime);
+                                    long oldMillis = oldDate.getTime();
+
+
+                                    String maxTime = dateInString;
+                                    Date maxDate = formatter.parse(maxTime);
+                                    long maxMillis = maxDate.getTime();
+//                                    Toast.makeText(getActivity(), "rateMarker" + maxMillis, Toast.LENGTH_LONG).show();
+
+                                    if(oldMillis>=maxMillis){
+
+
+                                    if (m.getRateId() == 105) {
+                                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefive);
+
+                                    } else if (m.getRateId() == 104) {
+                                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefour);
+
+                                    } else if (m.getRateId() == 103) {
+                                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimethree);
+
+                                    } else if (m.getRateId() == 102) {
+                                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimetwo);
+
+                                    } else {
+                                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimeone);
+
+                                    }
+                                    byte[] stringBytes = m.getAccTitle().getBytes();
+                                    String title = "Unsupported Text";
+                                    try {
+                                        title = new String(stringBytes, "UTF-8");
+                                    } catch (UnsupportedEncodingException e) {
+                                        e.printStackTrace();
+                                    }
+
+
+                                    myLocation = new MarkerOptions().position(
+                                            new LatLng(m.getAccLat(), m.getAccLong())
+                                    ).title(title).snippet(m.getAccDescription() + "\n" + "\n" + " Time of Occurrence : " + m.getDate()).icon(iconMarker);
+
+
+                                    mGoogleMap.setInfoWindowAdapter(new InfoWindowAdapter() {
+
+
+                                        @Override
+                                        public View getInfoWindow(com.google.android.gms.maps.model.Marker marker) {
+                                            return null;
+                                        }
+
+                                        @Override
+                                        public View getInfoContents(com.google.android.gms.maps.model.Marker marker) {
+                                            // Getting view from the layout file info_window_layout
+                                            View v = LayoutInflater.from(getActivity()).inflate(R.layout.description_marker, null);
+
+                                            // Getting the position from the marker
+
+                                            // Getting reference to the TextView to set latitude
+                                            TextView tvLat = (TextView) v.findViewById(R.id.tv_title);
+                                            Button reportmark1 = (Button) v.findViewById(R.id.mark_report);
+
+                                            // Getting reference to the TextView to set longitude
+                                            TextView tvLng = (TextView) v.findViewById(R.id.tv_description);
+
+                                            // Setting the latitude
+                                            tvLat.setText("Title:" + marker.getTitle());
+
+                                            // Setting the longitude
+                                            tvLng.setText("Description :" + marker.getSnippet());
+                                            reportmark1.setOnClickListener(new View.OnClickListener() {
+
+                                                public void onClick(View view) {
+                                                    Toast.makeText(getActivity(),
+                                                            "Report complete!!", Toast.LENGTH_LONG).show();
+
+
+                                                }
+
+                                            });
+                                            return v;
+                                        }
+
+
+                                    });
+
+                                    mGoogleMap.addMarker(myLocation);
+                                    }
+                                }catch (Exception e){
+//                                    Toast.makeText(getActivity(), "rateMarker" , Toast.LENGTH_SHORT).show();
                                 }
 
-
-                                myLocation = new MarkerOptions().position(
-                                        new LatLng(m.getAccLat(), m.getAccLong())
-                                ).title(title).snippet(m.getAccDescription() + "\n" + "\n" + " Time of Occurrence : " + m.getDate()).icon(iconMarker);
-
-
-                                mGoogleMap.setInfoWindowAdapter(new InfoWindowAdapter() {
-
-
-                                    @Override
-                                    public View getInfoWindow(com.google.android.gms.maps.model.Marker marker) {
-                                        return null;
-                                    }
-
-                                    @Override
-                                    public View getInfoContents(com.google.android.gms.maps.model.Marker marker) {
-                                        // Getting view from the layout file info_window_layout
-                                        View v = LayoutInflater.from(getActivity()).inflate(R.layout.description_marker, null);
-
-                                        // Getting the position from the marker
-
-                                        // Getting reference to the TextView to set latitude
-                                        TextView tvLat = (TextView) v.findViewById(R.id.tv_title);
-                                        Button reportmark1 = (Button) v.findViewById(R.id.mark_report);
-
-                                        // Getting reference to the TextView to set longitude
-                                        TextView tvLng = (TextView) v.findViewById(R.id.tv_description);
-
-                                        // Setting the latitude
-                                        tvLat.setText("Title:" + marker.getTitle());
-
-                                        // Setting the longitude
-                                        tvLng.setText("Description :" + marker.getSnippet());
-                                        reportmark1.setOnClickListener(new View.OnClickListener() {
-
-                                            public void onClick(View view) {
-                                                Toast.makeText(getActivity(),
-                                                        "Report complete!!", Toast.LENGTH_LONG).show();
-
-
-                                            }
-
-                                        });
-                                        return v;
-                                    }
-
-
-                                });
-
-                                mGoogleMap.addMarker(myLocation);
 
                             }
                         }
 
-                        LatLng latLngLocation = new LatLng(location.getLatitude(), location.getLongitude());
-//                    myLocation = new MarkerOptions().position(
-//                            new LatLng(location.getLatitude(), location.getLongitude())
-//                    ).title("moss").snippet("m").icon(icon);
-//                    mGoogleMap.addMarker(myLocation);
-//                        CameraPosition cameraPosition = new CameraPosition.Builder().target(latLngLocation).zoom(15).build();
-//                        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
                     }
                 }
 
@@ -314,31 +458,31 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         float[] results = new float[1];
         Location.distanceBetween(lo.getLatitude(), lo.getLongitude(),
                 marker.getAccLat(), marker.getAccLong(), results);
-        lengthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 0:
-                        lengthMap = 1000;
-                        break;
-                    case 1:
-                        lengthMap = 5000;
-                        break;
-                    case 2:
-                        lengthMap = 10000;
-                        break;
-
-                }
-//                Toast.makeText(getActivity(),
-//                        "Select : " + position,
-//                        Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+//        lengthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                switch (position) {
+//                    case 0:
+//                        lengthMap = 1000;
+//                        break;
+//                    case 1:
+//                        lengthMap = 5000;
+//                        break;
+//                    case 2:
+//                        lengthMap = 10000;
+//                        break;
+//
+//                }
+////                Toast.makeText(getActivity(),
+////                        "Select : " + position,
+////                        Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
         return results[0] < lengthMap;
     }
 
@@ -432,6 +576,9 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
         builder.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
+                try {
+
+
                 int rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
 //                Toast.makeText(getActivity(), "rateMarker" + rateMarker, Toast.LENGTH_SHORT).show();
                 int ratemarker = 0;
@@ -479,6 +626,9 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 } else {
 
                     Toast.makeText(getActivity(), "Please complete all information.", Toast.LENGTH_SHORT).show();
+                }
+                }catch (Exception e){
+                    Log.d(TAG, ""+e);
                 }
             }
         })
