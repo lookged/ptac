@@ -3,6 +3,7 @@ package com.example.kanda.ptacproject.activity;
 /**
  * Created by Kanda on 8/24/2016.
  */
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -17,18 +18,17 @@ import com.android.volley.Request.Method;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.kanda.ptacproject.R;
+import com.example.kanda.ptacproject.app.AppConfig;
+import com.example.kanda.ptacproject.app.AppController;
+import com.example.kanda.ptacproject.helper.SQLiteHandler;
+import com.example.kanda.ptacproject.helper.SessionManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import com.example.kanda.ptacproject.R;
-import com.example.kanda.ptacproject.app.AppConfig;
-import com.example.kanda.ptacproject.app.AppController;
-import com.example.kanda.ptacproject.helper.SQLiteHandler;
-import com.example.kanda.ptacproject.helper.SessionManager;
 public class RegisterActivity extends Activity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
     private Button btnRegister;
@@ -36,6 +36,7 @@ public class RegisterActivity extends Activity {
     private EditText inputFullName;
     private EditText inputEmail;
     private EditText inputPassword;
+    private EditText inputPhoneno;
     private EditText inputComfirmPassword;
     private ProgressDialog pDialog;
     private SessionManager session;
@@ -50,6 +51,7 @@ public class RegisterActivity extends Activity {
         inputEmail = (EditText) findViewById(R.id.email);
         inputPassword = (EditText) findViewById(R.id.password);
         inputComfirmPassword = (EditText) findViewById(R.id.confirmPassword);
+        inputPhoneno = (EditText) findViewById(R.id.phoneno);
         btnRegister = (Button) findViewById(R.id.btnRegister);
         btnLinkToLogin = (Button) findViewById(R.id.btnLinkToLoginScreen);
 
@@ -79,13 +81,14 @@ public class RegisterActivity extends Activity {
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
                 String passwordConfirm = inputComfirmPassword.getText().toString().trim();
+                String phoneno = inputPhoneno.getText().toString().trim();
 
                 if (!password.equals(passwordConfirm)){
                     Toast.makeText(getApplicationContext(),
                             "Confirm password must match with password!", Toast.LENGTH_LONG)
                             .show();
                 }else if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
-                    registerUser(name, email, password);
+                    registerUser(name, email, password, phoneno);
                 }else {
                     Toast.makeText(getApplicationContext(),
                             "Please enter your details!", Toast.LENGTH_LONG)
@@ -112,7 +115,7 @@ public class RegisterActivity extends Activity {
      * email, password) to register url
      * */
     private void registerUser(final String name, final String email,
-                              final String password) {
+                              final String password, final String phoneno) {
         // Tag used to cancel the request
         String tag_string_req = "req_register";
 
@@ -138,8 +141,8 @@ public class RegisterActivity extends Activity {
                         JSONObject user = jObj.getJSONObject("user");
                         String name = user.getString("name");
                         String email = user.getString("email");
-                        String created_at = user
-                                .getString("created_at");
+                        String created_at = user.getString("created_at");
+                        String phoneno = user.getString("phoneno");
 
                         // Inserting row in users table
                         db.addUser(email, uid);
@@ -167,6 +170,7 @@ public class RegisterActivity extends Activity {
                 inputPassword.setText("");
                 inputComfirmPassword.setText("");
                 inputFullName.setText("");
+                inputPhoneno.setText("");
 
                 Toast.makeText(getApplicationContext(),"Register completed",Toast.LENGTH_SHORT).show();
             }
@@ -188,6 +192,7 @@ public class RegisterActivity extends Activity {
                 params.put("name", name);
                 params.put("email", email);
                 params.put("password", password);
+                params.put("phoneno", phoneno);
 
                 return params;
             }
