@@ -16,11 +16,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.example.kanda.ptacproject.R;
 import com.example.kanda.ptacproject.activity.DestinationMapActivity;
 import com.example.kanda.ptacproject.activity.MainActivity;
+import com.example.kanda.ptacproject.app.AppConfig;
+import com.example.kanda.ptacproject.app.AppController;
 import com.example.kanda.ptacproject.fragments.TwoFragment;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class FriendListAdepter extends BaseAdapter {
     public static final String TAG = FriendListAdepter.class.getSimpleName();
@@ -29,11 +40,13 @@ public class FriendListAdepter extends BaseAdapter {
 
 
     public static class ViewHolder {
+         Button friendLocation;
         TextView friendNameTV;
-        Button friendLocation;
+
         public ViewHolder(View view) {
             friendNameTV = (TextView) view.findViewById(R.id.friend_name);
             friendLocation =(Button) view.findViewById(R.id.check_location);
+            friendLocation.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -70,6 +83,7 @@ public class FriendListAdepter extends BaseAdapter {
         if (str != null) {
             final ViewHolder viewHolder = new ViewHolder(view);
             viewHolder.friendNameTV.setText(str[0]);
+            checkDestination(str[0],view);
             viewHolder.friendLocation.setOnClickListener(new View.OnClickListener()
             {
                 @Override
@@ -86,5 +100,66 @@ public class FriendListAdepter extends BaseAdapter {
             });
         }
         return view;
+    }
+    public void checkDestination(final String email,View convertView) {
+        String tag_string_req = "req_searchfriend";
+        final View view = convertView;
+
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_SEARCH_DESTINATION, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Request Response: " + response);
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                        final ViewHolder viewHolder = new ViewHolder(view);
+//                        Toast.makeText(mContext,
+//                                "you can add this user", Toast.LENGTH_LONG).show();
+                       viewHolder.friendLocation.setVisibility(View.VISIBLE);
+                    } else {
+                        // Error in login. Get the error message
+                        String errorMsg = "user not found";
+//                        Toast.makeText(mContext,
+//                                errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Log.d(TAG, response);
+//                    Toast.makeText(mContext, "Json error Add Friend: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Request Error: " + error.getMessage());
+//                Toast.makeText(mContext,
+//                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 }

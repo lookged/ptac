@@ -11,40 +11,77 @@
         android:layout_height="match_parent" />
 
     <LinearLayout
+
         android:layout_width="wrap_content"
+
         android:layout_height="wrap_content"
-android:layout_marginLeft="1dp"
-        android:layout_marginTop="12dp"
-       >
-
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="1dp"
+        android:orientation="vertical">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="1dp"
-            android:background="@color/white">
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@color/white"
+            android:orientation="horizontal">
 
-            <Spinner
-                android:id="@+id/spinner_length"
+            <EditText
+                android:id="@+id/etOrigin"
+                android:layout_width="280dp"
+                android:lines="1"
+                android:maxLines="1"
+                android:layout_height="wrap_content"
+                android:hint="Search Location" />
+
+            <Button
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:backgroundTint="@color/colorAccent"></Spinner>
+                android:id="@+id/btnlocation"
+                android:text="Search"
+                android:layout_margin="1dp"
+                android:textColor="@color/white"
+                android:background="@color/colorAccent"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
-
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="1dp"
-            android:background="@color/white">
 
-            <Spinner
-                android:id="@+id/spinner_maxdate"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="1dp">
+
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_marginLeft="5dp"
-                android:backgroundTint="@color/colorAccent"></Spinner>
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:background="@color/white">
+
+                <Spinner
+                    android:id="@+id/spinner_length"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:backgroundTint="@color/colorAccent"></Spinner>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                android:background="@color/white">
+
+                <Spinner
+                    android:id="@+id/spinner_maxdate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="5dp"
+                    android:backgroundTint="@color/colorAccent"></Spinner>
+            </LinearLayout>
+
+
         </LinearLayout>
 
 
     </LinearLayout>
-
 </RelativeLayout>

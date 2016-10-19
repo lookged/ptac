@@ -1,7 +1,10 @@
 package com.example.kanda.ptacproject.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -14,6 +17,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -30,7 +35,11 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.kanda.ptacproject.Modules.DirectionFinder;
+import com.example.kanda.ptacproject.Modules.DirectionFinderListener;
+import com.example.kanda.ptacproject.Modules.Route;
 import com.example.kanda.ptacproject.R;
+import com.example.kanda.ptacproject.activity.DestinationMapActivity;
 import com.example.kanda.ptacproject.activity.MainActivity;
 import com.example.kanda.ptacproject.app.AppConfig;
 import com.example.kanda.ptacproject.app.AppController;
@@ -48,6 +57,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,12 +71,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.example.kanda.ptacproject.fragments.FiveFragment.session;
 
 
-public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
+public class OneFragment extends Fragment implements DirectionFinderListener,OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
 
     private static final String TAG = OneFragment.class.getSimpleName();
     public AutoCompleteTextView titleMarker;
@@ -75,6 +87,9 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public ArrayList<Marker> markerList = null;
     public String Datemarker;
     public AutoCompleteTextView descriptionMarker;
+    public EditText Edorigin ;
+    public Button Btnlocation;
+
     MapView mMapView;
     LocationManager locationManager;
     MarkerOptions myLocation;
@@ -83,6 +98,10 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private int lengthMap = 1000;
     private GoogleMap mGoogleMap;
     private int maxDate = -90;
+    private List<com.google.android.gms.maps.model.Marker> originMarkers = new ArrayList<>();
+    private List<com.google.android.gms.maps.model.Marker> destinationMarkers = new ArrayList<>();
+    private List<Polyline> polylinePaths = new ArrayList<>();
+    private ProgressDialog progressDialog;
 
     private Spinner lengthSpinner;
     private Spinner dateSpinner;
@@ -109,9 +128,34 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_one, container, false);
         inflator = inflater.inflate(R.layout.dialog_marker, null);
+
+         Edorigin = (EditText) rootView.findViewById(R.id.etOrigin) ;
+         Btnlocation = (Button) rootView.findViewById(R.id.btnlocation) ;
+
+
+        Btnlocation.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                String origin = Edorigin.getText().toString().trim();
+                String destination = "บางแค";
+                if (origin.isEmpty()) {
+                    Toast.makeText(getActivity(), "Please enter origin address!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                try {
+
+                    sendRequest(origin);
+                }catch (Exception e){
+                    Log.d(TAG, " "+e);
+                }
+
+            }
+        });
 
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -229,6 +273,7 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 
         googleMap.setMyLocationEnabled(true);
+        googleMap.setPadding(50,80,0,60);
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         Criteria criteria = new Criteria();
         Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
@@ -392,6 +437,83 @@ public class OneFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
 
+        }
+    }
+
+    private void sendRequest(String originn) {
+//        String origin = etOrigin.getText().toString();
+//        String destination = etDestination.getText().toString();
+        String origin = originn.toString().trim();
+        String destination = ""+13.669110+","+100.512731;
+        if (origin.isEmpty()) {
+            Toast.makeText(getActivity(), "Please enter origin address!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (destination.isEmpty()) {
+            Toast.makeText(getActivity(), "Please enter destination address!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            new DirectionFinder(this, origin, destination).execute();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void onDirectionFinderStart() {
+        progressDialog = ProgressDialog.show(getActivity(), "Please wait.",
+                "Finding direction..!", true);
+
+        if (originMarkers != null) {
+            for (com.google.android.gms.maps.model.Marker marker : originMarkers) {
+                marker.remove();
+            }
+        }
+
+        if (destinationMarkers != null) {
+            for (com.google.android.gms.maps.model.Marker marker : destinationMarkers) {
+                marker.remove();
+            }
+        }
+
+        if (polylinePaths != null) {
+            for (Polyline polyline : polylinePaths) {
+                polyline.remove();
+            }
+        }
+    }
+
+    @Override
+    public void onDirectionFinderSuccess(List<Route> routes) {
+        progressDialog.dismiss();
+        polylinePaths = new ArrayList<>();
+        originMarkers = new ArrayList<>();
+        destinationMarkers = new ArrayList<>();
+
+        for (Route route : routes) {
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
+
+
+            originMarkers.add(mGoogleMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
+                    .title(route.startAddress)
+                    .position(route.startLocation)));
+//            destinationMarkers.add(mMap.addMarker(new MarkerOptions()
+//                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
+//                    .title(route.endAddress)
+//                    .position(route.endLocation)));
+//
+//
+//            PolylineOptions polylineOptions = new PolylineOptions().
+//                    geodesic(true).
+//                    color(Color.BLUE).
+//                    width(3);
+//
+//            for (int i = 0; i < route.points.size(); i++)
+//                polylineOptions.add(route.points.get(i));
+//
+//            polylinePaths.add(mMap.addPolyline(polylineOptions));
         }
     }
 
