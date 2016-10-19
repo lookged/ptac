@@ -30,6 +30,7 @@ import com.example.kanda.ptacproject.app.AppConfig;
 import com.example.kanda.ptacproject.app.AppController;
 import com.example.kanda.ptacproject.fragments.TwoFragment;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,6 +38,10 @@ public class FriendListAdepter extends BaseAdapter {
     public static final String TAG = FriendListAdepter.class.getSimpleName();
     private Context mContext;
     private ArrayList<String[]> friendList;
+    public String latdestination ;
+    public String lngdestination ;
+    public String latcurrent ;
+    public String lngcurrent ;
 
 
     public static class ViewHolder {
@@ -79,7 +84,7 @@ public class FriendListAdepter extends BaseAdapter {
         if (view == null) {
             view = LayoutInflater.from(mContext).inflate(R.layout.friend_list, viewGroup, false);
         }
-        String[] str = getItem(i);
+        final String[] str = getItem(i);
         if (str != null) {
             final ViewHolder viewHolder = new ViewHolder(view);
             viewHolder.friendNameTV.setText(str[0]);
@@ -90,8 +95,12 @@ public class FriendListAdepter extends BaseAdapter {
                 public void onClick(View v)
                 {
                     try {
-//                        mContext.startActivity(new Intent(mContext, DestinationMapActivity.class));
-                        mContext.startActivity(new Intent(mContext, DestinationMapActivity.class));
+                        String emailfriend = str[0].trim();
+                        syncFriendLocation(emailfriend);
+//                        Toast.makeText(mContext, "no friend"+latdestination, Toast.LENGTH_LONG).show();
+
+
+
                     }catch (Exception e){
                         Log.d(TAG, " "+e);
                     }
@@ -101,6 +110,65 @@ public class FriendListAdepter extends BaseAdapter {
         }
         return view;
     }
+    private void syncFriendLocation(final String emailfriend) {
+
+        String tag_string_req = "req_marker_list";
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_LOCATIONFRIEND_LIST, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+                    JSONArray arr;
+                    arr = new JSONArray(response);
+                    if (arr.length() != 0) {
+                        friendList = new ArrayList<>();
+                        for (int i = 0; i < arr.length(); i++) {
+                            JSONObject obj = (JSONObject) arr.get(i);
+
+                            latdestination = obj.getString("latdestination");
+                            lngdestination = obj.getString("lngdestination");
+                            latcurrent = obj.getString("latcurrentlocation");
+                            lngcurrent = obj.getString("lngcurrentlocation");
+                            Intent intent=new Intent(mContext,DestinationMapActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.putExtra("latdestination", latdestination.toString());
+                            intent.putExtra("lngdestination", lngdestination.toString());
+                            intent.putExtra("latcurrent", latcurrent.toString());
+                            intent.putExtra("lngcurrent", lngcurrent.toString());
+
+                            mContext.startActivity(intent);
+//                            Toast.makeText(mContext, "no friend"+latdestination, Toast.LENGTH_LONG).show();
+                        }
+
+
+                    }
+                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                    Log.e(TAG, "Json error: " + e.getMessage());
+                    Toast.makeText(mContext, "no friend", Toast.LENGTH_LONG).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Load Friend List Error: " + error.getMessage());
+                //Toast.makeText(getActivity(), (error.getMessage() == null ? "haha" : "eiei"), Toast.LENGTH_LONG).show();
+
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("emailfriend", emailfriend);
+
+                return params;
+            }
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+
+    }
+
     public void checkDestination(final String email,View convertView) {
         String tag_string_req = "req_searchfriend";
         final View view = convertView;

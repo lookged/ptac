@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         }
         Log.d(TAG, "onCreate");
         HashMap<String, String> user = db.getUserDetails();
-
+        getSupportFragmentManager().addOnBackStackChangedListener(getListener());
         String name = user.get("name");
         String email = user.get("email");
 
@@ -210,6 +210,23 @@ public class MainActivity extends AppCompatActivity {
 //        startActivity(intent);
 //        finish();
 //    }
+    private FragmentManager.OnBackStackChangedListener getListener() {
+        FragmentManager.OnBackStackChangedListener result = new FragmentManager.OnBackStackChangedListener() {
+            public void onBackStackChanged() {
+                FragmentManager manager = getSupportFragmentManager();
+                if (manager != null) {
+                    int backStackEntryCount = manager.getBackStackEntryCount();
+                    if (backStackEntryCount == 0) {
+                        finish();
+                    }
+                    Fragment fragment = manager.getFragments()
+                            .get(backStackEntryCount - 1);
+                    fragment.onResume();
+                }
+            }
+        };
+        return result;
+    }
 
     public void sendSMS(String phoneNumber, String message) {
         SmsManager sms = SmsManager.getDefault();

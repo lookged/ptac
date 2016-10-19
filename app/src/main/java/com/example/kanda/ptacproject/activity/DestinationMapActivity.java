@@ -2,21 +2,29 @@ package com.example.kanda.ptacproject.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.example.kanda.ptacproject.Modules.DirectionFinder;
 import com.example.kanda.ptacproject.Modules.DirectionFinderListener;
 import com.example.kanda.ptacproject.Modules.Route;
 import com.example.kanda.ptacproject.R;
+import com.example.kanda.ptacproject.app.AppConfig;
+import com.example.kanda.ptacproject.app.AppController;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -27,6 +35,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -46,11 +58,13 @@ public class DestinationMapActivity extends FragmentActivity implements OnMapRea
     private List<Marker> destinationMarkers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
     private ProgressDialog progressDialog;
+    Intent intent = getIntent();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.destination_map);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -71,8 +85,15 @@ public class DestinationMapActivity extends FragmentActivity implements OnMapRea
     private void sendRequest() {
 //        String origin = etOrigin.getText().toString();
 //        String destination = etDestination.getText().toString();
-        String origin = ""+13.650890+","+100.496640;
-        String destination = ""+13.669110+","+100.512731;
+        Intent intent = getIntent();
+        String latdes = intent.getStringExtra("latdestination");
+        String lngdes = intent.getStringExtra("lngdestination");
+        String latcur = intent.getStringExtra("latcurrent");
+        String lngcur = intent.getStringExtra("lngcurrent");
+
+
+        String origin = ""+latcur+","+lngcur;
+        String destination = ""+latdes+","+lngdes;
         if (origin.isEmpty()) {
             Toast.makeText(this, "Please enter origin address!", Toast.LENGTH_SHORT).show();
             return;
@@ -130,7 +151,6 @@ public class DestinationMapActivity extends FragmentActivity implements OnMapRea
             }
         }
     }
-
 
 
     @Override

@@ -46,6 +46,7 @@ public class TwoFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         pDialog = new ProgressDialog(getActivity());
         pDialog.setCancelable(false);
 
@@ -94,7 +95,7 @@ public class TwoFragment extends Fragment {
                 } catch (JSONException e) {
 //                    e.printStackTrace();
 //                    Log.e(TAG, "Json error: " + e.getMessage());
-                    Toast.makeText(getActivity(), "no friend", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getActivity(), "no friend", Toast.LENGTH_LONG).show();
                 }
             }
         }, new Response.ErrorListener() {
@@ -127,6 +128,7 @@ public class TwoFragment extends Fragment {
         if (pDialog.isShowing())
             pDialog.dismiss();
     }
+
 
 
 }
