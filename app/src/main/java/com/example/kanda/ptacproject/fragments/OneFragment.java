@@ -3,8 +3,7 @@ package com.example.kanda.ptacproject.fragments;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
+
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -17,15 +16,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
+
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
-import android.widget.RadioButton;
+
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -39,12 +37,12 @@ import com.example.kanda.ptacproject.Modules.DirectionFinder;
 import com.example.kanda.ptacproject.Modules.DirectionFinderListener;
 import com.example.kanda.ptacproject.Modules.Route;
 import com.example.kanda.ptacproject.R;
-import com.example.kanda.ptacproject.activity.DestinationMapActivity;
+
 import com.example.kanda.ptacproject.activity.MainActivity;
 import com.example.kanda.ptacproject.app.AppConfig;
 import com.example.kanda.ptacproject.app.AppController;
 import com.example.kanda.ptacproject.helper.SQLiteHandler;
-import com.example.kanda.ptacproject.helper.SessionManager;
+
 import com.example.kanda.ptacproject.model.Marker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -58,7 +56,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,7 +72,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.kanda.ptacproject.fragments.FiveFragment.session;
+
 
 
 public class OneFragment extends Fragment implements DirectionFinderListener,OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
@@ -576,6 +574,85 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
     @Override
     public void onMapClick(final LatLng latLng) {
 
+        final AlertDialog.Builder builderdialog = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_destination, null);
+        builderdialog.setView(dialogView);
+
+
+        builderdialog.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                descriptionDestination = (EditText) dialogView.findViewById(R.id.description_of_destination);
+                String email = MainActivity.session.getLoginEmail();
+                String descriptiondestination = descriptionDestination.getText().toString();
+                Double destinationlat = latLng.latitude;
+                Double destinationlng = latLng.longitude;
+                Double mylocationlat = myLocation.getPosition().latitude;
+                Double mylocationlng = myLocation.getPosition().longitude;
+                String date = df.format(new Date());
+
+                addDestination(email,descriptiondestination,destinationlat,destinationlng,mylocationlat,mylocationlng,date);
+                Toast.makeText(getActivity(), " Mark Destination complete.", Toast.LENGTH_SHORT).show();
+            }
+        }).setNegativeButton("cancel", null);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                builderdialog.show();
+            }
+        }, 3300);
+
+        if (((MainActivity) getActivity()).markerList != null) {
+            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
+
+
+            for (Marker m : ((MainActivity) getActivity()).markerList) {
+                BitmapDescriptor iconMarker;
+                if (isShowMarkerClick(latLng, m)) {
+                    if (m.getRateId() == 105) {
+                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefive);
+                    } else if (m.getRateId() == 104) {
+                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefour);
+                    } else if (m.getRateId() == 103) {
+                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimethree);
+                    } else if (m.getRateId() == 102) {
+                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimetwo);
+                    } else {
+                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimeone);
+                    }
+                    byte[] stringBytes = m.getAccTitle().getBytes();
+                    String title = "Unsupported Text";
+                    try {
+                        title = new String(stringBytes, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    myLocation = new MarkerOptions().position(
+                            new LatLng(m.getAccLat(), m.getAccLong())
+                    ).title(title).snippet(m.getAccDescription() + " " + m.getDate()).icon(iconMarker);
+                    mGoogleMap.addMarker(myLocation);
+
+                }
+            }
+
+        }
+
+
+    }
+
+    public boolean isShowMarkerClick(LatLng latLng, Marker marker) {
+        float[] results = new float[1];
+        Location.distanceBetween(latLng.latitude, latLng.longitude,
+                marker.getAccLat(), marker.getAccLong(), results);
+        return results[0] < 1000;
+    }
+
+    @Override
+    public void onMapLongClick(final LatLng latLng) {
+
+
         myLocation = new MarkerOptions().position(
                 new LatLng(latLng.latitude, latLng.longitude)
         ).title("Marker").snippet("Lat : " + latLng.latitude + " Lng : " + latLng.longitude);
@@ -666,138 +743,60 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
                 try {
 
 
-                int rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
+                    int rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
 //                Toast.makeText(getActivity(), "rateMarker" + rateMarker, Toast.LENGTH_SHORT).show();
-                int ratemarker = 0;
+                    int ratemarker = 0;
 
-                switch (rateMarker) {
+                    switch (rateMarker) {
 
-                    case R.id.radio_lvl1:
-                        ratemarker = 101;
-                        break;
-                    case R.id.radio_lvl2:
-                        ratemarker = 102;
-                        break;
-                    case R.id.radio_lvl3:
-                        ratemarker = 103;
-                        break;
-                    case R.id.radio_lvl4:
-                        ratemarker = 104;
-                        break;
-                    case R.id.radio_lvl5:
-                        ratemarker = 105;
-                        break;
-                }
+                        case R.id.radio_lvl1:
+                            ratemarker = 101;
+                            break;
+                        case R.id.radio_lvl2:
+                            ratemarker = 102;
+                            break;
+                        case R.id.radio_lvl3:
+                            ratemarker = 103;
+                            break;
+                        case R.id.radio_lvl4:
+                            ratemarker = 104;
+                            break;
+                        case R.id.radio_lvl5:
+                            ratemarker = 105;
+                            break;
+                    }
 
-                int accid = 0;
-                String titlemarker = titleMarker.getText().toString();
-                String description = descriptionMarker.getText().toString().trim();
-                double latmarker = latLng.latitude;
-                double lngmarker = latLng.longitude;
-                int ratemarkers = ratemarker;
-                String usermarker = MainActivity.session.getLoginEmail();
+                    int accid = 0;
+                    String titlemarker = titleMarker.getText().toString();
+                    String description = descriptionMarker.getText().toString().trim();
+                    double latmarker = latLng.latitude;
+                    double lngmarker = latLng.longitude;
+                    int ratemarkers = ratemarker;
+                    String usermarker = MainActivity.session.getLoginEmail();
 
-                if(Datemarker==null) {
-                    long yourmilliseconds = System.currentTimeMillis();
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-                    Date resultdate = new Date(yourmilliseconds);
-                    Datemarker=sdf.format(resultdate);
-                }
+                    if(Datemarker==null) {
+                        long yourmilliseconds = System.currentTimeMillis();
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+                        Date resultdate = new Date(yourmilliseconds);
+                        Datemarker=sdf.format(resultdate);
+                    }
 //                Toast.makeText(getActivity(), ""+sdf.format(resultdate) , Toast.LENGTH_SHORT).show();
 
-                if (titlemarker.length() > 0 && description.length() > 0) {
-                   addMarker(accid, titlemarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
+                    if (titlemarker.length() > 0 && description.length() > 0) {
+                        addMarker(accid, titlemarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
 
 
                         Toast.makeText(getActivity(), ratemarker , Toast.LENGTH_SHORT).show();
-                } else {
+                    } else {
 
-                    Toast.makeText(getActivity(), "Please complete all information.", Toast.LENGTH_SHORT).show();
-                }
+                        Toast.makeText(getActivity(), "Please complete all information.", Toast.LENGTH_SHORT).show();
+                    }
                 }catch (Exception e){
                     Log.d(TAG, ""+e);
                 }
             }
         })
                 .setNegativeButton("cancel", null).show();
-
-    }
-
-    public boolean isShowMarkerClick(LatLng latLng, Marker marker) {
-        float[] results = new float[1];
-        Location.distanceBetween(latLng.latitude, latLng.longitude,
-                marker.getAccLat(), marker.getAccLong(), results);
-        return results[0] < 1000;
-    }
-
-    @Override
-    public void onMapLongClick(final LatLng latLng) {
-
-
-        final AlertDialog.Builder builderdialog = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_destination, null);
-        builderdialog.setView(dialogView);
-
-
-        builderdialog.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-                descriptionDestination = (EditText) dialogView.findViewById(R.id.description_of_destination);
-                String email = MainActivity.session.getLoginEmail();
-                String descriptiondestination = descriptionDestination.getText().toString();
-                Double destinationlat = latLng.latitude;
-                Double destinationlng = latLng.longitude;
-                Double mylocationlat = myLocation.getPosition().latitude;
-                Double mylocationlng = myLocation.getPosition().longitude;
-                String date = df.format(new Date());
-
-                addDestination(email,descriptiondestination,destinationlat,destinationlng,mylocationlat,mylocationlng,date);
-                Toast.makeText(getActivity(), " Mark Destination complete.", Toast.LENGTH_SHORT).show();
-            }
-        }).setNegativeButton("cancel", null);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                builderdialog.show();
-            }
-        }, 3300);
-
-        if (((MainActivity) getActivity()).markerList != null) {
-            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
-
-
-            for (Marker m : ((MainActivity) getActivity()).markerList) {
-                BitmapDescriptor iconMarker;
-                if (isShowMarkerClick(latLng, m)) {
-                    if (m.getRateId() == 105) {
-                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefive);
-                    } else if (m.getRateId() == 104) {
-                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefour);
-                    } else if (m.getRateId() == 103) {
-                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimethree);
-                    } else if (m.getRateId() == 102) {
-                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimetwo);
-                    } else {
-                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimeone);
-                    }
-                    byte[] stringBytes = m.getAccTitle().getBytes();
-                    String title = "Unsupported Text";
-                    try {
-                        title = new String(stringBytes, "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                    myLocation = new MarkerOptions().position(
-                            new LatLng(m.getAccLat(), m.getAccLong())
-                    ).title(title).snippet(m.getAccDescription() + " " + m.getDate()).icon(iconMarker);
-                    mGoogleMap.addMarker(myLocation);
-
-                }
-            }
-
-        }
 
 
     }

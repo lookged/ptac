@@ -145,7 +145,7 @@ public class FriendListAdepter extends BaseAdapter {
                 } catch (JSONException e) {
 //                    e.printStackTrace();
 //                    Log.e(TAG, "Json error: " + e.getMessage());
-                    Toast.makeText(mContext, "no friend", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(mContext, "no friend", Toast.LENGTH_LONG).show();
                 }
             }
         }, new Response.ErrorListener() {

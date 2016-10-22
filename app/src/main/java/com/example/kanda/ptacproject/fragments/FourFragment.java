@@ -86,7 +86,7 @@ public class FourFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Log.d(TAG, "Json error: " + e.getMessage());
-                    Toast.makeText(getActivity(), "Json error mm: " + e.getMessage(), Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getActivity(), "Json error mm: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
 
             }

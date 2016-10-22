@@ -108,6 +108,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+
     /**
      * Storing user details in database
      */

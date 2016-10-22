@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
 //        });
     }
 
-    private void syncMarker() {
+    public  void syncMarker() {
         db.delMarker();
         String tag_string_req = "req_marker_list";
         StringRequest strReq = new StringRequest(Request.Method.POST,
