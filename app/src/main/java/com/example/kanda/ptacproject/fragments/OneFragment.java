@@ -95,7 +95,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
     View inflator;
     private int lengthMap = 1000;
     private GoogleMap mGoogleMap;
-    private int maxDate = -90;
+    private int maxDate = -7;
     private List<com.google.android.gms.maps.model.Marker> originMarkers = new ArrayList<>();
     private List<com.google.android.gms.maps.model.Marker> destinationMarkers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
@@ -105,8 +105,8 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
     private Spinner dateSpinner;
     private ArrayList<String> lSpinner = new ArrayList<String>();
     private ArrayList<String> dSpinner = new ArrayList<String>();
-
-    String[] lengthdate = {"ระยะ 90 วัน","ระยะ 180 วัน","ระยะ 365 วัน"};
+    LocationListener lis ;
+    String[] lengthdate = {"ระยะ 7 วัน","ระยะ 30 วัน","ระยะ 90 วัน","ระยะ 180 วัน","ระยะ 365 วัน"};
 
     String[] lengthdistance = {"ระยะ 1 กม.","ระยะ 5 กม.","ระยะ 10 กม."};
 
@@ -174,13 +174,24 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
                                       int position, long id) {
                switch (position) {
                    case 0:
-                       maxDate = -90;
+                       maxDate = -7;
+                       locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
                        break;
                    case 1:
-                       maxDate = -180;
+                       maxDate = -30;
+                       locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
                        break;
                    case 2:
+                       maxDate = -90;
+                       locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
+                       break;
+                   case 3:
+                       maxDate = -180;
+                       locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
+                       break;
+                   case 4:
                        maxDate = -365;
+                       locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
                        break;
 
                }
@@ -204,12 +215,15 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
                 switch (position) {
                     case 0:
                         lengthMap = 1000;
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
                         break;
                     case 1:
                         lengthMap = 5000;
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
                         break;
                     case 2:
                         lengthMap = 10000;
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
                         break;
 
                 }
@@ -249,14 +263,6 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
         return rootView;
     }
 
-    private void createLengthData() {
-
-        lSpinner.add("ระยะ 1 กม.");
-        lSpinner.add("ระยะ 5 กม.");
-        lSpinner.add("ระยะ 10 กม.");
-
-
-    }
 
 
 
@@ -282,7 +288,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
             CameraPosition cameraPosition = new CameraPosition.Builder().target(latLngLocation).zoom(15).build();
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-            LocationListener lis = new LocationListener() {
+             lis = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
 
@@ -443,14 +449,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
 //        String destination = etDestination.getText().toString();
         String origin = originn.toString().trim();
         String destination = ""+13.669110+","+100.512731;
-        if (origin.isEmpty()) {
-            Toast.makeText(getActivity(), "Please enter origin address!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (destination.isEmpty()) {
-            Toast.makeText(getActivity(), "Please enter destination address!", Toast.LENGTH_SHORT).show();
-            return;
-        }
+
 
         try {
             new DirectionFinder(this, origin, destination).execute();
@@ -580,32 +579,8 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
         builderdialog.setView(dialogView);
 
 
-        builderdialog.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-                descriptionDestination = (EditText) dialogView.findViewById(R.id.description_of_destination);
-                String email = MainActivity.session.getLoginEmail();
-                String descriptiondestination = descriptionDestination.getText().toString();
-                Double destinationlat = latLng.latitude;
-                Double destinationlng = latLng.longitude;
-                Double mylocationlat = myLocation.getPosition().latitude;
-                Double mylocationlng = myLocation.getPosition().longitude;
-                String date = df.format(new Date());
-
-                addDestination(email,descriptiondestination,destinationlat,destinationlng,mylocationlat,mylocationlng,date);
-                Toast.makeText(getActivity(), " Mark Destination complete.", Toast.LENGTH_SHORT).show();
-            }
-        }).setNegativeButton("cancel", null);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                builderdialog.show();
-            }
-        }, 3300);
-
         if (((MainActivity) getActivity()).markerList != null) {
-            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
+
 
 
             for (Marker m : ((MainActivity) getActivity()).markerList) {
@@ -801,89 +776,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
 
     }
 
-    private void addDestination(final String email,
-                                final String descriptiondestination,
-                                final Double destinationlat,
-                                final Double destinationlng,
-                                final Double mylocationlat,
-                                final Double mylocationlng,
-                                final String date ) {
 
-        String tag_string_req = "add_destination";
-
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_ADD_DESTINATION, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-
-
-                try {
-                    Log.d(TAG, response);
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-                    if (!error) {
-
-                        JSONObject user = jObj.getJSONObject("user");
-                        String email = user.optString("email");
-                        String descriptiondestination = user.getString("descriptiondestination");
-                        Double destinationlat = user.optDouble("destinationlat");
-                        Double destinationlng = user.optDouble("destinationlng");
-                        Double mylocationlat = user.optDouble("mylocationlat");
-                        Double mylocationlng = user.optDouble("mylocationlng");
-                        String date = user.optString("date");
-
-
-
-//                        db.syncMarker(accid, titelmarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
-//                        ((MainActivity) getActivity()).markerList = db.getMarkerList();
-
-                    } else {
-
-
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(getActivity(),
-                                "error_msg" + errorMsg, Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-                Toast.makeText(getActivity(), "Marke Destination completed", Toast.LENGTH_SHORT).show();
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "addDestination Error: " + error.getMessage());
-                Toast.makeText(getActivity(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
-
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("email", email);
-                params.put("descriptiondestination", descriptiondestination);
-                params.put("destinationlat",  Double.toString(destinationlat));
-                params.put("destinationlng", Double.toString(destinationlng));
-                params.put("mylocationlat", Double.toString(mylocationlat));
-                params.put("mylocationlng",  Double.toString(mylocationlng));
-                params.put("date", date);
-
-
-                return params;
-            }
-
-        };
-
-
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
 
     private void addMarker(final int accid,
                            final String titelmarker,
@@ -971,47 +864,6 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
 
     }
-    private void syncMarker() {
-        db.delMarker();
-        String tag_string_req = "req_marker_list";
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_MARKER_LIST, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONArray arr;
-                    arr = new JSONArray(response);
-                    if (arr.length() != 0) {
-                        for (int i = 0; i < arr.length(); i++) {
-                            JSONObject obj = (JSONObject) arr.get(i);
-                            db.syncMarker(
-                                    obj.getInt("acc_id"),
-                                    obj.getString("acc_title"),
-                                    obj.getString("acc_description"),
-                                    obj.getDouble("acc_lat"),
-                                    obj.getDouble("acc_long"),
-                                    obj.getString("date"),
-                                    obj.getInt("rate_id"),
-                                    obj.getString("email")
-                            );
-                        }
-                        markerList = db.getMarkerList();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.e(TAG, "Json error: " + e.getMessage());
-                    Toast.makeText(getActivity(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Load Marker List Error: " + error.getMessage());
-                Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
+
 
 }

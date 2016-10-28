@@ -6,6 +6,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -38,11 +39,20 @@ import com.example.kanda.ptacproject.fragments.TwoFragment;
 import com.example.kanda.ptacproject.helper.SQLiteHandler;
 import com.example.kanda.ptacproject.helper.SessionManager;
 import com.example.kanda.ptacproject.model.Marker;
+import com.pddstudio.urlshortener.URLShortener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private SQLiteHandler db;
     private long then = 0;
+    String shorturl ;
     private int longClickDuration = 1200;
 
     @Override
@@ -86,6 +97,20 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons();
 
+        LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+        double lat = location.getLatitude();
+        double lng = location.getLongitude();
+        final String phoneNumber = "0992467337" ;
+        String longurl = "https://www.google.co.th/maps/place/" + lat + "+" + lng + "/@" + lat + "," + lng;
+        shortUrl(longurl);
+//                            String longUrl = "http://somelink.com/very/long/url";
+//                            String shortUrl = URLShortener.short(longUrl);
+
+        final String message = MainActivity.session.getLoginEmail() + " being in danger " +shorturl ;
+//        Toast.makeText(getApplicationContext(),shorturl, Toast.LENGTH_LONG).show();
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
         fab.setOnTouchListener(new View.OnTouchListener() {
@@ -95,19 +120,17 @@ public class MainActivity extends AppCompatActivity {
                     then = System.currentTimeMillis();
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     if ((System.currentTimeMillis() - then) > longClickDuration) {
-                        LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
-                        Criteria criteria = new Criteria();
-                        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-                        double lat = location.getLatitude();
-                        double lng = location.getLongitude();
-                        String phoneNumber = "0992467337" ;
-                        String message = MainActivity.session.getLoginEmail() + " being in danger" + " https://www.google.co.th/maps/place/" + lat + "+" + lng + "/@" + lat + "," + lng;
-                       sendSMS(phoneNumber, message);
-//                        Toast.makeText(getApplicationContext(),message, Toast.LENGTH_LONG).show();
+
+
+                        if (shorturl!=null) {
+                            sendSMS(phoneNumber, message);
+                        Toast.makeText(getApplicationContext(), "Send SMS Complete. " , Toast.LENGTH_LONG).show();
+                        }
+//                        Toast.makeText(getApplicationContext(),res, Toast.LENGTH_LONG).show();
                         Vibrator vtr = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                         // Vibrate for 500 milliseconds
                         vtr.vibrate(500);
-                        Toast.makeText(getApplicationContext(), "Send SMS Complete. " , Toast.LENGTH_LONG).show();
+//
                         return false;
                     } else {
 
@@ -226,6 +249,29 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         return result;
+    }
+
+    public void shortUrl(String lurl) {
+        String longUrl = lurl;
+
+        URLShortener.shortUrl(longUrl, new URLShortener.LoadingCallback() {
+            @Override
+            public void startedLoading() {
+
+            }
+
+            @Override
+            public void finishedLoading(@Nullable String shortUrl) {
+                //make sure the string is not null
+                if(shortUrl != null){
+                     shorturl = ""+shortUrl;
+
+                }
+                else{
+
+                }
+            }
+        });
     }
 
     public void sendSMS(String phoneNumber, String message) {

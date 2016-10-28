@@ -21,6 +21,10 @@
                 android:icon="@drawable/addusernew"
                 android:title="Add Friend" />
             <item
+                android:id="@+id/nav_Destination"
+                android:icon="@drawable/markerdestination"
+                android:title="Mark Destination" />
+            <item
                 android:id="@+id/nav_Setfriend"
                 android:icon="@drawable/message"
                 android:title="Emergency sms Contact" />

@@ -146,7 +146,7 @@ public class DestinationMapActivity extends MainActivity implements GoogleMap.On
             return;
         }
         mMap.setMyLocationEnabled(true);
-  
+
     }
 
     @Override
