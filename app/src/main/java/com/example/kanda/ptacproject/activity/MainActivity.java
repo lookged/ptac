@@ -147,39 +147,12 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-////                        .setAction("Action", null).show();
-//
-////                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
-////                .setIcon(R.mipmap.ic_launcher)
-////                .setTitle("Send SMS")
-////                .setMessage("Are you sure you want to Send SMS?" )
-////                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-////                    @Override
-////                    public void onClick(DialogInterface dialog, int which) {
-////                        LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
-////                        Criteria criteria = new Criteria();
-////                        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-////                        double lat = location.getLatitude();
-////                        double lng = location.getLongitude();
-////                        String phoneNumber = "0992467337" ;
-////                        String message = "https://www.google.co.th/maps/place/"+lat+"+"+lng+"/@"+lat+","+lng+",20z";
-////                        sendSMS(phoneNumber, message);
-////                        Toast.makeText(getApplicationContext(), "Send SMS Complete. " , Toast.LENGTH_LONG).show();
-////                    }
-////
-////                })
-////                .setNegativeButton("No", null)
-////                .show();
-//            }
-//        });
+
     }
 
     public  void syncMarker() {
         db.delMarker();
+
         String tag_string_req = "req_marker_list";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_MARKER_LIST, new Response.Listener<String>() {

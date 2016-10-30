@@ -21,7 +21,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.kanda.ptacproject.R;
-import com.example.kanda.ptacproject.activity.DestinationMapActivity;
 import com.example.kanda.ptacproject.activity.LoginActivity;
 import com.example.kanda.ptacproject.activity.MainActivity;
 import com.example.kanda.ptacproject.app.AppConfig;
@@ -95,7 +94,10 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
         } else if (id == R.id.nav_Setfriend) {
             setFriend();
         } else if (id == R.id.nav_Destination) {
-            editProFile();
+//            Intent i = new Intent(getActivity(), DestinationMarkFragment.class);
+//
+//
+//            startActivity(i);
         } else if (id == R.id.nav_Logout) {
             logoutUser();
 

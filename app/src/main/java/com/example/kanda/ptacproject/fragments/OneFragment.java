@@ -8,8 +8,10 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -87,12 +89,13 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
     public AutoCompleteTextView descriptionMarker;
     public EditText Edorigin ;
     public Button Btnlocation;
-
+    private SQLiteHandler sqldb;
     MapView mMapView;
     LocationManager locationManager;
     MarkerOptions myLocation;
     View rootView;
     View inflator;
+    private  MainActivity mainActivity;
     private int lengthMap = 1000;
     private GoogleMap mGoogleMap;
     private int maxDate = -7;
@@ -111,19 +114,11 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
     String[] lengthdistance = {"ระยะ 1 กม.","ระยะ 5 กม.","ระยะ 10 กม."};
 
 
-    private SQLiteHandler db;
+
     private long then = 0;
     private int longClickDuration = 3000;
 
-    public static String getDate(long milliSeconds, String dateFormat) {
-        // Create a DateFormatter object for displaying date in specified format.
-        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
 
-        // Create a calendar object that will convert the date and time value in milliseconds to date.
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        return formatter.format(calendar.getTime());
-    }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -236,21 +231,6 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
             }
         });
 
-//
-//        lengthSpinner = (Spinner) rootView.findViewById(R.id.spinner_length);
-//        createLengthData();
-//        ArrayAdapter<String> lengthspinner = new ArrayAdapter<String>(getActivity(),
-//                android.R.layout.simple_spinner_dropdown_item, lSpinner);
-//        lengthSpinner.setAdapter(lengthspinner);
-//
-//        dateSpinner = (Spinner) rootView.findViewById(R.id.spinner_maxdate);
-//        createLengthData();
-//        ArrayAdapter<String> datespinner = new ArrayAdapter<String>(getActivity(),
-//                android.R.layout.simple_spinner_dropdown_item, dSpinner);
-//        lengthSpinner.setAdapter(datespinner);
-
-
-
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
@@ -269,6 +249,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
     @Override
     public void onMapReady(GoogleMap googleMap) {
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
+
         mGoogleMap = googleMap;
 
         mGoogleMap.setOnMapClickListener(this);
@@ -279,6 +260,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
         googleMap.setMyLocationEnabled(true);
         googleMap.setPadding(50,80,0,60);
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+        googleMap.isIndoorEnabled();
         Criteria criteria = new Criteria();
         Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
         if (location != null) {
@@ -713,6 +695,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
 
 
         builder.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 try {
@@ -761,6 +744,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
                         addMarker(accid, titlemarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
 
 
+
                         Toast.makeText(getActivity(), ratemarker , Toast.LENGTH_SHORT).show();
                     } else {
 
@@ -805,17 +789,17 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
                         JSONObject user = jObj.getJSONObject("user");
                         int accid = user.getInt("accid");
                         String titelmarker = user.getString("titelmarker");
-                        String description = user.getString("description");
-                        Double latmarker = user.optDouble("latmarker");
-                        Double lngmarker = user.optDouble("lngmarker");
+                        String descriptionmark = user.getString("description");
+                        Double latmarker = user.getDouble("latmarker");
+                        Double lngmarker = user.getDouble("lngmarker");
                         String Datemarker = user.getString("Datemarker");
                         int ratemarkers = user.getInt("ratemarkers");
                         String usermarker = user.getString("usermarker");
 
 
-
-                        db.syncMarker(accid, titelmarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
-                        ((MainActivity) getActivity()).markerList = db.getMarkerList();
+//
+//                        db.syncMarker(accid, titelmarker, descriptionmark, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
+//                        ((MainActivity) getActivity()).markerList = db.getMarkerList();
 
                     } else {
 
