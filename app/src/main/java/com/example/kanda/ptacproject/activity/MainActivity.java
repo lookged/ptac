@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 //                            String longUrl = "http://somelink.com/very/long/url";
 //                            String shortUrl = URLShortener.short(longUrl);
 
-        final String message = MainActivity.session.getLoginEmail() + " being in danger " +shorturl ;
+
 //        Toast.makeText(getApplicationContext(),shorturl, Toast.LENGTH_LONG).show();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                         if (shorturl!=null) {
+                            final String message = MainActivity.session.getLoginEmail() + " being in danger " +shorturl ;
                            sendSMS(phoneNumber, message);
                         Toast.makeText(getApplicationContext(), "Send SMS Complete. "+shorturl, Toast.LENGTH_LONG).show();
                         }
