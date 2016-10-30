@@ -12,6 +12,9 @@ public class AppConfig {
     public static String URL_LOCATIONFRIEND_LIST = "https://www.ptacproject.com/android_login_api/getlocationfriend.php";
     public static String URL_SEARCH_DESTINATION = "https://www.ptacproject.com/android_login_api/searchdestination.php";
     public static String URL_Information = "https://www.ptacproject.com/android_login_api/getinformation.php";
+    public static String URL_ADD_FRIENDNUMBER = "https://www.ptacproject.com/android_login_api/addFriendnumber.php";
+    public static String URL_CHECK_NUMBERFRIEND = "https://www.ptacproject.com/android_login_api/getcheckfriendnumber.php";
+    public static String URL_SEARCH_NUMBERFRIEND = "https://www.ptacproject.com/android_login_api/getfriendnumber.php";
 
     public static String URL_SEARCH_FRIEND = "https://www.ptacproject.com/android_login_api/searchfriend.php";
     public static String URL_CHECK_REQUEST = "https://www.ptacproject.com/android_login_api/checkrequest.php";

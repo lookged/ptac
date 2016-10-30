@@ -130,6 +130,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
 
+
+
     /**
      * Getting user data from database
      */

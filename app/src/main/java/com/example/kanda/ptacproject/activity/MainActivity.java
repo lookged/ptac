@@ -56,19 +56,21 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     public static SessionManager session;
     public ArrayList<Marker> markerList = null;
-
+    public ArrayList<String[]> friendList = null;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private SQLiteHandler db;
     private long then = 0;
     String shorturl ;
+     String phoneNumber;
     private int longClickDuration = 1200;
-
+    String uiduser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,10 +82,10 @@ public class MainActivity extends AppCompatActivity {
             //logoutUser();
         }
         Log.d(TAG, "onCreate");
-        HashMap<String, String> user = db.getUserDetails();
+
         getSupportFragmentManager().addOnBackStackChangedListener(getListener());
-        String name = user.get("name");
-        String email = user.get("email");
+//        uIdUser();
+//        Toast.makeText(getApplicationContext(),uiduser, Toast.LENGTH_LONG).show();
 
         // new coming
 //        toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -102,7 +104,8 @@ public class MainActivity extends AppCompatActivity {
         Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
         double lat = location.getLatitude();
         double lng = location.getLongitude();
-        final String phoneNumber = "0992467337" ;
+        syncFriendNumber(MainActivity.session.getLoginEmail());
+
         String longurl = "https://www.google.co.th/maps/place/" + lat + "+" + lng + "/@" + lat + "," + lng;
         shortUrl(longurl);
 //                            String longUrl = "http://somelink.com/very/long/url";
@@ -123,8 +126,8 @@ public class MainActivity extends AppCompatActivity {
 
 
                         if (shorturl!=null) {
-                            sendSMS(phoneNumber, message);
-                        Toast.makeText(getApplicationContext(), "Send SMS Complete. " , Toast.LENGTH_LONG).show();
+                           sendSMS(phoneNumber, message);
+                        Toast.makeText(getApplicationContext(), "Send SMS Complete. "+shorturl, Toast.LENGTH_LONG).show();
                         }
 //                        Toast.makeText(getApplicationContext(),res, Toast.LENGTH_LONG).show();
                         Vibrator vtr = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -148,6 +151,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+    public String uIdUser(){
+        HashMap<String, String> user = db.getUserDetails();
+
+        uiduser = user.get("uid");
+        return uiduser;
     }
 
     public  void syncMarker() {
@@ -321,6 +330,60 @@ public class MainActivity extends AppCompatActivity {
             // return null to display only the icon
             return null;
         }
+    }
+
+    private void syncFriendNumber(final String email) {
+
+        String tag_string_req = "req_marker_list";
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_CHECK_NUMBERFRIEND, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+                    JSONArray arr;
+                    arr = new JSONArray(response);
+                    if (arr.length() != 0) {
+                        friendList = new ArrayList<>();
+                        for (int i = 0; i < arr.length(); i++) {
+                            JSONObject obj = (JSONObject) arr.get(i);
+
+                            phoneNumber = "0"+obj.getString("friendnumber");
+
+
+
+
+
+
+                        }
+
+
+                    }
+                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                    Log.e(TAG, "Json error: " + e.getMessage());
+//                    Toast.makeText(mContext, "no friend", Toast.LENGTH_LONG).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Load Friend List Error: " + error.getMessage());
+                //Toast.makeText(getActivity(), (error.getMessage() == null ? "haha" : "eiei"), Toast.LENGTH_LONG).show();
+
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+
+                return params;
+            }
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+
     }
 }
 

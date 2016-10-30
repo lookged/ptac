@@ -23,6 +23,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.kanda.ptacproject.R;
 import com.example.kanda.ptacproject.activity.LoginActivity;
 import com.example.kanda.ptacproject.activity.MainActivity;
+import com.example.kanda.ptacproject.activity.SmsContactActivity;
 import com.example.kanda.ptacproject.app.AppConfig;
 import com.example.kanda.ptacproject.app.AppController;
 import com.example.kanda.ptacproject.helper.SQLiteHandler;
@@ -92,7 +93,10 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
         } else if (id == R.id.nav_AddFriend) {
             addFriend();
         } else if (id == R.id.nav_Setfriend) {
-            setFriend();
+            Intent i = new Intent(getActivity(), SmsContactActivity.class);
+
+
+            startActivity(i);
         } else if (id == R.id.nav_Destination) {
 //            Intent i = new Intent(getActivity(), DestinationMarkFragment.class);
 //
@@ -106,34 +110,34 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
 
         return true;
     }
+//
+//    private void setDestination() {
+//        AlertDialog.Builder buildersetfriend = new AlertDialog.Builder(getActivity());
+//        final View setfriend = LayoutInflater.from(getActivity()).inflate(R.layout.setcontact, null);
+//        buildersetfriend.setView(setfriend);
+//        buildersetfriend.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int id) {
+//                Toast.makeText(getActivity(), " Complete. ", Toast.LENGTH_LONG).show();
+//            }
+//        }).setNegativeButton("cancel", null).show();
+//
+//
+//    }
 
-    private void setDestination() {
-        AlertDialog.Builder buildersetfriend = new AlertDialog.Builder(getActivity());
-        final View setfriend = LayoutInflater.from(getActivity()).inflate(R.layout.setcontact, null);
-        buildersetfriend.setView(setfriend);
-        buildersetfriend.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                Toast.makeText(getActivity(), " Complete. ", Toast.LENGTH_LONG).show();
-            }
-        }).setNegativeButton("cancel", null).show();
-
-
-    }
-
-    private void setFriend() {
-        AlertDialog.Builder buildersetfriend = new AlertDialog.Builder(getActivity());
-        final View setfriend = LayoutInflater.from(getActivity()).inflate(R.layout.setcontact, null);
-        buildersetfriend.setView(setfriend);
-        buildersetfriend.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                Toast.makeText(getActivity(), " Complete. ", Toast.LENGTH_LONG).show();
-            }
-        }).setNegativeButton("cancel", null).show();
-
-
-    }
+//    private void setFriend() {
+//        AlertDialog.Builder buildersetfriend = new AlertDialog.Builder(getActivity());
+//        final View setfriend = LayoutInflater.from(getActivity()).inflate(R.layout.setcontact, null);
+//        buildersetfriend.setView(setfriend);
+//        buildersetfriend.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int id) {
+//                Toast.makeText(getActivity(), " Complete. ", Toast.LENGTH_LONG).show();
+//            }
+//        }).setNegativeButton("cancel", null).show();
+//
+//
+//    }
 
     private void proFile() {
         AlertDialog.Builder builderprofile = new AlertDialog.Builder(getActivity());

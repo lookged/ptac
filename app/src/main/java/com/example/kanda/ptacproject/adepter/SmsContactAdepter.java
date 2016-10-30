@@ -1,9 +1,5 @@
 package com.example.kanda.ptacproject.adepter;
 
-/**
- * Created by Kanda on 9/3/2016.
- */
-
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -15,10 +11,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -28,35 +20,47 @@ import com.example.kanda.ptacproject.activity.DestinationMapActivity;
 import com.example.kanda.ptacproject.activity.MainActivity;
 import com.example.kanda.ptacproject.app.AppConfig;
 import com.example.kanda.ptacproject.app.AppController;
-import com.example.kanda.ptacproject.fragments.TwoFragment;
+import com.example.kanda.ptacproject.helper.SQLiteHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class FriendListAdepter extends BaseAdapter {
-    public static final String TAG = FriendListAdepter.class.getSimpleName();
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Created by NamPeung on 30-Oct-16.
+ */
+
+public class SmsContactAdepter extends BaseAdapter {
+    public static final String TAG = SmsContactAdepter.class.getSimpleName();
     private Context mContext;
     private ArrayList<String[]> friendList;
-    public String latdestination ;
-    public String lngdestination ;
-    public String latcurrent ;
-    public String lngcurrent ;
+    public int phonenofriend;
+    public String emailfriend;
+    private SQLiteHandler db;
+    String uiduser ;
 
 
-    public static class ViewHolder {
-         Button friendLocation;
+
+    public class ViewHolder {
+        Button friendLocation;
         TextView friendNameTV;
 
         public ViewHolder(View view) {
             friendNameTV = (TextView) view.findViewById(R.id.friend_name);
-            friendLocation =(Button) view.findViewById(R.id.check_location);
-            friendLocation.setVisibility(View.INVISIBLE);
+            friendLocation =(Button) view.findViewById(R.id.check_friendno);
+
+
+
+
         }
     }
 
-    public FriendListAdepter(Context context, ArrayList<String[]> friendList) {
-        mContext = context;
+    public SmsContactAdepter(Context context, ArrayList<String[]> friendList) {
+        this.mContext = context;
         this.friendList = friendList;
         Log.d(TAG, "Constructor");
     }
@@ -82,22 +86,29 @@ public class FriendListAdepter extends BaseAdapter {
         Log.d(TAG, "getView");
         View view = convertView;
         if (view == null) {
-            view = LayoutInflater.from(mContext).inflate(R.layout.friend_list, viewGroup, false);
+            view = LayoutInflater.from(mContext).inflate(R.layout.friendlistsms, viewGroup, false);
         }
         final String[] str = getItem(i);
         if (str != null) {
-            final ViewHolder viewHolder = new ViewHolder(view);
+             final ViewHolder viewHolder = new ViewHolder(view);
             viewHolder.friendNameTV.setText(str[0]);
-            checkDestination(str[0],view);
+
+
+//                        Toast.makeText(mContext,
+//                                "you can add this user", Toast.LENGTH_LONG).show();
+
             viewHolder.friendLocation.setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View v)
                 {
                     try {
+
                         String emailfriend = str[0].trim();
-                        syncFriendLocation(emailfriend);
-//                        Toast.makeText(mContext, "no friend"+latdestination, Toast.LENGTH_LONG).show();
+                        String emailuid = MainActivity.session.getLoginId();
+//                       Toast.makeText(mContext,emailuid+emailfriend, Toast.LENGTH_LONG).show();
+                        syncFriendNumber(emailfriend,emailuid);
+
 
 
 
@@ -110,11 +121,13 @@ public class FriendListAdepter extends BaseAdapter {
         }
         return view;
     }
-    private void syncFriendLocation(final String emailfriend) {
+
+
+    private void syncFriendNumber(final String friendemail, final String uid) {
 
         String tag_string_req = "req_marker_list";
         StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_LOCATIONFRIEND_LIST, new Response.Listener<String>() {
+                AppConfig.URL_SEARCH_NUMBERFRIEND, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
@@ -126,18 +139,13 @@ public class FriendListAdepter extends BaseAdapter {
                         for (int i = 0; i < arr.length(); i++) {
                             JSONObject obj = (JSONObject) arr.get(i);
 
-                            latdestination = obj.getString("latdestination");
-                            lngdestination = obj.getString("lngdestination");
-                            latcurrent = obj.getString("latcurrentlocation");
-                            lngcurrent = obj.getString("lngcurrentlocation");
-//                            Intent intent=new Intent(mContext,DestinationMapActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                            intent.putExtra("latdestination", latdestination.toString());
-//                            intent.putExtra("lngdestination", lngdestination.toString());
-//                            intent.putExtra("latcurrent", latcurrent.toString());
-//                            intent.putExtra("lngcurrent", lngcurrent.toString());
-//
-//                            mContext.startActivity(intent);
-                            Toast.makeText(mContext, "no friend"+latdestination, Toast.LENGTH_LONG).show();
+                            emailfriend = obj.getString("email");
+                            phonenofriend = obj.getInt("phoneno");
+
+                            String email = MainActivity.session.getLoginEmail();
+
+                            addNumberFriend(email,phonenofriend,emailfriend);
+                            Toast.makeText(mContext, "no friend"+email, Toast.LENGTH_LONG).show();
                         }
 
 
@@ -159,8 +167,8 @@ public class FriendListAdepter extends BaseAdapter {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("emailfriend", emailfriend);
-
+                params.put("friendemail", friendemail);
+                params.put("uid", uid);
                 return params;
             }
         };
@@ -169,13 +177,13 @@ public class FriendListAdepter extends BaseAdapter {
 
     }
 
-    public void checkDestination(final String email,View convertView) {
+    public void addNumberFriend(final String email,final int friendnumber ,final String friendemail) {
         String tag_string_req = "req_searchfriend";
-        final View view = convertView;
+
 
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_SEARCH_DESTINATION, new Response.Listener<String>() {
+                AppConfig.URL_ADD_FRIENDNUMBER, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
@@ -187,15 +195,10 @@ public class FriendListAdepter extends BaseAdapter {
 
                     // Check for error node in json
                     if (!error) {
-                        final ViewHolder viewHolder = new ViewHolder(view);
-//                        Toast.makeText(mContext,
-//                                "you can add this user", Toast.LENGTH_LONG).show();
-                       viewHolder.friendLocation.setVisibility(View.VISIBLE);
+
+
                     } else {
-                        // Error in login. Get the error message
-                        String errorMsg = "user not found";
-//                        Toast.makeText(mContext,
-//                                errorMsg, Toast.LENGTH_LONG).show();
+
                     }
                 } catch (JSONException e) {
                     // JSON error
@@ -221,7 +224,8 @@ public class FriendListAdepter extends BaseAdapter {
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("email", email);
-
+                params.put("friendnumber", Integer.toString(friendnumber));
+                params.put("friendemail", friendemail);
                 return params;
             }
 
