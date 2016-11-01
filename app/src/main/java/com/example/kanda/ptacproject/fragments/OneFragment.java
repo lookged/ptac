@@ -52,6 +52,7 @@ import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -141,6 +142,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
 
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
         mMapView = (MapView) rootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
@@ -186,7 +188,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
 
 
             googleMap.setMyLocationEnabled(true);
-            googleMap.setPadding(50, 80, 0, 60);
+
 //        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
 //
             Criteria criteria = new Criteria();

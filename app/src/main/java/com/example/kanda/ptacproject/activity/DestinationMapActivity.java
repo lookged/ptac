@@ -178,11 +178,45 @@ public class DestinationMapActivity extends MainActivity implements GoogleMap.On
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
                         }
+
                         myLocation = new MarkerOptions().position(
                                 new LatLng(m.getAccLat(), m.getAccLong())
-                        ).title(title).snippet(m.getAccDescription() + " " + m.getDate()).icon(iconMarker);
-                        mMapMark.addMarker(myLocation);
+                        ).title(title).snippet(m.getAccDescription() + "\n" + "\n" + " Time of Occurrence : " + m.getDate()+ "\n" ).icon(iconMarker);
 
+                        mMapMark.addMarker(myLocation);
+                        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+
+                            @Override
+                            public View getInfoWindow(com.google.android.gms.maps.model.Marker marker) {
+                                return null;
+                            }
+
+                            @Override
+                            public View getInfoContents(com.google.android.gms.maps.model.Marker marker) {
+
+                                View v = LayoutInflater.from(getApplication()).inflate(R.layout.descritionmarkdes, null);
+
+                                // Getting the position from the marker
+
+                                // Getting reference to the TextView to set latitude
+                                TextView tvLat = (TextView) v.findViewById(R.id.title);
+
+
+                                // Getting reference to the TextView to set longitude
+                                TextView tvLng = (TextView) v.findViewById(R.id.description);
+
+                                // Setting the latitude
+                                tvLat.setText("Title:" + marker.getTitle());
+
+                                // Setting the longitude
+                                tvLng.setText("Description :" + marker.getSnippet());
+
+                                return v;
+                            }
+
+
+                        });
                     }
                 }
 

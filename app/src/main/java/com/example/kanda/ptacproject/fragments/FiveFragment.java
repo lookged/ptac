@@ -21,8 +21,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.kanda.ptacproject.R;
+import com.example.kanda.ptacproject.activity.DestinationMapActivity;
 import com.example.kanda.ptacproject.activity.LoginActivity;
 import com.example.kanda.ptacproject.activity.MainActivity;
+import com.example.kanda.ptacproject.activity.MarkDestinationActivity;
 import com.example.kanda.ptacproject.activity.SmsContactActivity;
 import com.example.kanda.ptacproject.app.AppConfig;
 import com.example.kanda.ptacproject.app.AppController;
@@ -98,10 +100,11 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
 
             startActivity(i);
         } else if (id == R.id.nav_Destination) {
-//            Intent i = new Intent(getActivity(), DestinationMarkFragment.class);
-//
-//
-//            startActivity(i);
+            Intent i = new Intent(getActivity(), MarkDestinationActivity.class);
+
+
+            startActivity(i);
+//                            Toast.makeText(mContext, "no frien
         } else if (id == R.id.nav_Logout) {
             logoutUser();
 

@@ -1,34 +1,29 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.OneFragment">
-
-
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/map"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    android:orientation="vertical"
+    >
 
     <LinearLayout
-
-        android:layout_width="wrap_content"
-
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="1dp"
-        android:layout_marginTop="1dp"
-        android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="1dp"
-            android:layout_marginRight="1dp"
-            android:background="@color/white"
-            android:orientation="horizontal">
+        android:background="@color/white"
+        android:orientation="vertical"
+        >
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        >
 
             <EditText
                 android:id="@+id/etOrigin"
-                android:layout_width="280dp"
+                android:layout_width="290dp"
                 android:lines="1"
                 android:maxLines="1"
                 android:layout_height="wrap_content"
@@ -44,32 +39,24 @@
                 android:layout_height="wrap_content" />
 
         </LinearLayout>
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:background="@color/white"
+        android:orientation="horizontal">
 
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="1dp"
-            android:layout_marginTop="1dp">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="1dp"
-                android:background="@color/white">
 
                 <Spinner
                     android:id="@+id/spinner_length"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:backgroundTint="@color/colorAccent"></Spinner>
-            </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="1dp"
-                android:background="@color/white">
+
+
 
                 <Spinner
                     android:id="@+id/spinner_maxdate"
@@ -77,11 +64,17 @@
                     android:layout_height="40dp"
                     android:layout_marginLeft="5dp"
                     android:backgroundTint="@color/colorAccent"></Spinner>
-            </LinearLayout>
-
-
-        </LinearLayout>
-
 
     </LinearLayout>
-</RelativeLayout>
+    </LinearLayout>
+<com.google.android.gms.maps.MapView
+    android:id="@+id/map"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    />
+
+
+
+
+</LinearLayout>
