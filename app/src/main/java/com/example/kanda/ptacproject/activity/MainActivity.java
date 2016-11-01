@@ -99,15 +99,20 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons();
 
-        LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-        double lat = location.getLatitude();
-        double lng = location.getLongitude();
-        syncFriendNumber(MainActivity.session.getLoginEmail());
 
-        String longurl = "https://www.google.co.th/maps/place/" + lat + "+" + lng + "/@" + lat + "," + lng;
-        shortUrl(longurl);
+        try {
+            LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            double lat = location.getLatitude();
+            double lng = location.getLongitude();
+            syncFriendNumber(MainActivity.session.getLoginEmail());
+
+            String longurl = "https://www.google.co.th/maps/place/" + lat + "+" + lng + "/@" + lat + "," + lng;
+            shortUrl(longurl);
+        }catch (Exception e){
+
+        }
 //                            String longUrl = "http://somelink.com/very/long/url";
 //                            String shortUrl = URLShortener.short(longUrl);
 

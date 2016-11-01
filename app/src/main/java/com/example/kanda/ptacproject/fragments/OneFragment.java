@@ -75,27 +75,25 @@ import java.util.List;
 import java.util.Map;
 
 
-
-
-public class OneFragment extends Fragment implements DirectionFinderListener,OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
+public class OneFragment extends Fragment implements DirectionFinderListener, OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
 
     private static final String TAG = OneFragment.class.getSimpleName();
     public AutoCompleteTextView titleMarker;
-    public EditText descriptionDestination;
+    private ArrayList<String[]> friendList;
     public CalendarView calendarMarker;
-    public int rateMarker;
-    public ArrayList<Marker> markerList = null;
+
     public String Datemarker;
     public AutoCompleteTextView descriptionMarker;
-    public EditText Edorigin ;
+    public EditText Edorigin;
     public Button Btnlocation;
-    private SQLiteHandler sqldb;
+
     MapView mMapView;
     LocationManager locationManager;
     MarkerOptions myLocation;
     View rootView;
     View inflator;
-    private  MainActivity mainActivity;
+    Spinner spin;
+    Spinner spin2;
     private int lengthMap = 1000;
     private GoogleMap mGoogleMap;
     private int maxDate = -7;
@@ -104,20 +102,13 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
     private List<Polyline> polylinePaths = new ArrayList<>();
     private ProgressDialog progressDialog;
 
-    private Spinner lengthSpinner;
-    private Spinner dateSpinner;
+
     private ArrayList<String> lSpinner = new ArrayList<String>();
     private ArrayList<String> dSpinner = new ArrayList<String>();
-    LocationListener lis ;
-    String[] lengthdate = {"ระยะ 7 วัน","ระยะ 30 วัน","ระยะ 90 วัน","ระยะ 180 วัน","ระยะ 365 วัน"};
+    LocationListener lis;
+    String[] lengthdate = {"ระยะ 7 วัน", "ระยะ 30 วัน", "ระยะ 90 วัน", "ระยะ 180 วัน", "ระยะ 365 วัน"};
 
-    String[] lengthdistance = {"ระยะ 1 กม.","ระยะ 5 กม.","ระยะ 10 กม."};
-
-
-
-    private long then = 0;
-    private int longClickDuration = 3000;
-
+    String[] lengthdistance = {"ระยะ 1 กม.", "ระยะ 5 กม.", "ระยะ 10 กม."};
 
 
     @Override
@@ -125,17 +116,15 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
         rootView = inflater.inflate(R.layout.fragment_one, container, false);
         inflator = inflater.inflate(R.layout.dialog_marker, null);
 
-         Edorigin = (EditText) rootView.findViewById(R.id.etOrigin) ;
-         Btnlocation = (Button) rootView.findViewById(R.id.btnlocation) ;
+        Edorigin = (EditText) rootView.findViewById(R.id.etOrigin);
+        Btnlocation = (Button) rootView.findViewById(R.id.btnlocation);
 
 
-        Btnlocation.setOnClickListener(new View.OnClickListener()
-        {
+        Btnlocation.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 String origin = Edorigin.getText().toString().trim();
-                String destination = "บางแค";
+
                 if (origin.isEmpty()) {
                     Toast.makeText(getActivity(), "Please enter origin address!", Toast.LENGTH_SHORT).show();
                     return;
@@ -143,8 +132,8 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
                 try {
 
                     sendRequest(origin);
-                }catch (Exception e){
-                    Log.d(TAG, " "+e);
+                } catch (Exception e) {
+                    Log.d(TAG, " " + e);
                 }
 
             }
@@ -159,78 +148,19 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
         dSpinner.clear();
 
 
+        try {
+            spin = (Spinner) rootView.findViewById(R.id.spinner_length);
+            ArrayAdapter<String> aa = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, lengthdate);
+            aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spin.setAdapter(aa);
+            spin2 = (Spinner) rootView.findViewById(R.id.spinner_maxdate);
+            ArrayAdapter<String> bb = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, lengthdistance);
+            bb.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spin2.setAdapter(bb);
 
-        Spinner spin = (Spinner) (Spinner) rootView.findViewById(R.id.spinner_length);
-        ArrayAdapter<String> aa = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, lengthdate);
-        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spin.setAdapter(aa);
-       spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-           public void onItemSelected(AdapterView<?> parent, View view,
-                                      int position, long id) {
-               switch (position) {
-                   case 0:
-                       maxDate = -7;
-                       locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
-                       break;
-                   case 1:
-                       maxDate = -30;
-                       locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
-                       break;
-                   case 2:
-                       maxDate = -90;
-                       locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
-                       break;
-                   case 3:
-                       maxDate = -180;
-                       locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
-                       break;
-                   case 4:
-                       maxDate = -365;
-                       locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
-                       break;
+        } catch (Exception e) {
 
-               }
-
-           }
-
-           @Override
-           public void onNothingSelected(AdapterView<?> parent) {
-
-           }
-       });
-
-
-        Spinner spin2 = (Spinner) rootView.findViewById(R.id.spinner_maxdate);
-        ArrayAdapter<String> bb = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, lengthdistance);
-        bb.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spin2.setAdapter(bb);
-        spin2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
-                switch (position) {
-                    case 0:
-                        lengthMap = 1000;
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
-                        break;
-                    case 1:
-                        lengthMap = 5000;
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
-                        break;
-                    case 2:
-                        lengthMap = 10000;
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
-                        break;
-
-                }
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
+        }
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
@@ -244,193 +174,267 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
     }
 
 
-
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
+        try {
+            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher);
 
-        mGoogleMap = googleMap;
+            mGoogleMap = googleMap;
 
-        mGoogleMap.setOnMapClickListener(this);
-        mGoogleMap.setOnMapLongClickListener(this);
+            mGoogleMap.setOnMapClickListener(this);
+            mGoogleMap.setOnMapLongClickListener(this);
 
 
-
-        googleMap.setMyLocationEnabled(true);
-        googleMap.setPadding(50,80,0,60);
-        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-        googleMap.isIndoorEnabled();
-        Criteria criteria = new Criteria();
-        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-        if (location != null) {
-            LatLng latLngLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            googleMap.setMyLocationEnabled(true);
+            googleMap.setPadding(50, 80, 0, 60);
+//        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+//
+            Criteria criteria = new Criteria();
+            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            if (location != null) {
+                LatLng latLngLocation = new LatLng(location.getLatitude(), location.getLongitude());
 //        myLocation = new MarkerOptions().position(latLngLocation).title("Marker Title").snippet("Marker Description").icon(icon);
 //        googleMap.addMarker(myLocation);
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(latLngLocation).zoom(15).build();
-            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(latLngLocation).zoom(15).build();
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-             lis = new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-
-                    if (((MainActivity) getActivity()).markerList != null) {
-
-                        mGoogleMap.clear();
+                lis = new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
 
 
-                        for (final Marker m : ((MainActivity) getActivity()).markerList) {
-                            final BitmapDescriptor iconMarker;
-                            if (isShowMarker(location, m)) {
-                                try {
-                                    long yourmilliseconds = System.currentTimeMillis();
+                        try {
+                            String emailuser = MainActivity.session.getLoginEmail();
+                            String uiduser = MainActivity.session.getLoginId();
+                            Double latcuruser = location.getLatitude();
+                            Double lngcuruser = location.getLongitude();
+//                        Toast.makeText(getActivity(), "emailuser" + emailuser+"\n"+"uiduser" + uiduser+"\n"+"latcuruser" + latcuruser+"\n"+"lngcuruser" + lngcuruser+"\n", Toast.LENGTH_LONG).show();
+                            checkstatusdestination(emailuser, latcuruser, lngcuruser, uiduser);
+//                        updateCurLocation(emailuser,latcuruser,lngcuruser ,uiduser);
+                        } catch (Exception e) {
 
-                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                                    Date resultdate = new Date(yourmilliseconds);
-                                    String todate= sdf.format(resultdate);
-                                    String dateInString = todate;  // Start date
+                        }
+                        if (((MainActivity) getActivity()).markerList != null) {
 
-
-                                    Calendar c = Calendar.getInstance(); // Get Calendar Instance
-                                    c.setTime(sdf.parse(dateInString));
-
-                                    c.add(Calendar.DATE, maxDate);  // add 45 days
-                                    sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-                                    Date resultdate1 = new Date(c.getTimeInMillis());   // Get new time
-                                    dateInString = sdf.format(resultdate1);
-
-                                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                                    formatter.setLenient(false);
-                                    Date curDate = new Date();
+                            mGoogleMap.clear();
 
 
-                                    String oldTime = m.getDate();
-                                    Date oldDate = formatter.parse(oldTime);
-                                    long oldMillis = oldDate.getTime();
+                            for (final Marker m : ((MainActivity) getActivity()).markerList) {
+                                final BitmapDescriptor iconMarker;
+                                if (isShowMarker(location, m)) {
+                                    try {
+                                        long yourmilliseconds = System.currentTimeMillis();
+
+                                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                        Date resultdate = new Date(yourmilliseconds);
+                                        String todate = sdf.format(resultdate);
+                                        String dateInString = todate;  // Start date
 
 
-                                    String maxTime = dateInString;
-                                    Date maxDate = formatter.parse(maxTime);
-                                    long maxMillis = maxDate.getTime();
+                                        Calendar c = Calendar.getInstance(); // Get Calendar Instance
+                                        c.setTime(sdf.parse(dateInString));
+
+                                        c.add(Calendar.DATE, maxDate);  // add 45 days
+                                        sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+                                        Date resultdate1 = new Date(c.getTimeInMillis());   // Get new time
+                                        dateInString = sdf.format(resultdate1);
+
+                                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                                        formatter.setLenient(false);
+                                        Date curDate = new Date();
+
+
+                                        String oldTime = m.getDate();
+                                        Date oldDate = formatter.parse(oldTime);
+                                        long oldMillis = oldDate.getTime();
+
+
+                                        String maxTime = dateInString;
+                                        Date maxDate = formatter.parse(maxTime);
+                                        long maxMillis = maxDate.getTime();
 //                                    Toast.makeText(getActivity(), "rateMarker" + maxMillis, Toast.LENGTH_LONG).show();
 
-                                    if(oldMillis>=maxMillis){
+                                        if (oldMillis >= maxMillis) {
 
 
-                                    if (m.getRateId() == 105) {
-                                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefive);
+                                            if (m.getRateId() == 105) {
+                                                iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefive);
 
-                                    } else if (m.getRateId() == 104) {
-                                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefour);
+                                            } else if (m.getRateId() == 104) {
+                                                iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimefour);
 
-                                    } else if (m.getRateId() == 103) {
-                                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimethree);
+                                            } else if (m.getRateId() == 103) {
+                                                iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimethree);
 
-                                    } else if (m.getRateId() == 102) {
-                                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimetwo);
+                                            } else if (m.getRateId() == 102) {
+                                                iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimetwo);
 
-                                    } else {
-                                        iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimeone);
+                                            } else {
+                                                iconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.crimeone);
 
-                                    }
-                                    byte[] stringBytes = m.getAccTitle().getBytes();
-                                    String title = "Unsupported Text";
-                                    try {
-                                        title = new String(stringBytes, "UTF-8");
-                                    } catch (UnsupportedEncodingException e) {
-                                        e.printStackTrace();
-                                    }
-
-
-                                    myLocation = new MarkerOptions().position(
-                                            new LatLng(m.getAccLat(), m.getAccLong())
-                                    ).title(title).snippet(m.getAccDescription() + "\n" + "\n" + " Time of Occurrence : " + m.getDate()).icon(iconMarker);
+                                            }
+                                            byte[] stringBytes = m.getAccTitle().getBytes();
+                                            String title = "Unsupported Text";
+                                            try {
+                                                title = new String(stringBytes, "UTF-8");
+                                            } catch (UnsupportedEncodingException e) {
+                                                e.printStackTrace();
+                                            }
 
 
-                                    mGoogleMap.setInfoWindowAdapter(new InfoWindowAdapter() {
+                                            myLocation = new MarkerOptions().position(
+                                                    new LatLng(m.getAccLat(), m.getAccLong())
+                                            ).title(title).snippet(m.getAccDescription() + "\n" + "\n" + " Time of Occurrence : " + m.getDate()).icon(iconMarker);
 
 
-                                        @Override
-                                        public View getInfoWindow(com.google.android.gms.maps.model.Marker marker) {
-                                            return null;
-                                        }
-
-                                        @Override
-                                        public View getInfoContents(com.google.android.gms.maps.model.Marker marker) {
-                                            // Getting view from the layout file info_window_layout
-                                            View v = LayoutInflater.from(getActivity()).inflate(R.layout.description_marker, null);
-
-                                            // Getting the position from the marker
-
-                                            // Getting reference to the TextView to set latitude
-                                            TextView tvLat = (TextView) v.findViewById(R.id.tv_title);
-                                            Button reportmark1 = (Button) v.findViewById(R.id.mark_report);
-
-                                            // Getting reference to the TextView to set longitude
-                                            TextView tvLng = (TextView) v.findViewById(R.id.tv_description);
-
-                                            // Setting the latitude
-                                            tvLat.setText("Title:" + marker.getTitle());
-
-                                            // Setting the longitude
-                                            tvLng.setText("Description :" + marker.getSnippet());
-                                            reportmark1.setOnClickListener(new View.OnClickListener() {
-
-                                                public void onClick(View view) {
-                                                    Toast.makeText(getActivity(),
-                                                            "Report complete!!", Toast.LENGTH_LONG).show();
+                                            mGoogleMap.setInfoWindowAdapter(new InfoWindowAdapter() {
 
 
+                                                @Override
+                                                public View getInfoWindow(com.google.android.gms.maps.model.Marker marker) {
+                                                    return null;
                                                 }
 
+                                                @Override
+                                                public View getInfoContents(com.google.android.gms.maps.model.Marker marker) {
+                                                    // Getting view from the layout file info_window_layout
+                                                    View v = LayoutInflater.from(getActivity()).inflate(R.layout.description_marker, null);
+
+                                                    // Getting the position from the marker
+
+                                                    // Getting reference to the TextView to set latitude
+                                                    TextView tvLat = (TextView) v.findViewById(R.id.tv_title);
+                                                    Button reportmark1 = (Button) v.findViewById(R.id.mark_report);
+
+                                                    // Getting reference to the TextView to set longitude
+                                                    TextView tvLng = (TextView) v.findViewById(R.id.tv_description);
+
+                                                    // Setting the latitude
+                                                    tvLat.setText("Title:" + marker.getTitle());
+
+                                                    // Setting the longitude
+                                                    tvLng.setText("Description :" + marker.getSnippet());
+                                                    reportmark1.setOnClickListener(new View.OnClickListener() {
+
+                                                        public void onClick(View view) {
+                                                            Toast.makeText(getActivity(),
+                                                                    "Report complete!!", Toast.LENGTH_LONG).show();
+
+
+                                                        }
+
+                                                    });
+                                                    return v;
+                                                }
+
+
                                             });
-                                            return v;
+
+                                            mGoogleMap.addMarker(myLocation);
                                         }
-
-
-                                    });
-
-                                    mGoogleMap.addMarker(myLocation);
-                                    }
-                                }catch (Exception e){
+                                    } catch (Exception e) {
 //                                    Toast.makeText(getActivity(), "rateMarker" , Toast.LENGTH_SHORT).show();
+                                    }
+
+
                                 }
-
-
                             }
-                        }
 
+
+                        }
+                    }
+
+                    @Override
+                    public void onStatusChanged(String provider, int status, Bundle extras) {
 
                     }
-                }
 
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
+                    @Override
+                    public void onProviderEnabled(String provider) {
 
-                }
+                    }
 
-                @Override
-                public void onProviderEnabled(String provider) {
+                    @Override
+                    public void onProviderDisabled(String provider) {
 
-                }
+                    }
+                };
 
-                @Override
-                public void onProviderDisabled(String provider) {
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
 
-                }
-            };
-
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, lis);
+            }
+        } catch (Exception e) {
 
         }
+        spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+                switch (position) {
+                    case 0:
+                        maxDate = -7;
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                        break;
+                    case 1:
+                        maxDate = -30;
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                        break;
+                    case 2:
+                        maxDate = -90;
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                        break;
+                    case 3:
+                        maxDate = -180;
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                        break;
+                    case 4:
+                        maxDate = -365;
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                        break;
+
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        spin2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+                switch (position) {
+                    case 0:
+                        lengthMap = 1000;
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                        break;
+                    case 1:
+                        lengthMap = 5000;
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                        break;
+                    case 2:
+                        lengthMap = 10000;
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                        break;
+
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void sendRequest(String originn) {
 //        String origin = etOrigin.getText().toString();
 //        String destination = etDestination.getText().toString();
         String origin = originn.toString().trim();
-        String destination = ""+13.669110+","+100.512731;
+        String destination = "" + 13.669110 + "," + 100.512731;
 
 
         try {
@@ -439,6 +443,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
             e.printStackTrace();
         }
     }
+
     @Override
     public void onDirectionFinderStart() {
         progressDialog = ProgressDialog.show(getActivity(), "Please wait.",
@@ -556,13 +561,12 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
     public void onMapClick(final LatLng latLng) {
 
         final AlertDialog.Builder builderdialog = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+
         final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_destination, null);
         builderdialog.setView(dialogView);
 
 
         if (((MainActivity) getActivity()).markerList != null) {
-
 
 
             for (Marker m : ((MainActivity) getActivity()).markerList) {
@@ -586,10 +590,58 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
+
+
                     myLocation = new MarkerOptions().position(
                             new LatLng(m.getAccLat(), m.getAccLong())
-                    ).title(title).snippet(m.getAccDescription() + " " + m.getDate()).icon(iconMarker);
+                    ).title(title).snippet(m.getAccDescription() + "\n" + "\n" + " Time of Occurrence : " + m.getDate()).icon(iconMarker);
+
+
+                    mGoogleMap.setInfoWindowAdapter(new InfoWindowAdapter() {
+
+
+                        @Override
+                        public View getInfoWindow(com.google.android.gms.maps.model.Marker marker) {
+                            return null;
+                        }
+
+                        @Override
+                        public View getInfoContents(com.google.android.gms.maps.model.Marker marker) {
+                            // Getting view from the layout file info_window_layout
+                            View v = LayoutInflater.from(getActivity()).inflate(R.layout.description_marker, null);
+
+                            // Getting the position from the marker
+
+                            // Getting reference to the TextView to set latitude
+                            TextView tvLat = (TextView) v.findViewById(R.id.tv_title);
+                            Button reportmark1 = (Button) v.findViewById(R.id.mark_report);
+
+                            // Getting reference to the TextView to set longitude
+                            TextView tvLng = (TextView) v.findViewById(R.id.tv_description);
+
+                            // Setting the latitude
+                            tvLat.setText("Title:" + marker.getTitle());
+
+                            // Setting the longitude
+                            tvLng.setText("Description :" + marker.getSnippet());
+                            reportmark1.setOnClickListener(new View.OnClickListener() {
+
+                                public void onClick(View view) {
+                                    Toast.makeText(getActivity(),
+                                            "Report complete!!", Toast.LENGTH_LONG).show();
+
+
+                                }
+
+                            });
+                            return v;
+                        }
+
+
+                    });
+
                     mGoogleMap.addMarker(myLocation);
+
 
                 }
             }
@@ -617,21 +669,18 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
 
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // Get the layout inflater
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+
         final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_marker, null);
         builder.setView(dialogView);
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
+
 
         titleMarker = (AutoCompleteTextView) dialogView.findViewById(R.id.title_Marker);
         descriptionMarker = (AutoCompleteTextView) dialogView.findViewById(R.id.description_Marker);
 
-        long endOfMonth = System.currentTimeMillis();
+
         calendarMarker = (CalendarView) dialogView.findViewById(R.id.Calendar_Marker);
         RadioGroup rateMarker = (RadioGroup) dialogView.findViewById(R.id.radioGroup_marker);
-//        rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
-//                Toast.makeText(getActivity(), "rateMarker" + rateMarker, Toast.LENGTH_SHORT).show();
+
 
         final TextView textCategory = (TextView) dialogView.findViewById(R.id.textcategory);
 
@@ -640,7 +689,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
         rateMarker.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
-            public void onCheckedChanged (RadioGroup group,int checkedId){
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
 
                 Log.d("chk", "id" + checkedId);
 
@@ -648,44 +697,22 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
                     textCategory.setText("ชิงทรัพย์");
                 } else if (checkedId == R.id.radio_lvl2) {
                     textCategory.setText("ทำร้านร่างกาย");
-                }else if (checkedId == R.id.radio_lvl3) {
+                } else if (checkedId == R.id.radio_lvl3) {
                     textCategory.setText("ชิงทรัพย์และทำร้านร่างกาย");
-                }else if (checkedId == R.id.radio_lvl4) {
+                } else if (checkedId == R.id.radio_lvl4) {
                     textCategory.setText("ข่มขืนและกระทำอนาจาร");
-                }else if (checkedId == R.id.radio_lvl5) {
+                } else if (checkedId == R.id.radio_lvl5) {
                     textCategory.setText("ทำร้ายร่างกายจนเสียชีวิต");
                 }
             }
         });
 
 
-//        switch (rateMarker) {
-//
-//            case R.id.radio_lvl1:
-//                textCategory.setText("ชิงทรัพย์");
-//                break;
-//            case R.id.radio_lvl2:
-//                textCategory.setText("ทำร้านร่างกาย");
-//                break;
-//            case R.id.radio_lvl3:
-//                textCategory.setText("ชิงทรัพย์และทำร้านร่างกาย");
-//                break;
-//            case R.id.radio_lvl4:
-//                textCategory.setText("ข่มขืนและกระทำอนาจาร");
-//                break;
-//            case R.id.radio_lvl5:
-//                textCategory.setText("ทำร้ายร่างกายจนเสียชีวิต");
-//                break;
-//        }
-
-
         calendarMarker.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
 
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-d");
-                String dateNew = sdf.format(new Date());
-                String selectDate = "" + year + "-" + month + "-" + dayOfMonth;
+
 
                 Datemarker = "" + year + "/" + month + "/" + dayOfMonth;
 
@@ -732,11 +759,11 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
                     int ratemarkers = ratemarker;
                     String usermarker = MainActivity.session.getLoginEmail();
 
-                    if(Datemarker==null) {
+                    if (Datemarker == null) {
                         long yourmilliseconds = System.currentTimeMillis();
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
                         Date resultdate = new Date(yourmilliseconds);
-                        Datemarker=sdf.format(resultdate);
+                        Datemarker = sdf.format(resultdate);
                     }
 //                Toast.makeText(getActivity(), ""+sdf.format(resultdate) , Toast.LENGTH_SHORT).show();
 
@@ -744,14 +771,13 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
                         addMarker(accid, titlemarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
 
 
-
-                        Toast.makeText(getActivity(), ratemarker , Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), ratemarker, Toast.LENGTH_SHORT).show();
                     } else {
 
                         Toast.makeText(getActivity(), "Please complete all information.", Toast.LENGTH_SHORT).show();
                     }
-                }catch (Exception e){
-                    Log.d(TAG, ""+e);
+                } catch (Exception e) {
+                    Log.d(TAG, "" + e);
                 }
             }
         })
@@ -759,7 +785,6 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
 
 
     }
-
 
 
     private void addMarker(final int accid,
@@ -786,15 +811,15 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
                     boolean error = jObj.getBoolean("error");
                     if (!error) {
 
-                        JSONObject user = jObj.getJSONObject("user");
-                        int accid = user.getInt("accid");
-                        String titelmarker = user.getString("titelmarker");
-                        String descriptionmark = user.getString("description");
-                        Double latmarker = user.getDouble("latmarker");
-                        Double lngmarker = user.getDouble("lngmarker");
-                        String Datemarker = user.getString("Datemarker");
-                        int ratemarkers = user.getInt("ratemarkers");
-                        String usermarker = user.getString("usermarker");
+//                        JSONObject user = jObj.getJSONObject("user");
+//                        int accid = user.getInt("accid");
+//                        String titelmarker = user.getString("titelmarker");
+//                        String descriptionmark = user.getString("description");
+//                        Double latmarker = user.getDouble("latmarker");
+//                        Double lngmarker = user.getDouble("lngmarker");
+//                        String Datemarker = user.getString("Datemarker");
+//                        int ratemarkers = user.getInt("ratemarkers");
+//                        String usermarker = user.getString("usermarker");
 
 
 //
@@ -847,6 +872,194 @@ public class OneFragment extends Fragment implements DirectionFinderListener,OnM
 
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
 
+    }
+
+    public void checkstatusdestination(final String email, final Double latcur, final Double lngcur, final String uid) {
+        String tag_string_req = "req_searchfriend";
+
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_CHECK_STATUSDESTINATION, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Request Response: " + response);
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                        updateCurLocation(email, latcur, lngcur, uid);
+//                        Toast.makeText(getActivity(), "Wowwwwwwwww", Toast.LENGTH_LONG).show();
+                    } else {
+//                        Toast.makeText(getActivity(), "Wowwwwwwwww", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Log.d(TAG, response);
+//                    Toast.makeText(mContext, "Json error Add Friend: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Request Error: " + error.getMessage());
+//                Toast.makeText(mContext,
+//                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    public void updateCurLocation(final String email, final Double latcur, final Double lngcur, final String uid) {
+        String tag_string_req = "req_searchfriend";
+
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_UPDATE_CURLOCATION, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Request Response: " + response);
+
+                try {
+                    JSONArray arr;
+                    arr = new JSONArray(response);
+                    if (arr.length() != 0) {
+                        friendList = new ArrayList<>();
+                        for (int i = 0; i < arr.length(); i++) {
+                            JSONObject obj = (JSONObject) arr.get(i);
+
+                            Double latdestination = obj.optDouble("latdestination");
+                            Double lngdestination = obj.optDouble("lngdestination");
+
+
+                            if (isCheckDestination(latdestination, lngdestination, latcur, lngcur)) {
+                                updateStatusDestination(email, uid);
+                            }
+                            ;
+
+
+                        }
+
+
+                    }
+
+
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Log.d(TAG, response);
+//                    Toast.makeText(mContext, "Json error Add Friend: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Request Error: " + error.getMessage());
+//                Toast.makeText(mContext,
+//                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+                params.put("latcur", Double.toString(latcur));
+                params.put("lngcur", Double.toString(lngcur));
+                params.put("uid", uid);
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    public void updateStatusDestination(final String email, final String uid) {
+        String tag_string_req = "req_searchfriend";
+
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_UPDATE_DESTINATION, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Request Response: " + response);
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        Toast.makeText(getActivity(), "STOP DESTINATION!!", Toast.LENGTH_LONG).show();
+                    } else {
+//                        Toast.makeText(getActivity(), "Wowwwwwwwww", Toast.LENGTH_LONG).show();
+                    }
+
+
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Log.d(TAG, response);
+//                    Toast.makeText(mContext, "Json error Add Friend: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Request Error: " + error.getMessage());
+//                Toast.makeText(mContext,
+//                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+                params.put("uid", uid);
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+
+    public boolean isCheckDestination(Double latdestination, Double lngdestination, Double latcur, Double lngcur) {
+        float[] results = new float[1];
+        Location.distanceBetween(latdestination, lngdestination,
+                latcur, lngcur, results);
+        return results[0] < 10;
     }
 
 
