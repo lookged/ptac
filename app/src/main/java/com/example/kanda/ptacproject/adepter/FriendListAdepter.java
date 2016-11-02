@@ -131,6 +131,7 @@ public class FriendListAdepter extends BaseAdapter {
                             latcurrent = obj.getString("latcurrentlocation");
                             lngcurrent = obj.getString("lngcurrentlocation");
                             Intent intent=new Intent(mContext,DestinationMapActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.putExtra("emailfriend", emailfriend.toString());
                             intent.putExtra("latdestination", latdestination.toString());
                             intent.putExtra("lngdestination", lngdestination.toString());
                             intent.putExtra("latcurrent", latcurrent.toString());

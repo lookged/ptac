@@ -33,7 +33,7 @@ public class RegisterActivity extends Activity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
     private Button btnRegister;
     private Button btnLinkToLogin;
-    private EditText inputFullName;
+
     private EditText inputEmail;
     private EditText inputPassword;
     private EditText inputPhoneno;
@@ -47,7 +47,7 @@ public class RegisterActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        inputFullName = (EditText) findViewById(R.id.name);
+
         inputEmail = (EditText) findViewById(R.id.email);
         inputPassword = (EditText) findViewById(R.id.password);
         inputComfirmPassword = (EditText) findViewById(R.id.confirmPassword);
@@ -77,18 +77,64 @@ public class RegisterActivity extends Activity {
         // Register Button Click event
         btnRegister.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                String name = inputFullName.getText().toString().trim();
+
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
                 String passwordConfirm = inputComfirmPassword.getText().toString().trim();
                 String phoneno = inputPhoneno.getText().toString().trim();
+                if (email.isEmpty()){
+                    Toast.makeText(getApplicationContext(),
+                            "Email isEmpty!", Toast.LENGTH_LONG)
+                            .show();
+                    return;
+                }if (password.isEmpty()){
+                    Toast.makeText(getApplicationContext(),
+                            "Password isEmpty!", Toast.LENGTH_LONG)
+                            .show();
+                    return;
+                }if (passwordConfirm.isEmpty()){
+                    Toast.makeText(getApplicationContext(),
+                            "PasswordConfirm isEmpty!", Toast.LENGTH_LONG)
+                            .show();
+                    return;
+                }if (phoneno.isEmpty()){
+                    Toast.makeText(getApplicationContext(),
+                            "Phoneno isEmpty!", Toast.LENGTH_LONG)
+                            .show();
+                    return;
+                }
+                if (!email.contains("@")){
+                    Toast.makeText(getApplicationContext(),
+                            "Email '@' invalid!", Toast.LENGTH_LONG)
+                            .show();
+                    return;
+                }
+                if (!email.contains(".")){
+                    Toast.makeText(getApplicationContext(),
+                            "Email '.' invalid!", Toast.LENGTH_LONG)
+                            .show();
+                    return;
+                }
+                if(password.length()<8){
+                    Toast.makeText(getApplicationContext(),
+                            "Password must be at least 8 characters long!", Toast.LENGTH_LONG)
+                            .show();
+                    return;
+                }
+                if(phoneno.length()<10){
+                    Toast.makeText(getApplicationContext(),
+                            "Phoneno must be at least 10 characters!", Toast.LENGTH_LONG)
+                            .show();
+                    return;
+                }
 
                 if (!password.equals(passwordConfirm)){
                     Toast.makeText(getApplicationContext(),
                             "Confirm password must match with password!", Toast.LENGTH_LONG)
                             .show();
-                }else if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
-                    registerUser(name, email, password, phoneno);
+                    return;
+                }else if (!email.isEmpty() && !password.isEmpty()) {
+                    registerUser( email, password, phoneno);
                 }else {
                     Toast.makeText(getApplicationContext(),
                             "Please enter your details!", Toast.LENGTH_LONG)
@@ -114,7 +160,7 @@ public class RegisterActivity extends Activity {
      * Function to store user in MySQL database will post params(tag, name,
      * email, password) to register url
      * */
-    private void registerUser(final String name, final String email,
+    private void registerUser(final String email,
                               final String password, final String phoneno) {
         // Tag used to cancel the request
         String tag_string_req = "req_register";
@@ -169,7 +215,7 @@ public class RegisterActivity extends Activity {
                 inputEmail.setText("");
                 inputPassword.setText("");
                 inputComfirmPassword.setText("");
-                inputFullName.setText("");
+
                 inputPhoneno.setText("");
 
                 Toast.makeText(getApplicationContext(),"Register completed",Toast.LENGTH_SHORT).show();
@@ -189,7 +235,7 @@ public class RegisterActivity extends Activity {
             protected Map<String, String> getParams() {
                 // Posting params to register url
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("name", name);
+
                 params.put("email", email);
                 params.put("password", password);
                 params.put("phoneno", phoneno);

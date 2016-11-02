@@ -34,11 +34,5 @@
         android:text="description"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <Button
-        android:id="@+id/mark_report"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:layout_margin="10dp"
-        android:text="Report"
-        android:textSize="10dp" />
+
 </LinearLayout>

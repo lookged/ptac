@@ -75,7 +75,7 @@ public class DestinationMapActivity extends MainActivity implements GoogleMap.On
     private List<com.google.android.gms.maps.model.Marker> destinationMarkers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
     private ProgressDialog progressDialog;
-
+    String emailfriend;
     Intent intent = getIntent();
 
     @Override
@@ -110,7 +110,7 @@ public class DestinationMapActivity extends MainActivity implements GoogleMap.On
         String lngdes = intent.getStringExtra("lngdestination");
         String latcur = intent.getStringExtra("latcurrent");
         String lngcur = intent.getStringExtra("lngcurrent");
-
+        emailfriend = intent.getStringExtra("emailfriend");
 
         String origin = "" + latcur + "," + lngcur;
         String destination = "" + latdes + "," + lngdes;
@@ -273,19 +273,21 @@ public class DestinationMapActivity extends MainActivity implements GoogleMap.On
             ((TextView) findViewById(R.id.tvDistance)).setText(route.distance.text);
 
             originMarkers.add(mMap.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
-                    .title(route.startAddress)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.curlocation))
+                    .title(emailfriend+"  "+"Location")
+//                    route.startAddress
                     .position(route.startLocation)));
             destinationMarkers.add(mMap.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
-                    .title(route.endAddress)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_green))
+                    .title("Destination Location")
+//                    route.endAddress
                     .position(route.endLocation)));
 
 
             PolylineOptions polylineOptions = new PolylineOptions().
                     geodesic(true).
                     color(Color.BLUE).
-                    width(3);
+                    width(5);
 
             for (int i = 0; i < route.points.size(); i++)
                 polylineOptions.add(route.points.get(i));

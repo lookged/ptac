@@ -49,6 +49,7 @@ import com.example.kanda.ptacproject.model.Marker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -307,7 +308,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
 
                                                     // Getting reference to the TextView to set latitude
                                                     TextView tvLat = (TextView) v.findViewById(R.id.tv_title);
-                                                    Button reportmark1 = (Button) v.findViewById(R.id.mark_report);
+
 
                                                     // Getting reference to the TextView to set longitude
                                                     TextView tvLng = (TextView) v.findViewById(R.id.tv_description);
@@ -317,16 +318,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
 
                                                     // Setting the longitude
                                                     tvLng.setText("Description :" + marker.getSnippet());
-                                                    reportmark1.setOnClickListener(new View.OnClickListener() {
 
-                                                        public void onClick(View view) {
-                                                            Toast.makeText(getActivity(),
-                                                                    "Report complete!!", Toast.LENGTH_LONG).show();
-
-
-                                                        }
-
-                                                    });
                                                     return v;
                                                 }
 
@@ -364,72 +356,73 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
                 };
 
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(AdapterView<?> parent, View view,
+                                               int position, long id) {
+                        switch (position) {
+                            case 0:
+                                maxDate = -7;
 
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                                break;
+                            case 1:
+                                maxDate = -30;
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                                break;
+                            case 2:
+                                maxDate = -90;
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                                break;
+                            case 3:
+                                maxDate = -180;
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                                break;
+                            case 4:
+                                maxDate = -365;
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                                break;
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+
+                spin2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(AdapterView<?> parent, View view,
+                                               int position, long id) {
+                        switch (position) {
+                            case 0:
+                                lengthMap = 1000;
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                                break;
+                            case 1:
+                                lengthMap = 5000;
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                                break;
+                            case 2:
+                                lengthMap = 10000;
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                                break;
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
             }
         } catch (Exception e) {
 
         }
-        spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
-                switch (position) {
-                    case 0:
-                        maxDate = -7;
-                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
-                        break;
-                    case 1:
-                        maxDate = -30;
-                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
-                        break;
-                    case 2:
-                        maxDate = -90;
-                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
-                        break;
-                    case 3:
-                        maxDate = -180;
-                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
-                        break;
-                    case 4:
-                        maxDate = -365;
-                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
-                        break;
 
-                }
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        spin2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
-                switch (position) {
-                    case 0:
-                        lengthMap = 1000;
-                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
-                        break;
-                    case 1:
-                        lengthMap = 5000;
-                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
-                        break;
-                    case 2:
-                        lengthMap = 10000;
-                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
-                        break;
-
-                }
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     private void sendRequest(String originn) {
@@ -482,7 +475,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
 
 
             originMarkers.add(mGoogleMap.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_green))
                     .title(route.startAddress)
                     .position(route.startLocation)));
 //            destinationMarkers.add(mMap.addMarker(new MarkerOptions()
@@ -616,7 +609,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
 
                             // Getting reference to the TextView to set latitude
                             TextView tvLat = (TextView) v.findViewById(R.id.tv_title);
-                            Button reportmark1 = (Button) v.findViewById(R.id.mark_report);
+
 
                             // Getting reference to the TextView to set longitude
                             TextView tvLng = (TextView) v.findViewById(R.id.tv_description);
@@ -626,16 +619,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
 
                             // Setting the longitude
                             tvLng.setText("Description :" + marker.getSnippet());
-                            reportmark1.setOnClickListener(new View.OnClickListener() {
 
-                                public void onClick(View view) {
-                                    Toast.makeText(getActivity(),
-                                            "Report complete!!", Toast.LENGTH_LONG).show();
-
-
-                                }
-
-                            });
                             return v;
                         }
 
@@ -682,7 +666,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
 
         calendarMarker = (CalendarView) dialogView.findViewById(R.id.Calendar_Marker);
         RadioGroup rateMarker = (RadioGroup) dialogView.findViewById(R.id.radioGroup_marker);
-
+        Button btnMark = (Button) dialogView.findViewById(R.id.btn_mark);
 
         final TextView textCategory = (TextView) dialogView.findViewById(R.id.textcategory);
 
@@ -698,9 +682,9 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
                 if (checkedId == R.id.radio_lvl1) {
                     textCategory.setText("ชิงทรัพย์");
                 } else if (checkedId == R.id.radio_lvl2) {
-                    textCategory.setText("ทำร้านร่างกาย");
+                    textCategory.setText("ทำร้ายร่างกาย");
                 } else if (checkedId == R.id.radio_lvl3) {
-                    textCategory.setText("ชิงทรัพย์และทำร้านร่างกาย");
+                    textCategory.setText("ชิงทรัพย์และทำร้ายร่างกาย");
                 } else if (checkedId == R.id.radio_lvl4) {
                     textCategory.setText("ข่มขืนและกระทำอนาจาร");
                 } else if (checkedId == R.id.radio_lvl5) {
@@ -722,12 +706,14 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
             }
         });
 
+        builder.show();
 
-        builder.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        btnMark.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int id) {
-                try {
+            public void onClick(View v) {
+
+
+                    try {
 
 
                     int rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
@@ -761,6 +747,15 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
                     int ratemarkers = ratemarker;
                     String usermarker = MainActivity.session.getLoginEmail();
 
+                    if(titlemarker.isEmpty()){
+                        Toast.makeText(getActivity(), " Title isEmpty!! ", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                        if(description.isEmpty()){
+                            Toast.makeText(getActivity(), " Description isEmpty!! ", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
                     if (Datemarker == null) {
                         long yourmilliseconds = System.currentTimeMillis();
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
@@ -778,12 +773,74 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
 
                         Toast.makeText(getActivity(), "Please complete all information.", Toast.LENGTH_SHORT).show();
                     }
+
                 } catch (Exception e) {
-                    Log.d(TAG, "" + e);
+                    Log.d(TAG, " " + e);
                 }
+
             }
-        })
-                .setNegativeButton("cancel", null).show();
+        });
+//        builder.setPositiveButton("Mark", new DialogInterface.OnClickListener() {
+//            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+//            @Override
+//            public void onClick(DialogInterface dialog, int id) {
+//                try {
+//
+//
+//                    int rateMarker = ((RadioGroup) dialogView.findViewById(R.id.radioGroup_marker)).getCheckedRadioButtonId();
+////                Toast.makeText(getActivity(), "rateMarker" + rateMarker, Toast.LENGTH_SHORT).show();
+//                    int ratemarker = 0;
+//
+//                    switch (rateMarker) {
+//
+//                        case R.id.radio_lvl1:
+//                            ratemarker = 101;
+//                            break;
+//                        case R.id.radio_lvl2:
+//                            ratemarker = 102;
+//                            break;
+//                        case R.id.radio_lvl3:
+//                            ratemarker = 103;
+//                            break;
+//                        case R.id.radio_lvl4:
+//                            ratemarker = 104;
+//                            break;
+//                        case R.id.radio_lvl5:
+//                            ratemarker = 105;
+//                            break;
+//                    }
+//
+//                    int accid = 0;
+//                    String titlemarker = titleMarker.getText().toString();
+//                    String description = descriptionMarker.getText().toString().trim();
+//                    double latmarker = latLng.latitude;
+//                    double lngmarker = latLng.longitude;
+//                    int ratemarkers = ratemarker;
+//                    String usermarker = MainActivity.session.getLoginEmail();
+//
+//                    if (Datemarker == null) {
+//                        long yourmilliseconds = System.currentTimeMillis();
+//                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+//                        Date resultdate = new Date(yourmilliseconds);
+//                        Datemarker = sdf.format(resultdate);
+//                    }
+////                Toast.makeText(getActivity(), ""+sdf.format(resultdate) , Toast.LENGTH_SHORT).show();
+//
+//                    if (titlemarker.length() > 0 && description.length() > 0) {
+//                        addMarker(accid, titlemarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
+//
+//
+//                        Toast.makeText(getActivity(), ratemarker, Toast.LENGTH_SHORT).show();
+//                    } else {
+//
+//                        Toast.makeText(getActivity(), "Please complete all information.", Toast.LENGTH_SHORT).show();
+//                    }
+//                } catch (Exception e) {
+//                    Log.d(TAG, "" + e);
+//                }
+//            }
+//        })
+//                .setNegativeButton("cancel", null).show();
 
 
     }

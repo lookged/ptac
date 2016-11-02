@@ -37,6 +37,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Email"
+                    android:imeActionId="@+id/login"
+                    android:imeActionLabel="Password"
+                    android:imeOptions="actionUnspecified"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:textColorHint="@color/white" />

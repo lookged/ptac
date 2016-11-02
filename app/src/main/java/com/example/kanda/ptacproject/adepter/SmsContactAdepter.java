@@ -145,7 +145,7 @@ public class SmsContactAdepter extends BaseAdapter {
                             String email = MainActivity.session.getLoginEmail();
 
                             addNumberFriend(email,phonenofriend,emailfriend);
-                            Toast.makeText(mContext, "no friend"+email, Toast.LENGTH_LONG).show();
+//                            Toast.makeText(mContext, "no friend"+email, Toast.LENGTH_LONG).show();
                         }
 
 

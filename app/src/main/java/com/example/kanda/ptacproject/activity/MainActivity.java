@@ -1,11 +1,17 @@
 package com.example.kanda.ptacproject.activity;
 
+import android.Manifest;
+import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.os.Vibrator;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -77,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         db = new SQLiteHandler(getApplicationContext());
         syncMarker();
+
         session = new SessionManager(getApplicationContext());
         if (!session.isLoggedIn()) {
             //logoutUser();
@@ -164,6 +171,8 @@ public class MainActivity extends AppCompatActivity {
         uiduser = user.get("uid");
         return uiduser;
     }
+
+
 
     public  void syncMarker() {
         db.delMarker();
