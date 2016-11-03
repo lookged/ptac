@@ -63,7 +63,19 @@ public class RequestFriendAdapter extends BaseAdapter implements View.OnClickLis
         String[] str = getItem(i);
         if (str != null) {
             ViewHolder viewHolder = new ViewHolder(view);
-            viewHolder.requestNameTV.setText(str[1]);
+            String fnamefriend = str[2];
+            String emailfriend = str[1];
+            if (fnamefriend.equalsIgnoreCase("null")){
+
+                int num = emailfriend.indexOf("@");
+
+                viewHolder.requestNameTV.setText(emailfriend.substring(0,num+1));
+
+            }else {
+                viewHolder.requestNameTV.setText(str[2]);
+
+            }
+
             viewHolder.btnAccept.setContentDescription(str[0]);
             viewHolder.btnDeny.setContentDescription(str[0]);
             viewHolder.btnAccept.setOnClickListener(this);

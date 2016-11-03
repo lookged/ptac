@@ -1,9 +1,11 @@
 package com.example.kanda.ptacproject.fragments;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -94,6 +96,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
     MarkerOptions myLocation;
     View rootView;
     View inflator;
+    private SQLiteHandler db;
     Spinner spin;
     Spinner spin2;
     private int lengthMap = 1000;
@@ -755,6 +758,13 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
                             Toast.makeText(getActivity(), " Description isEmpty!! ", Toast.LENGTH_SHORT).show();
                             return;
                         }
+                        if(titlemarker.equalsIgnoreCase("null")){
+                            Toast.makeText(getActivity(), " Title is NULL!! ", Toast.LENGTH_SHORT).show();
+                            return;
+                        }if(description.equalsIgnoreCase("null")){
+                            Toast.makeText(getActivity(), " Description is NULL!! ", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
                     if (Datemarker == null) {
                         long yourmilliseconds = System.currentTimeMillis();
@@ -767,7 +777,8 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
                     if (titlemarker.length() > 0 && description.length() > 0) {
                         addMarker(accid, titlemarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
 
-
+                        db.syncMarker(accid, titlemarker, description, latmarker, lngmarker, Datemarker, ratemarkers, usermarker);
+                        ((MainActivity) getActivity()).markerList = db.getMarkerList();
                         Toast.makeText(getActivity(), ratemarker, Toast.LENGTH_SHORT).show();
                     } else {
 

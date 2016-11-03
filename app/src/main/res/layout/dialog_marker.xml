@@ -6,26 +6,28 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="3dp"
         android:background="#FFFFBB33"
         android:scaleType="fitCenter"
 
-        android:src="@drawable/logoapp" />
+         />
 
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_marginTop="3dp"
+        android:layout_height="wrap_content">
 
         <AutoCompleteTextView
             android:id="@+id/title_Marker"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
+
             android:layout_marginBottom="0dp"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:layout_marginTop="4dp"
-            android:hint="Title"
+
+            android:hint="หัวข้อเหตุการณ์"
             android:inputType="textEmailAddress"
             android:maxLines="1"
              />
@@ -33,17 +35,17 @@
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="wrap_content">
 
         <AutoCompleteTextView
             android:id="@+id/description_Marker"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:layout_marginTop="0dp"
-            android:hint="Description"
+
+            android:hint="คำอธิบาย"
             android:inputType="textEmailAddress"
             android:maxLines="1"
             />
@@ -54,7 +56,7 @@
 
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_height="30dp"
         android:orientation="horizontal">
 
         <!--<Button-->
@@ -154,7 +156,7 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="40dp"
         android:id="@+id/btn_mark"
         android:layout_gravity="center"
         android:background="@color/colorAccent"

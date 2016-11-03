@@ -87,8 +87,19 @@ public class FriendListAdepter extends BaseAdapter {
         final String[] str = getItem(i);
         if (str != null) {
             final ViewHolder viewHolder = new ViewHolder(view);
-            viewHolder.friendNameTV.setText(str[0]);
-            checkDestination(str[0],view);
+            String fnamefriend = str[1];
+            String emailfriend = str[0];
+            if (fnamefriend.equalsIgnoreCase("null")){
+
+                int num = emailfriend.indexOf("@");
+
+                viewHolder.friendNameTV.setText(emailfriend.substring(0,num+1));
+
+            }else {
+                viewHolder.friendNameTV.setText(str[1]);
+
+            }
+            checkDestination(emailfriend,view);
             viewHolder.friendLocation.setOnClickListener(new View.OnClickListener()
             {
                 @Override

@@ -298,8 +298,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupTabIcons() {
         int[] tabIcons = {
-                R.drawable.ic_home_white,
-                R.drawable.ic_face_white,
+                R.drawable.ic_home,
+                R.drawable.friend,
                 R.drawable.requestfriend,
                 R.drawable.menulist
         };

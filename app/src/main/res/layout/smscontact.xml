@@ -2,7 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="#FFFFBB33"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitCenter"
+        android:src="@drawable/logoapp" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="70dp">
@@ -12,7 +18,8 @@
             android:layout_height="30dp"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="20dp"
-            android:background="@android:mipmap/sym_def_app_icon" />
+            android:src="@drawable/avatar"
+            />
 
         <TextView
 
@@ -20,7 +27,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="20dp"
-            android:text="SMS Contact"
+            android:text="Set SMS Contact"
             android:textSize="20sp" />
     </LinearLayout>
 

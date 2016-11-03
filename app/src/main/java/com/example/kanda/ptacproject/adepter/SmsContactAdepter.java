@@ -91,7 +91,16 @@ public class SmsContactAdepter extends BaseAdapter {
         final String[] str = getItem(i);
         if (str != null) {
              final ViewHolder viewHolder = new ViewHolder(view);
-            viewHolder.friendNameTV.setText(str[0]);
+            String fnamefriend = str[1];
+            if (fnamefriend.equalsIgnoreCase("null")){
+                String emailfriend = str[0];
+                int num = emailfriend.indexOf("@");
+
+                viewHolder.friendNameTV.setText(emailfriend.substring(0,num+1));
+            }else {
+                viewHolder.friendNameTV.setText(str[1]);
+            }
+
 
 
 //                        Toast.makeText(mContext,
@@ -234,4 +243,5 @@ public class SmsContactAdepter extends BaseAdapter {
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
+
 }

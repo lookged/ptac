@@ -11,15 +11,16 @@
 
         <TextView
             android:id="@+id/request_name"
-            android:layout_width="130dp"
+            android:layout_width="150dp"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="20dp"
+            android:maxLines="1"
             android:layout_marginTop="10dp"
             android:gravity="center_vertical"
             android:text="New Text"
             android:textColor="@android:color/background_dark"
-            android:textSize="20sp" />
+            android:textSize="17sp" />
 
         <Button
             android:id="@+id/accept_request"

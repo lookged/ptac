@@ -9,13 +9,14 @@
 
         <TextView
             android:id="@+id/friend_name"
-            android:layout_width="130dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="2dp"
             android:text="New Text"
+            android:maxLines="1"
             android:textColor="@android:color/background_dark"
-            android:textSize="20sp" />
+            android:textSize="17dp" />
         <Button
             android:id="@+id/check_friendno"
             style="@style/Widget.AppCompat.Button.Colored"

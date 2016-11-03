@@ -80,6 +80,7 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
         session = new SessionManager(getActivity());
         View rootView = inflater.inflate(R.layout.fragment_five, container, false);
         NavigationView navigationView = (NavigationView) rootView.findViewById(R.id.nav_view);
+        navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(this);
         return rootView;
     }

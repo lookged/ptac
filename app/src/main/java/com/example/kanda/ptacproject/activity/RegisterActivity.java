@@ -133,7 +133,7 @@ public class RegisterActivity extends Activity {
                             "Confirm password must match with password!", Toast.LENGTH_LONG)
                             .show();
                     return;
-                }else if (!email.isEmpty() && !password.isEmpty()) {
+                }else if (!email.isEmpty() && !password.isEmpty()&&!email.equalsIgnoreCase("null")) {
                     registerUser( email, password, phoneno);
                 }else {
                     Toast.makeText(getApplicationContext(),

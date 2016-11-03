@@ -5,11 +5,11 @@
         <menu>
             <item
                 android:id="@+id/nav_Profile"
-                android:icon="@drawable/user"
+                android:icon="@drawable/avatar"
                 android:title="Profile" />
             <item
                 android:id="@+id/nav_EditProfile"
-                android:icon="@drawable/edituser"
+                android:icon="@drawable/writing"
                 android:title="EditProfile" />
         </menu>
     </item>
@@ -18,23 +18,23 @@
         <menu>
             <item
                 android:id="@+id/nav_AddFriend"
-                android:icon="@drawable/addusernew"
+                android:icon="@drawable/addfriend"
                 android:title="Add Friend" />
             <item
                 android:id="@+id/nav_Destination"
-                android:icon="@drawable/markerdestination"
+                android:icon="@drawable/start_green"
                 android:title="Mark Destination" />
             <item
                 android:id="@+id/nav_Setfriend"
-                android:icon="@drawable/message"
-                android:title="Emergency sms Contact" />
+                android:icon="@drawable/email"
+                android:title="Set Emergency sms Contact" />
         </menu>
     </item>
     <item android:title="Logout">
         <menu>
             <item
                 android:id="@+id/nav_Logout"
-                android:icon="@drawable/logoutnew"
+                android:icon="@drawable/logout"
                 android:title="Log out" />
 
         </menu>
