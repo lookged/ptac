@@ -18,7 +18,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="0dp"
         android:layout_marginLeft="4dp"
+        android:maxLength="30"
         android:layout_marginRight="4dp"
+
         android:layout_marginTop="10dp"
         android:hint="First Name" />
 
@@ -27,6 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
+        android:maxLength="30"
+
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginTop="10dp"
@@ -37,6 +41,8 @@
         android:id="@+id/text_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxLength="300"
+
         android:layout_marginBottom="0dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
@@ -49,9 +55,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
+        android:maxLength="10"
+
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginTop="10dp"
+        android:inputType="phone"
         android:fontFamily="sans-serif"
         android:hint="Phone Number" />
 

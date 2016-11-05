@@ -19,7 +19,7 @@ public class AppConfig {
     public static String URL_CHECK_STATUSDESTINATION ="https://www.ptacproject.com/android_login_api/checkstatusdestination.php";
 
     public static String URL_UPDATE_DESTINATION = "https://www.ptacproject.com/android_login_api/updatestatusdestination.php";
-
+    public static String URL_ADD_EMERGENCY = "https://www.ptacproject.com/android_login_api/addemergency.php";
 
 
     public static String URL_SEARCH_FRIEND = "https://www.ptacproject.com/android_login_api/searchfriend.php";

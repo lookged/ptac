@@ -26,11 +26,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RequestFriendAdapter extends BaseAdapter implements View.OnClickListener {
+public class RequestFriendAdapter extends BaseAdapter  {
     public static final String TAG = RequestFriendAdapter.class.getSimpleName();
     private Context mContext;
     private ArrayList<String[]> friendRequest;
-
+    ViewHolder viewHolder;
     public RequestFriendAdapter(Context context, ArrayList<String[]> friendRequest) {
         mContext = context;
         this.friendRequest = friendRequest;
@@ -60,10 +60,10 @@ public class RequestFriendAdapter extends BaseAdapter implements View.OnClickLis
         if (view == null) {
             view = LayoutInflater.from(mContext).inflate(R.layout.request_list, viewGroup, false);
         }
-        String[] str = getItem(i);
+        final String[] str = getItem(i);
         if (str != null) {
-            ViewHolder viewHolder = new ViewHolder(view);
-            String fnamefriend = str[2];
+            viewHolder = new ViewHolder(view);
+            final String fnamefriend = str[2];
             String emailfriend = str[1];
             if (fnamefriend.equalsIgnoreCase("null")){
 
@@ -75,29 +75,67 @@ public class RequestFriendAdapter extends BaseAdapter implements View.OnClickLis
                 viewHolder.requestNameTV.setText(str[2]);
 
             }
+            final String requestedId = str[0];
+            final String loginId = MainActivity.session.getLoginId();
+            viewHolder.btnAccept.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    try {
 
-            viewHolder.btnAccept.setContentDescription(str[0]);
-            viewHolder.btnDeny.setContentDescription(str[0]);
-            viewHolder.btnAccept.setOnClickListener(this);
-            viewHolder.btnDeny.setOnClickListener(this);
+                        viewHolder.btnAccept.setVisibility(View.INVISIBLE);
+                        viewHolder.btnDeny.setVisibility(View.INVISIBLE);
+                        acceptFriendRequest(loginId, requestedId);
+
+                    }catch (Exception e){
+                        Log.d(TAG, " "+e);
+                    }
+
+                }
+            });
+            viewHolder.btnDeny.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    try {
+
+                        viewHolder.btnAccept.setVisibility(View.INVISIBLE);
+                        viewHolder.btnDeny.setVisibility(View.INVISIBLE);
+                        denyFriendRequest(loginId, requestedId);
+
+                    }catch (Exception e){
+                        Log.d(TAG, " "+e);
+                    }
+
+                }
+            });
+//            viewHolder.btnAccept.setContentDescription(str[0]);
+//            viewHolder.btnDeny.setContentDescription(str[0]);
+//            viewHolder.btnAccept.setOnClickListener(this);
+//            viewHolder.btnDeny.setOnClickListener(this);
         }
         return view;
     }
 
-    @Override
-    public void onClick(View view) {
-        String requestedId = view.getContentDescription().toString();
-        String loginId = MainActivity.session.getLoginId();
-        switch (view.getId()) {
-            case R.id.accept_request:
-                acceptFriendRequest(loginId, requestedId);
-                break;
-            case R.id.deny_request:
-                denyFriendRequest(loginId, requestedId);
-                break;
-        }
-
-    }
+//    @Override
+//    public void onClick(View view) {
+//
+//        switch (view.getId()) {
+//            case R.id.accept_request:
+//
+//
+//                break;
+//            case R.id.deny_request:
+//                viewHolder.btnAccept.setVisibility(View.INVISIBLE);
+//                viewHolder.btnDeny.setVisibility(View.INVISIBLE);
+//                denyFriendRequest(loginId, requestedId);
+//
+//                break;
+//        }
+//
+//    }
 
     private void acceptFriendRequest(final String loginId, final String requestedId) {
         String tag_string_req = "accept_request";
@@ -135,8 +173,8 @@ public class RequestFriendAdapter extends BaseAdapter implements View.OnClickLis
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Registration Error: " + error.getMessage());
-                Toast.makeText(mContext,
-                        error.getMessage(), Toast.LENGTH_LONG).show();
+//                Toast.makeText(mContext,
+//                        error.getMessage(), Toast.LENGTH_LONG).show();
 
             }
         }) {
@@ -193,8 +231,8 @@ public class RequestFriendAdapter extends BaseAdapter implements View.OnClickLis
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Registration Error: " + error.getMessage());
-                Toast.makeText(mContext,
-                        error.getMessage(), Toast.LENGTH_LONG).show();
+//                Toast.makeText(mContext,
+//                        error.getMessage(), Toast.LENGTH_LONG).show();
 
             }
         }) {

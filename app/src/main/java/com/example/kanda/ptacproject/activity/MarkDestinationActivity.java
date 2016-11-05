@@ -450,7 +450,7 @@ public class MarkDestinationActivity extends MainActivity implements GoogleMap.O
                     }
                 } catch (JSONException e) {
                     // JSON error
-                    e.printStackTrace();
+
                     Log.d(TAG, response);
 //                    Toast.makeText(mContext, "Json error Add Friend: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }

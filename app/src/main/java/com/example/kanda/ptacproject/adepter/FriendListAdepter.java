@@ -87,7 +87,7 @@ public class FriendListAdepter extends BaseAdapter {
         final String[] str = getItem(i);
         if (str != null) {
             final ViewHolder viewHolder = new ViewHolder(view);
-            String fnamefriend = str[1];
+            final String fnamefriend = str[1];
             String emailfriend = str[0];
             if (fnamefriend.equalsIgnoreCase("null")){
 
@@ -107,7 +107,7 @@ public class FriendListAdepter extends BaseAdapter {
                 {
                     try {
                         String emailfriend = str[0].trim();
-                        syncFriendLocation(emailfriend);
+                        syncFriendLocation(emailfriend,fnamefriend);
 //                        Toast.makeText(mContext, "no friend"+latdestination, Toast.LENGTH_LONG).show();
 
 
@@ -121,7 +121,7 @@ public class FriendListAdepter extends BaseAdapter {
         }
         return view;
     }
-    private void syncFriendLocation(final String emailfriend) {
+    private void syncFriendLocation(final String emailfriend, final String fnamefriend) {
 
         String tag_string_req = "req_marker_list";
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -143,6 +143,7 @@ public class FriendListAdepter extends BaseAdapter {
                             lngcurrent = obj.getString("lngcurrentlocation");
                             Intent intent=new Intent(mContext,DestinationMapActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.putExtra("emailfriend", emailfriend.toString());
+                            intent.putExtra("fnamefriend", fnamefriend.toString());
                             intent.putExtra("latdestination", latdestination.toString());
                             intent.putExtra("lngdestination", lngdestination.toString());
                             intent.putExtra("latcurrent", latcurrent.toString());

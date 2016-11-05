@@ -98,7 +98,7 @@ public class SearchFriendActivity extends Activity {
                     // JSON error
                     e.printStackTrace();
                     Log.d(TAG, response);
-                    Toast.makeText(getApplicationContext(), "Json error Add Friend: " + e.getMessage(), Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(), "Json error Add Friend: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -107,8 +107,8 @@ public class SearchFriendActivity extends Activity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Request Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(),
+//                        error.getMessage(), Toast.LENGTH_LONG).show();
 
             }
         }) {
@@ -161,8 +161,8 @@ public class SearchFriendActivity extends Activity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Add Friend Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        "error_msg Add Friend " + error.getMessage(), Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(),
+//                        "error_msg Add Friend " + error.getMessage(), Toast.LENGTH_LONG).show();
             }
         }) {
 

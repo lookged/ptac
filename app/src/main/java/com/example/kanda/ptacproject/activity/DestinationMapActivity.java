@@ -77,7 +77,7 @@ public class DestinationMapActivity extends MainActivity implements GoogleMap.On
     private ProgressDialog progressDialog;
     String emailfriend;
     Intent intent = getIntent();
-
+    String fnamefriend;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,7 +111,7 @@ public class DestinationMapActivity extends MainActivity implements GoogleMap.On
         String latcur = intent.getStringExtra("latcurrent");
         String lngcur = intent.getStringExtra("lngcurrent");
         emailfriend = intent.getStringExtra("emailfriend");
-
+        fnamefriend = intent.getStringExtra("fnamefriend");
         String origin = "" + latcur + "," + lngcur;
         String destination = "" + latdes + "," + lngdes;
         if (origin.isEmpty()) {
@@ -271,6 +271,19 @@ public class DestinationMapActivity extends MainActivity implements GoogleMap.On
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
             ((TextView) findViewById(R.id.tvDuration)).setText(route.duration.text);
             ((TextView) findViewById(R.id.tvDistance)).setText(route.distance.text);
+
+            if (fnamefriend.equalsIgnoreCase("null")){
+
+                int num = emailfriend.indexOf("@");
+
+
+                ((TextView) findViewById(R.id.tvfriendname)).setText(emailfriend.substring(0,num+1));
+
+            }else {
+                ((TextView) findViewById(R.id.tvfriendname)).setText(fnamefriend.toString());
+
+            }
+            int num = emailfriend.indexOf("@");
 
             originMarkers.add(mMap.addMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.curlocation))

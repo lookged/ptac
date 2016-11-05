@@ -1,8 +1,10 @@
 package com.example.kanda.ptacproject.fragments;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -51,9 +53,11 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
     private EditText inputEmailFriend;
     private ArrayList<String[]> informationUser;
     public String lnamedb;
+    private ProgressDialog progressDialog;
     public String fnamedb;
     public String addressdb;
     public String phoneonuserdb;
+    boolean CHECK = false;
     EditText editfname;
     EditText editlname;
     EditText editaddress;
@@ -75,18 +79,27 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
+
         db = new SQLiteHandler(getActivity());
-        syncInformationUser(MainActivity.session.getLoginEmail());
+
         session = new SessionManager(getActivity());
         View rootView = inflater.inflate(R.layout.fragment_five, container, false);
         NavigationView navigationView = (NavigationView) rootView.findViewById(R.id.nav_view);
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(this);
+
+
         return rootView;
+
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        try {
+
+
         int id = item.getItemId();
 
         if (id == R.id.nav_Profile) {
@@ -112,6 +125,10 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
         }
 
 
+
+        }catch (Exception e){
+
+        }
         return true;
     }
 //
@@ -144,67 +161,115 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
 //    }
 
     private void proFile() {
-        AlertDialog.Builder builderprofile = new AlertDialog.Builder(getActivity());
-        final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.activity_profile, null);
-        builderprofile.setView(dialogView);
-        txtName = (TextView) dialogView.findViewById(R.id.text_name);
-        txtAddress = (TextView) dialogView.findViewById(R.id.text_address);
-        txtPhonenumber = (TextView) dialogView.findViewById(R.id.text_phoneno);
-        txtName.setText(fnamedb.toUpperCase()+"  "+lnamedb.toUpperCase());
-        txtPhonenumber.setText("Phone Number :  0"+phoneonuserdb);
-        txtAddress.setText("Address :  "+addressdb.toUpperCase());
-        builderprofile.show();
+        try {
+        progressDialog = ProgressDialog.show(getActivity(), "Please wait.",
+                "Finding Information..!", true);
+
+
+        syncInformationUser(MainActivity.session.getLoginEmail());
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                //your code here
+                progressDialog.dismiss();
+                AlertDialog.Builder builderprofile = new AlertDialog.Builder(getActivity());
+                final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.activity_profile, null);
+                builderprofile.setView(dialogView);
+                txtName = (TextView) dialogView.findViewById(R.id.text_name);
+                txtAddress = (TextView) dialogView.findViewById(R.id.text_address);
+                txtPhonenumber = (TextView) dialogView.findViewById(R.id.text_phoneno);
+                try{
+                    txtName.setText(fnamedb.toUpperCase()+"  "+lnamedb.toUpperCase());
+                    txtPhonenumber.setText("Phone Number :  0"+phoneonuserdb);
+                    txtAddress.setText("Address :  "+addressdb.toUpperCase());
+                }catch (Exception e){
+
+                }
+
+
+                builderprofile.show();
+            }
+        }, 2000);
+        } catch (Exception e) {
+//            Toast.makeText(getActivity(), "Editprofile :  " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+
+
+
+
+
+
+
 
 
     }
 
     private void editProFile() {
         try {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.edit_profile, null);
-            builder.setView(dialogView);
+            progressDialog = ProgressDialog.show(getActivity(), "Please wait.",
+                    "Finding Information..!", true);
 
 
-            editfname = (EditText) dialogView.findViewById(R.id.text_first_name);
-            editlname = (EditText) dialogView.findViewById(R.id.text_last_name);
-            editaddress = (EditText) dialogView.findViewById(R.id.text_address);
-            editphone = (EditText) dialogView.findViewById(R.id.text_phoneno);
-            editfname.setHint("First Name : "+fnamedb);
-            editlname.setHint("Last Name : "+lnamedb);
-            editaddress.setHint("Address : "+addressdb);
-            editphone.setHint("Phone Number : " +"0"+phoneonuserdb);
+            syncInformationUser(MainActivity.session.getLoginEmail());
 
-            builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    //your code here
+                    progressDialog.dismiss();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.edit_profile, null);
+                    builder.setView(dialogView);
+                    editfname = (EditText) dialogView.findViewById(R.id.text_first_name);
+                    editlname = (EditText) dialogView.findViewById(R.id.text_last_name);
+                    editaddress = (EditText) dialogView.findViewById(R.id.text_address);
+                    editphone = (EditText) dialogView.findViewById(R.id.text_phoneno);
+                    editfname.setHint("First Name : "+fnamedb);
+                    editlname.setHint("Last Name : "+lnamedb);
+                    editaddress.setHint("Address : "+addressdb);
+                    editphone.setHint("Phone Number : " +"0"+phoneonuserdb);
+
+                    builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
 
 
-                    EditText editfname = (EditText) dialogView.findViewById(R.id.text_first_name);
-                    EditText editlname = (EditText) dialogView.findViewById(R.id.text_last_name);
-                    EditText editaddress = (EditText) dialogView.findViewById(R.id.text_address);
-                    EditText editphone = (EditText) dialogView.findViewById(R.id.text_phoneno);
+                            EditText editfname = (EditText) dialogView.findViewById(R.id.text_first_name);
+                            EditText editlname = (EditText) dialogView.findViewById(R.id.text_last_name);
+                            EditText editaddress = (EditText) dialogView.findViewById(R.id.text_address);
+                            EditText editphone = (EditText) dialogView.findViewById(R.id.text_phoneno);
 
-                    String fname = editfname.getText().toString();
-                    String lname = editlname.getText().toString();
-                    String address = editaddress.getText().toString();
-                    String phoneno = editphone.getText().toString();
-                    String email = MainActivity.session.getLoginEmail();
-                    if(fname.isEmpty()){
-                        fname = fnamedb;
-                    }if (lname.isEmpty()){
-                        lname = lnamedb;
-                    }if (address.isEmpty()){
-                        address = addressdb;
-                    }if (phoneno.isEmpty()){
-                        phoneno = phoneonuserdb;
-                    }
-                    if (!fname.isEmpty()&&!lname.isEmpty()&&!address.isEmpty()&&!phoneno.isEmpty()){
-                        updateProfile(fname, lname, address, phoneno, email);
-                        Toast.makeText(getActivity(), " Edit Complete. ", Toast.LENGTH_LONG).show();
-                    }
+                            String fname = editfname.getText().toString();
+                            String lname = editlname.getText().toString();
+                            String address = editaddress.getText().toString();
+                            String phoneno = editphone.getText().toString();
+                            String email = MainActivity.session.getLoginEmail();
+                            if(fname.isEmpty()){
+                                fname = fnamedb;
+                            }if (lname.isEmpty()){
+                                lname = lnamedb;
+                            }if (address.isEmpty()){
+                                address = addressdb;
+                            }if (phoneno.isEmpty()){
+                                phoneno = phoneonuserdb;
+                            }
+                            try {
+                            if (!fname.isEmpty()&&!lname.isEmpty()&&!address.isEmpty()&&!phoneno.isEmpty()){
+                                updateProfile(fname, lname, address, phoneno, email);
+                                Toast.makeText(getActivity(), " Edit Complete. ", Toast.LENGTH_LONG).show();
+                            }
+                            } catch (Exception e) {
 
+                            }
+
+                        }
+                    }).setNegativeButton("cancel", null).show();
                 }
-            }).setNegativeButton("cancel", null).show();
+            }, 1500);
+
+
 
         } catch (Exception e) {
             Toast.makeText(getActivity(), "Editprofile :  " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -229,8 +294,12 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
 
             public void onClick(View view) {
                 String friendEmail = inputEmailFriend.getText().toString().trim();
+                if(friendEmail.equalsIgnoreCase(MainActivity.session.getLoginEmail())){
+                    Toast.makeText(getActivity(), "You can't add yourself add friend ", Toast.LENGTH_LONG).show();
+                }else {
+                    checkExistUser(friendEmail);
+                }
 
-                checkExistUser(friendEmail);
 
 
             }
@@ -242,7 +311,7 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
                 String friendEmail = inputEmailFriend.getText().toString().trim();
 
                 addFriend(friendEmail);
-
+                btnAdd.setVisibility(View.INVISIBLE);
 
             }
 
@@ -310,8 +379,7 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Request Error: " + error.getMessage());
-                Toast.makeText(getActivity(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(),"Internet  not found!!", Toast.LENGTH_LONG).show();
 
             }
         }) {
@@ -364,7 +432,7 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Add Friend Error: " + error.getMessage());
                 Toast.makeText(getActivity(),
-                        "error_msg Add Friend " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        "error_msg Add Friend " + "Internet  not found!!", Toast.LENGTH_LONG).show();
             }
         }) {
 
@@ -436,8 +504,7 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "addMarker Error: " + error.getMessage());
-                Toast.makeText(getActivity(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(),"Internet  not found!!", Toast.LENGTH_LONG).show();
 
             }
         }) {
@@ -481,7 +548,7 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
                             lnamedb = obj.getString("lname");
                             addressdb = obj.getString("address");
                             phoneonuserdb = obj.getString("phoneno");
-
+                            CHECK = true;
 
 
 //                            Toast.makeText(mContext, "no friend"+latdestination, Toast.LENGTH_LONG).show();
@@ -499,6 +566,7 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Load Friend List Error: " + error.getMessage());
+                Toast.makeText(getActivity(),"Internet  not found!!", Toast.LENGTH_LONG).show();
                 //Toast.makeText(getActivity(), (error.getMessage() == null ? "haha" : "eiei"), Toast.LENGTH_LONG).show();
 
             }

@@ -359,6 +359,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
                 };
 
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+
                 spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     public void onItemSelected(AdapterView<?> parent, View view,
                                                int position, long id) {
@@ -421,6 +422,10 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
 
                     }
                 });
+            }else {
+                final Toast toast =  Toast.makeText(getActivity(), "Open Location, Internet and \n          Exit Application!!" , Toast.LENGTH_LONG);
+                toast.show();
+
             }
         } catch (Exception e) {
 
@@ -1129,7 +1134,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
         float[] results = new float[1];
         Location.distanceBetween(latdestination, lngdestination,
                 latcur, lngcur, results);
-        return results[0] < 10;
+        return results[0] < 20;
     }
 
 

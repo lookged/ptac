@@ -59,6 +59,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -107,19 +108,6 @@ public class MainActivity extends AppCompatActivity {
         setupTabIcons();
 
 
-        try {
-            LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
-            Criteria criteria = new Criteria();
-            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-            double lat = location.getLatitude();
-            double lng = location.getLongitude();
-            syncFriendNumber(MainActivity.session.getLoginEmail());
-
-            String longurl = "https://www.google.co.th/maps/place/" + lat + "+" + lng + "/@" + lat + "," + lng;
-            shortUrl(longurl);
-        }catch (Exception e){
-
-        }
 //                            String longUrl = "http://somelink.com/very/long/url";
 //                            String shortUrl = URLShortener.short(longUrl);
 
@@ -131,22 +119,53 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
+
+
+                try {
+
+                    syncFriendNumber(MainActivity.session.getLoginEmail());
+                    Criteria criteria = new Criteria();
+                    LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
+
+                    Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+
+                    double lat = location.getLatitude();
+                    double lng = location.getLongitude();
+                    String longurl = "https://www.google.co.th/maps/place/" + lat + "+" + lng + "/@" + lat + "," + lng;
+                    shortUrl(longurl);
+                }catch (Exception e){
+
+                }
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     then = System.currentTimeMillis();
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     if ((System.currentTimeMillis() - then) > longClickDuration) {
+                        String email = MainActivity.session.getLoginEmail();
+                        SimpleDateFormat df = new SimpleDateFormat("dd:MM:yyyy HH:mm:ss");
+                        String date_emergency = df.format(System.currentTimeMillis());
+
+                        String uid = MainActivity.session.getLoginId();
+                try {
+                    if (shorturl!=null&&phoneNumber.length()==10) {
+                        final String message = "PTAC"+"/n"+MainActivity.session.getLoginEmail() + " being in danger " +shorturl ;
+//                           sendSMS(phoneNumber, message);
+                        addEmergency(email,1,shorturl,date_emergency,uid);
+                        Toast.makeText(getApplicationContext(), "Send SMS Complete. ", Toast.LENGTH_LONG).show();
+                    }else {
+                        addEmergency(email,0,shorturl,date_emergency,uid);
+                        Toast.makeText(getApplicationContext(), "Send SMS to Admin !!. ", Toast.LENGTH_LONG).show();
+                    }
+                }catch (Exception e){
+
+                }
 
 
-                        if (shorturl!=null) {
-                            final String message = MainActivity.session.getLoginEmail() + " being in danger " +shorturl ;
-                           sendSMS(phoneNumber, message);
-                        Toast.makeText(getApplicationContext(), "Send SMS Complete. "+shorturl, Toast.LENGTH_LONG).show();
-                        }
 //                        Toast.makeText(getApplicationContext(),res, Toast.LENGTH_LONG).show();
                         Vibrator vtr = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                         // Vibrate for 500 milliseconds
                         vtr.vibrate(500);
-//
+//addEmergency(String email,int status_emergency,String url_emergency,String date_emergency,String uid);
                         return false;
                     } else {
 
@@ -211,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Load Marker List Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
         // Adding request to request queue
@@ -356,24 +375,47 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(String response) {
 
                 try {
-                    JSONArray arr;
-                    arr = new JSONArray(response);
-                    if (arr.length() != 0) {
-                        friendList = new ArrayList<>();
-                        for (int i = 0; i < arr.length(); i++) {
-                            JSONObject obj = (JSONObject) arr.get(i);
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        JSONObject phone = jObj.getJSONObject("0");
 
-                            phoneNumber = "0"+obj.getString("friendnumber");
+                        phoneNumber = "0"+phone.getString("friendnumber");
+//                        Toast.makeText(getApplicationContext(), phoneNumber, Toast.LENGTH_LONG).show();
+//                        JSONArray arr;
+//                        arr = new JSONArray(response);
+//                        if (arr.length() != 0) {
+//                            friendList = new ArrayList<>();
+//                            for (int i = 0; i < arr.length(); i++) {
+//                                JSONObject obj = (JSONObject) arr.get(i);
+//
+//                                String number =obj.getString("friendnumber");
+//                                Toast.makeText(getApplicationContext(), number, Toast.LENGTH_LONG).show();
+//                                if(number!=null){
+//                                    phoneNumber = "0"+obj.getString("friendnumber");
+//                                }else {
+//                                    phoneNumber = null ;
+//                                }
+//
+//
+//
+//
+//
+//
+//
+//                            }
+//
+//
+//                        }
 
-
-
-
-
-
-                        }
-
+                    }else {
+                        phoneNumber = "null" ;
+//                        Toast.makeText(getApplication(), phoneNumber, Toast.LENGTH_LONG).show();
 
                     }
+
+
+
                 } catch (JSONException e) {
 //                    e.printStackTrace();
 //                    Log.e(TAG, "Json error: " + e.getMessage());
@@ -392,6 +434,46 @@ public class MainActivity extends AppCompatActivity {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("email", email);
+
+                return params;
+            }
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+
+    }
+    private void addEmergency(final String email, final int status_emergency, final String url_emergency, final String date_emergency, final String uid) {
+
+        String tag_string_req = "req_marker_list";
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_ADD_EMERGENCY, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+
+                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    Log.e(TAG, "Json error: " + e.getMessage());
+//                    Toast.makeText(mContext, "no friend", Toast.LENGTH_LONG).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Load Friend List Error: " + error.getMessage());
+                //Toast.makeText(getActivity(), (error.getMessage() == null ? "haha" : "eiei"), Toast.LENGTH_LONG).show();
+
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+                params.put("status_emergency", Integer.toString(status_emergency));
+                params.put("url_emergency", url_emergency);
+                params.put("date_emergency", date_emergency);
+                params.put("uid", uid);
 
                 return params;
             }
