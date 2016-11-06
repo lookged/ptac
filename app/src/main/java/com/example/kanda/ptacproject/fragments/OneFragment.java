@@ -47,6 +47,7 @@ import com.example.kanda.ptacproject.app.AppConfig;
 import com.example.kanda.ptacproject.app.AppController;
 import com.example.kanda.ptacproject.helper.SQLiteHandler;
 
+import com.example.kanda.ptacproject.helper.SessionManager;
 import com.example.kanda.ptacproject.model.Marker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -90,7 +91,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
     public AutoCompleteTextView descriptionMarker;
     public EditText Edorigin;
     public Button Btnlocation;
-
+    EditText passwordck ;
     MapView mMapView;
     LocationManager locationManager;
     MarkerOptions myLocation;
@@ -360,7 +361,9 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
                     }
                 };
 
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                if(maxDate == -7){
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 7000, 0, lis);
+                }
 
                 spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     public void onItemSelected(AdapterView<?> parent, View view,
@@ -368,24 +371,23 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
                         switch (position) {
                             case 0:
                                 maxDate = -7;
-
-                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, lis);
                                 break;
                             case 1:
                                 maxDate = -30;
-                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, lis);
                                 break;
                             case 2:
                                 maxDate = -90;
-                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, lis);
                                 break;
                             case 3:
                                 maxDate = -180;
-                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, lis);
                                 break;
                             case 4:
                                 maxDate = -365;
-                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, lis);
                                 break;
 
                         }
@@ -404,15 +406,15 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
                         switch (position) {
                             case 0:
                                 lengthMap = 1000;
-                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, lis);
                                 break;
                             case 1:
                                 lengthMap = 5000;
-                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, lis);
                                 break;
                             case 2:
                                 lengthMap = 10000;
-                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, lis);
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, lis);
                                 break;
 
                         }
@@ -432,7 +434,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
         } catch (Exception e) {
 
         }
-
+        checkemergencyuser(MainActivity.session.getLoginEmail(),MainActivity.session.getLoginId());
     }
 
     private void sendRequest(String originn) {
@@ -951,6 +953,87 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
 
     }
 
+    public void checkemergencyuser(final String email, final String uid) {
+        String tag_string_req = "req_searchfriend";
+
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_CHECK_EMERGENCYUSER, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Request Response: " + response);
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                    AlertDialog.Builder builderaddfriend = new AlertDialog.Builder(getActivity());
+                        View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.checksafe, null);
+
+                        builderaddfriend.setView(dialogView);
+                     passwordck = (EditText) dialogView.findViewById(R.id.inputpasswordck);
+                        Button btncheck = (Button) dialogView.findViewById(R.id.btnsafe);
+
+                        btncheck.setOnClickListener(new View.OnClickListener() {
+
+                            public void onClick(View view) {
+                                String stringpass = passwordck.getText().toString() ;
+                                if(stringpass.isEmpty()){
+                                    Toast.makeText(getActivity(), "Password isEmpty!!", Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                                if(!stringpass.isEmpty()){
+                                    String email = MainActivity.session.getLoginEmail();
+
+                                    checkpassword(email,stringpass);
+                                }
+
+
+                            }
+
+                        });
+                        builderaddfriend.show();
+
+                    } else {
+//                       Toast.makeText(getApplication(), "WowwwAAAAAwwwwww", Toast.LENGTH_LONG).show();
+
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Log.d(TAG, response);
+//                    Toast.makeText(mContext, "Json error Add Friend: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Request Error: " + error.getMessage());
+//                Toast.makeText(mContext,
+//                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+                params.put("uid", uid);
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
     public void checkstatusdestination(final String email, final Double latcur, final Double lngcur, final String uid) {
         String tag_string_req = "req_searchfriend";
 
@@ -997,6 +1080,118 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("email", email);
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+    public void checkpassword(final String email, final String password) {
+        String tag_string_req = "req_searchfriend";
+
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_CHECK_PASSWORD, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Request Response: " + response);
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    String  err = jObj.getString("error_msg");
+                    // Check for error node in json
+                    if (!error) {
+                        updateemergencystatus(MainActivity.session.getLoginEmail(),MainActivity.session.getLoginId());
+
+                    } else {
+                     Toast.makeText(getActivity(), "Password invalid!!", Toast.LENGTH_LONG).show();
+
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Log.d(TAG, response);
+//                    Toast.makeText(mContext, "Json error Add Friend: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Request Error: " + error.getMessage());
+//                Toast.makeText(mContext,
+//                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+                params.put("password", password);
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+    public void updateemergencystatus(final String email, final String uid) {
+        String tag_string_req = "req_searchfriend";
+
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_UPDATE_SMSEMERGENCY, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Request Response: " + response);
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    String  err = jObj.getString("error_msg");
+                    // Check for error node in json
+                    if (!error) {
+
+                        Toast.makeText(getActivity(), " Good Luck :D :D :D ", Toast.LENGTH_LONG).show();
+                    } else {
+
+
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Log.d(TAG, response);
+//                    Toast.makeText(mContext, "Json error Add Friend: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Request Error: " + error.getMessage());
+//                Toast.makeText(mContext,
+//                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+                params.put("uid", uid);
                 return params;
             }
 
@@ -1136,7 +1331,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
         float[] results = new float[1];
         Location.distanceBetween(latdestination, lngdestination,
                 latcur, lngcur, results);
-        return results[0] < 10;
+        return results[0] < 20;
     }
 
 

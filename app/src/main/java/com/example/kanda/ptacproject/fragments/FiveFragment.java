@@ -102,9 +102,11 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
 
         int id = item.getItemId();
 
-        if (id == R.id.nav_Profile) {
-            proFile();
-        } else if (id == R.id.nav_EditProfile) {
+//        if (id == R.id.nav_Profile) {
+////            proFile();
+//        } else
+//
+         if (id == R.id.nav_EditProfile) {
             editProFile();
         } else if (id == R.id.nav_AddFriend) {
             addFriend();
@@ -160,74 +162,74 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
 //
 //    }
 
-    private void proFile() {
-        try {
-        progressDialog = ProgressDialog.show(getActivity(), "Please wait.",
-                "Finding Information..!", true);
-
-
-        syncInformationUser(MainActivity.session.getLoginEmail());
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                //your code here
-                progressDialog.dismiss();
-                AlertDialog.Builder builderprofile = new AlertDialog.Builder(getActivity());
-                final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.activity_profile, null);
-                builderprofile.setView(dialogView);
-                txtName = (TextView) dialogView.findViewById(R.id.text_name);
-                txtAddress = (TextView) dialogView.findViewById(R.id.text_address);
-                txtPhonenumber = (TextView) dialogView.findViewById(R.id.text_phoneno);
-                try{
-                    if( fnamedb.equalsIgnoreCase("null")&&lnamedb.equalsIgnoreCase("null")&&phoneonuserdb.equalsIgnoreCase("null")&&addressdb.equalsIgnoreCase("null")){
-                        txtName.setText("NAME");
-                        txtPhonenumber.setText("Phone Number :  ");
-                        txtAddress.setText("Address :  ");
-                    }else {
-                        if(fnamedb.equalsIgnoreCase("null")){
-                            fnamedb = "";
-                        }
-                        if(lnamedb.equalsIgnoreCase("null")){
-                            lnamedb = "";
-                        }
-                        if (!phoneonuserdb.equalsIgnoreCase("null")){
-                            phoneonuserdb = "0"+phoneonuserdb ;
-                        }
-                        if(phoneonuserdb.equalsIgnoreCase("null")){
-                            phoneonuserdb = "";
-                        }
-                        if(addressdb.equalsIgnoreCase("null")){
-                            addressdb = "";
-                        }
-
-                        txtName.setText(fnamedb.toUpperCase()+"  "+lnamedb.toUpperCase());
-                        txtPhonenumber.setText("Phone Number :  "+phoneonuserdb);
-                        txtAddress.setText("Address :  "+addressdb.toUpperCase());
-                    }
-
-                }catch (Exception e){
-
-                }
-
-
-                builderprofile.show();
-            }
-        }, 2000);
-        } catch (Exception e) {
-//            Toast.makeText(getActivity(), "Editprofile :  " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-
-
-
-
-
-
-
-
-
-
-    }
+//    private void proFile() {
+//        try {
+//        progressDialog = ProgressDialog.show(getActivity(), "Please wait.",
+//                "Finding Information..!", true);
+//
+//
+//        syncInformationUser(MainActivity.session.getLoginEmail());
+//
+//        Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            public void run() {
+//                //your code here
+//                progressDialog.dismiss();
+//                AlertDialog.Builder builderprofile = new AlertDialog.Builder(getActivity());
+//                final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.activity_profile, null);
+//                builderprofile.setView(dialogView);
+//                txtName = (TextView) dialogView.findViewById(R.id.text_name);
+//                txtAddress = (TextView) dialogView.findViewById(R.id.text_address);
+//                txtPhonenumber = (TextView) dialogView.findViewById(R.id.text_phoneno);
+//                try{
+//                    if( fnamedb.equalsIgnoreCase("null")&&lnamedb.equalsIgnoreCase("null")&&phoneonuserdb.equalsIgnoreCase("null")&&addressdb.equalsIgnoreCase("null")){
+//                        txtName.setText("NAME");
+//                        txtPhonenumber.setText("Phone Number :  ");
+//                        txtAddress.setText("Address :  ");
+//                    }else {
+//                        if(fnamedb.equalsIgnoreCase("null")){
+//                            fnamedb = "";
+//                        }
+//                        if(lnamedb.equalsIgnoreCase("null")){
+//                            lnamedb = "";
+//                        }
+//                        if (!phoneonuserdb.equalsIgnoreCase("null")){
+//                            phoneonuserdb = "0"+phoneonuserdb ;
+//                        }
+//                        if(phoneonuserdb.equalsIgnoreCase("null")){
+//                            phoneonuserdb = "";
+//                        }
+//                        if(addressdb.equalsIgnoreCase("null")){
+//                            addressdb = "";
+//                        }
+//
+//                        txtName.setText(fnamedb.toUpperCase()+"  "+lnamedb.toUpperCase());
+//                        txtPhonenumber.setText("Phone Number :  "+phoneonuserdb);
+//                        txtAddress.setText("Address :  "+addressdb.toUpperCase());
+//                    }
+//
+//                }catch (Exception e){
+//
+//                }
+//
+//
+//                builderprofile.show();
+//            }
+//        }, 2000);
+//        } catch (Exception e) {
+////            Toast.makeText(getActivity(), "Editprofile :  " + e.getMessage(), Toast.LENGTH_LONG).show();
+//        }
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//    }
 
     private void editProFile() {
         try {
@@ -300,10 +302,10 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
                                 phoneno = phoneonuserdb;
                             }
                             try {
-                            if (!fname.isEmpty()&&!lname.isEmpty()&&!address.isEmpty()&&!phoneno.isEmpty()){
+//                            if (!fname.isEmpty()&&!lname.isEmpty()&&!address.isEmpty()&&!phoneno.isEmpty()){
                                 updateProfile(fname, lname, address, phoneno, email);
                                 Toast.makeText(getActivity(), " Edit Complete. ", Toast.LENGTH_LONG).show();
-                            }
+//                            }
                             } catch (Exception e) {
 
                             }

@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -74,8 +76,10 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private SQLiteHandler db;
     private long then = 0;
+
     String shorturl ;
-     String phoneNumber;
+    String phoneNumber;
+    public  String checkemer;
     private int longClickDuration = 1200;
     String uiduser;
     @Override
@@ -100,6 +104,11 @@ public class MainActivity extends AppCompatActivity {
 //        setSupportActionBar(toolbar);
         // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //
+
+
+
+
+
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
@@ -149,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     if (shorturl!=null&&phoneNumber.length()==10) {
                         final String message = "PTAC"+"/n"+MainActivity.session.getLoginEmail() + " being in danger " +shorturl ;
-//                           sendSMS(phoneNumber, message);
+                           sendSMS(phoneNumber, message);
                         addEmergency(email,1,shorturl,date_emergency,uid);
                         Toast.makeText(getApplicationContext(), "Send SMS Complete. ", Toast.LENGTH_LONG).show();
                     }else {
@@ -182,6 +191,10 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+
+
+
 
     }
     public String uIdUser(){
@@ -482,5 +495,6 @@ public class MainActivity extends AppCompatActivity {
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
 
     }
+
 }
 

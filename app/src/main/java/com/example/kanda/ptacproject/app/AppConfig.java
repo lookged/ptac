@@ -18,10 +18,11 @@ public class AppConfig {
     public static String URL_UPDATE_CURLOCATION = " https://www.ptacproject.com/android_login_api/updatecurdestination.php";
     public static String URL_CHECK_STATUSDESTINATION ="https://www.ptacproject.com/android_login_api/checkstatusdestination.php";
     public static String URL_CHECK_DESTINATION ="https://www.ptacproject.com/android_login_api/getDestination.php";
-
+    public static String URL_CHECK_EMERGENCYUSER ="https://www.ptacproject.com/android_login_api/checkemergencyuser.php";
+    public static String URL_CHECK_PASSWORD ="https://www.ptacproject.com/android_login_api/checkpassword.php";
     public static String URL_UPDATE_DESTINATION = "https://www.ptacproject.com/android_login_api/updatestatusdestination.php";
     public static String URL_ADD_EMERGENCY = "https://www.ptacproject.com/android_login_api/addemergency.php";
-
+    public static String URL_UPDATE_SMSEMERGENCY = "https://www.ptacproject.com/android_login_api/updateemergencystatus.php";
 
     public static String URL_SEARCH_FRIEND = "https://www.ptacproject.com/android_login_api/searchfriend.php";
     public static String URL_CHECK_REQUEST = "https://www.ptacproject.com/android_login_api/checkrequest.php";

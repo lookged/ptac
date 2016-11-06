@@ -3,10 +3,7 @@
 
     <item android:title="Profile">
         <menu>
-            <item
-                android:id="@+id/nav_Profile"
-                android:icon="@drawable/avatar"
-                android:title="Profile" />
+
             <item
                 android:id="@+id/nav_EditProfile"
                 android:icon="@drawable/writing"
