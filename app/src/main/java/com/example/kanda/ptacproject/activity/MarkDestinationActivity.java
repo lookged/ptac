@@ -63,6 +63,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -110,7 +111,8 @@ public class MarkDestinationActivity extends MainActivity implements GoogleMap.O
         mapFragment.getMapAsync(this);
         Edorigin = (EditText) findViewById(R.id.etOrigin);
         Btnlocation = (Button) findViewById(R.id.btnlocation);
-
+        progressDialog = ProgressDialog.show(this, "Please wait.",
+                "Finding Information..!", true);
 //        sendRequest();
 //        btnFindPath = (Button) findViewById(R.id.btnFindPath);
 //        etOrigin = (EditText) findViewById(R.id.etOrigin);
@@ -133,7 +135,7 @@ public class MarkDestinationActivity extends MainActivity implements GoogleMap.O
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        progressDialog.cancel();
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -150,9 +152,13 @@ public class MarkDestinationActivity extends MainActivity implements GoogleMap.O
         Criteria criteria = new Criteria();
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         final Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+
+        checkstatusdestination(MainActivity.session.getLoginEmail(),location,MainActivity.session.getLoginId());
         Btnlocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 String origin = Edorigin.getText().toString().trim();
 
                 if (origin.isEmpty()) {
@@ -231,7 +237,7 @@ public class MarkDestinationActivity extends MainActivity implements GoogleMap.O
                 Double mylocationlng = location.getLongitude();
                 String descriptiondestination = descrip.getText().toString();
                 String uid = MainActivity.session.getLoginId();
-
+                sendRequestdes(latLng,location);
                 SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
                 String date = df.format(System.currentTimeMillis());
 
@@ -240,6 +246,20 @@ public class MarkDestinationActivity extends MainActivity implements GoogleMap.O
             }
         }).setNegativeButton("cancel", null).show();
 
+    }
+    private void sendRequestdes(LatLng latlng,Location location) {
+//        String origin = etOrigin.getText().toString();
+//        String destination = etDestination.getText().toString();
+        String origin = "" + latlng.latitude + "," + latlng.longitude;
+
+        String destination = "" + location.getLatitude() + "," + location.getLongitude();
+
+
+        try {
+            new DirectionFinder(this, origin, destination).execute();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
     @Override
     public void onMapClick(final LatLng latLng) {
@@ -487,5 +507,139 @@ public class MarkDestinationActivity extends MainActivity implements GoogleMap.O
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+    public void checkstatusdestination(final String email, final Location location, final String uid) {
+        String tag_string_req = "req_searchfriend";
+
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_CHECK_STATUSDESTINATION, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Request Response: " + response);
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                        markDestination(email,location,uid);
+//                        Toast.makeText(getActivity(), "Wowwwwwwwww", Toast.LENGTH_LONG).show();
+                    } else {
+//                        Toast.makeText(getActivity(), "Wowwwwwwwww", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Log.d(TAG, response);
+//                    Toast.makeText(mContext, "Json error Add Friend: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Request Error: " + error.getMessage());
+//                Toast.makeText(mContext,
+//                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+    public void markDestination(final String email, final Location location, final String uid) {
+        String tag_string_req = "req_searchfriend";
+
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_CHECK_DESTINATION, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Request Response: " + response);
+
+                try {
+                    JSONArray arr;
+                    arr = new JSONArray(response);
+                    if (arr.length() != 0) {
+                        friendList = new ArrayList<>();
+                        for (int i = 0; i < arr.length(); i++) {
+                            JSONObject obj = (JSONObject) arr.get(i);
+
+                            Double latdestination = obj.optDouble("latdestination");
+                            Double lngdestination = obj.optDouble("lngdestination");
+
+                            sendRequestMarkDestination(latdestination,lngdestination,location);
+
+                            ;
+
+
+                        }
+
+
+                    }
+
+
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Log.d(TAG, response);
+//                    Toast.makeText(mContext, "Json error Add Friend: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Request Error: " + error.getMessage());
+//                Toast.makeText(mContext,
+//                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+                params.put("uid", uid);
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+    private void sendRequestMarkDestination(Double lat,Double lng,Location location) {
+//        String origin = etOrigin.getText().toString();
+//        String destination = etDestination.getText().toString();
+        String origin = "" + lat + "," + lng;
+
+        String destination = "" + location.getLatitude() + "," + location.getLongitude();
+
+
+        try {
+            new DirectionFinder(this, origin, destination).execute();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 }

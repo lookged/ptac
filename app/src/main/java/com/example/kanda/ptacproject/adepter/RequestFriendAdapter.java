@@ -72,7 +72,13 @@ public class RequestFriendAdapter extends BaseAdapter  {
                 viewHolder.requestNameTV.setText(emailfriend.substring(0,num+1));
 
             }else {
-                viewHolder.requestNameTV.setText(str[2]);
+                String lname = str[3];
+
+                if (lname.equalsIgnoreCase("null")){
+                    lname = "";
+                }
+
+                viewHolder.requestNameTV.setText(str[2]+"  "+lname);
 
             }
             final String requestedId = str[0];

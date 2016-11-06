@@ -115,7 +115,7 @@ public class SmsContactAdepter extends BaseAdapter {
 
                         String emailfriend = str[0].trim();
                         String emailuid = MainActivity.session.getLoginId();
-//                       Toast.makeText(mContext,emailuid+emailfriend, Toast.LENGTH_LONG).show();
+                      Toast.makeText(mContext,"Set Emergency Sms : "+emailfriend, Toast.LENGTH_LONG).show();
                         syncFriendNumber(emailfriend,emailuid);
 
 

@@ -83,10 +83,11 @@ public class TwoFragment extends Fragment {
                         friendList = new ArrayList<>();
                         for (int i = 0; i < arr.length(); i++) {
                             JSONObject obj = (JSONObject) arr.get(i);
-                            String str[] = new String[3];
+                            String str[] = new String[4];
                             str[0] = obj.getString("email");
                             str[1] = obj.getString("fname");
                             str[2] = obj.getString("uid");
+                            str[3] = obj.getString("lname");
                             friendList.add(str);
                         }
 

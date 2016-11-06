@@ -220,6 +220,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
                         } catch (Exception e) {
 
                         }
+                        try {
                         if (((MainActivity) getActivity()).markerList != null) {
 
                             mGoogleMap.clear();
@@ -228,7 +229,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
                             for (final Marker m : ((MainActivity) getActivity()).markerList) {
                                 final BitmapDescriptor iconMarker;
                                 if (isShowMarker(location, m)) {
-                                    try {
+
                                         long yourmilliseconds = System.currentTimeMillis();
 
                                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -330,15 +331,16 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
 
                                             mGoogleMap.addMarker(myLocation);
                                         }
-                                    } catch (Exception e) {
-//                                    Toast.makeText(getActivity(), "rateMarker" , Toast.LENGTH_SHORT).show();
-                                    }
+
 
 
                                 }
                             }
 
 
+                        }
+                        } catch (Exception e) {
+//                                    Toast.makeText(getActivity(), "rateMarker" , Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -1134,7 +1136,7 @@ public class OneFragment extends Fragment implements DirectionFinderListener, On
         float[] results = new float[1];
         Location.distanceBetween(latdestination, lngdestination,
                 latcur, lngcur, results);
-        return results[0] < 20;
+        return results[0] < 10;
     }
 
 

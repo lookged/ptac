@@ -47,10 +47,11 @@ public class FriendListAdepter extends BaseAdapter {
     public static class ViewHolder {
          Button friendLocation;
         TextView friendNameTV;
-
+        TextView friendDescriptionTV;
         public ViewHolder(View view) {
             friendNameTV = (TextView) view.findViewById(R.id.friend_name);
             friendLocation =(Button) view.findViewById(R.id.check_location);
+            friendDescriptionTV =(TextView) view.findViewById(R.id.DestinationDescription);
             friendLocation.setVisibility(View.INVISIBLE);
         }
     }
@@ -96,7 +97,12 @@ public class FriendListAdepter extends BaseAdapter {
                 viewHolder.friendNameTV.setText(emailfriend.substring(0,num+1));
 
             }else {
-                viewHolder.friendNameTV.setText(str[1]);
+                String lname = str[3];
+
+                if (lname.equalsIgnoreCase("null")){
+                    lname = "";
+                }
+                viewHolder.friendNameTV.setText(str[1]+"  "+lname);
 
             }
             checkDestination(emailfriend,view);
@@ -197,12 +203,13 @@ public class FriendListAdepter extends BaseAdapter {
                 try {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.getBoolean("error");
-
+                    JSONObject description = jObj.getJSONObject("0");
                     // Check for error node in json
                     if (!error) {
                         final ViewHolder viewHolder = new ViewHolder(view);
 //                        Toast.makeText(mContext,
 //                                "you can add this user", Toast.LENGTH_LONG).show();
+                        viewHolder.friendDescriptionTV.setText(description.getString("description"));
                        viewHolder.friendLocation.setVisibility(View.VISIBLE);
                     } else {
                         // Error in login. Get the error message

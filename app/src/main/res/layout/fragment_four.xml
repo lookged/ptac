@@ -13,7 +13,7 @@
         android:layout_marginTop="10dp"
         android:text="Request Friend"
         android:textSize="20dp"
-        android:textStyle="bold" />
+        />
 
 
     <ListView

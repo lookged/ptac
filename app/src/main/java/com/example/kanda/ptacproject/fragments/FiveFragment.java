@@ -180,9 +180,32 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
                 txtAddress = (TextView) dialogView.findViewById(R.id.text_address);
                 txtPhonenumber = (TextView) dialogView.findViewById(R.id.text_phoneno);
                 try{
-                    txtName.setText(fnamedb.toUpperCase()+"  "+lnamedb.toUpperCase());
-                    txtPhonenumber.setText("Phone Number :  0"+phoneonuserdb);
-                    txtAddress.setText("Address :  "+addressdb.toUpperCase());
+                    if( fnamedb.equalsIgnoreCase("null")&&lnamedb.equalsIgnoreCase("null")&&phoneonuserdb.equalsIgnoreCase("null")&&addressdb.equalsIgnoreCase("null")){
+                        txtName.setText("NAME");
+                        txtPhonenumber.setText("Phone Number :  ");
+                        txtAddress.setText("Address :  ");
+                    }else {
+                        if(fnamedb.equalsIgnoreCase("null")){
+                            fnamedb = "";
+                        }
+                        if(lnamedb.equalsIgnoreCase("null")){
+                            lnamedb = "";
+                        }
+                        if (!phoneonuserdb.equalsIgnoreCase("null")){
+                            phoneonuserdb = "0"+phoneonuserdb ;
+                        }
+                        if(phoneonuserdb.equalsIgnoreCase("null")){
+                            phoneonuserdb = "";
+                        }
+                        if(addressdb.equalsIgnoreCase("null")){
+                            addressdb = "";
+                        }
+
+                        txtName.setText(fnamedb.toUpperCase()+"  "+lnamedb.toUpperCase());
+                        txtPhonenumber.setText("Phone Number :  "+phoneonuserdb);
+                        txtAddress.setText("Address :  "+addressdb.toUpperCase());
+                    }
+
                 }catch (Exception e){
 
                 }
@@ -226,11 +249,32 @@ public class FiveFragment extends Fragment implements NavigationView.OnNavigatio
                     editlname = (EditText) dialogView.findViewById(R.id.text_last_name);
                     editaddress = (EditText) dialogView.findViewById(R.id.text_address);
                     editphone = (EditText) dialogView.findViewById(R.id.text_phoneno);
+                    if( fnamedb.equalsIgnoreCase("null")&&lnamedb.equalsIgnoreCase("null")&&phoneonuserdb.equalsIgnoreCase("null")&&addressdb.equalsIgnoreCase("null")){
+                        editfname.setHint("First Name : ");
+                        editlname.setHint("Last Name : ");
+                        editaddress.setHint("Address : ");
+                        editphone.setHint("Phone Number : ");
+                    }else {
+                        if(fnamedb.equalsIgnoreCase("null")){
+                            fnamedb = "";
+                        }
+                        if(lnamedb.equalsIgnoreCase("null")){
+                            lnamedb = "";
+                        }
+                        if (!phoneonuserdb.equalsIgnoreCase("null")){
+                            phoneonuserdb = "0"+phoneonuserdb ;
+                        }
+                        if(phoneonuserdb.equalsIgnoreCase("null")){
+                            phoneonuserdb = "";
+                        }
+                        if(addressdb.equalsIgnoreCase("null")){
+                            addressdb = "";
+                        }
                     editfname.setHint("First Name : "+fnamedb);
                     editlname.setHint("Last Name : "+lnamedb);
                     editaddress.setHint("Address : "+addressdb);
-                    editphone.setHint("Phone Number : " +"0"+phoneonuserdb);
-
+                    editphone.setHint("Phone Number : "+phoneonuserdb);
+                    }
                     builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
