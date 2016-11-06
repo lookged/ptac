@@ -88,10 +88,11 @@ public class RequestFriendAdapter extends BaseAdapter  {
                 @Override
                 public void onClick(View v)
                 {
+                    viewHolder.btnAccept.setVisibility(View.INVISIBLE);
+                    viewHolder.btnDeny.setVisibility(View.INVISIBLE);
                     try {
 
-                        viewHolder.btnAccept.setVisibility(View.INVISIBLE);
-                        viewHolder.btnDeny.setVisibility(View.INVISIBLE);
+
                         acceptFriendRequest(loginId, requestedId);
 
                     }catch (Exception e){
@@ -105,10 +106,11 @@ public class RequestFriendAdapter extends BaseAdapter  {
                 @Override
                 public void onClick(View v)
                 {
+                    viewHolder.btnAccept.setVisibility(View.INVISIBLE);
+                    viewHolder.btnDeny.setVisibility(View.INVISIBLE);
                     try {
 
-                        viewHolder.btnAccept.setVisibility(View.INVISIBLE);
-                        viewHolder.btnDeny.setVisibility(View.INVISIBLE);
+
                         denyFriendRequest(loginId, requestedId);
 
                     }catch (Exception e){
