@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                         String uid = MainActivity.session.getLoginId();
                 try {
                     if (shorturl!=null&&phoneNumber.length()==10) {
-                        final String message = "PTAC"+"/n"+MainActivity.session.getLoginEmail() + " being in danger " +shorturl ;
+                        final String message = "PTAC"+"  "+MainActivity.session.getLoginEmail() + " being in danger " +shorturl ;
                            sendSMS(phoneNumber, message);
                         addEmergency(email,1,shorturl,date_emergency,uid);
                         Toast.makeText(getApplicationContext(), "Send SMS Complete. ", Toast.LENGTH_LONG).show();
